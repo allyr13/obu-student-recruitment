@@ -8,6 +8,24 @@ In order to run the project, Conda must first be installed. Once Conda is instal
 This creates an environment named 'stu-rec' that contains all the necessary dependencies for the backend API.
 
 Once the environment is set up, it must be activated with `conda activate stu-rec`.
+
+### Activate The Server
+Activate the conda envirnment using:
+```bash
+conda activate stu-rec
+```
+From the api folder, run this command in the terminal to activate the flask server:
+```bash
+python flask_server.py
+```
+The flask server currently runs on host 0.0.0.0 and port 6000, but these can be changed by editing the `config.json` file. 
+
+### Running Tests
+From the api folder, run this command in a seperate terminal to test the flask server:
+```bash
+pytest -v tests/test_flask_server.py
+```
+
 ## React Front End
 To start the app cd into 'react'. Then run `npm start` and the app will open in your browser.
 
