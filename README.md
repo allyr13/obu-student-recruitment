@@ -17,6 +17,7 @@ From the api folder, run this command in the terminal to activate the flask serv
 ```bash
 python flask_server.py
 ```
+The flask server currently runs on host 0.0.0.0 and port 6000, but these can be changed by editing the `config.json` file. 
 
 ## Running Tests
 From the api folder, run this command in a seperate terminal to test the flask server:
