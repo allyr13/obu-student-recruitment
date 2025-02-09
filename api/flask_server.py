@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from api.json_loader import get_config, edit_json_data
+from json_loader import get_config, edit_json_data
 import json
 
 app = Flask(__name__)

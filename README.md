@@ -9,13 +9,17 @@ This creates an environment named 'stu-rec' that contains all the necessary depe
 
 # Flask Server
 ## Activate The Server
-From the base directory, run this command in the terminal to activate the flask server:
+Activate the conda envirnment using:
+```bash
+conda activate stu-rec
+```
+From the api folder, run this command in the terminal to activate the flask server:
 ```bash
 python flask_server.py
 ```
 
 ## Running Tests
-From the base directory, run this command in the terminal to test the flask server:
+From the api folder, run this command in a seperate terminal to test the flask server:
 ```bash
-pytest -v tests/test_flask_server.py 
+pytest -v tests/test_flask_server.py
 ```
