@@ -9,7 +9,6 @@ This creates an environment named 'stu-rec' that contains all the necessary depe
 
 Once the environment is set up, it must be activated with `conda activate stu-rec`.
 
-## Flask Server
 ### Activate The Server
 Activate the conda envirnment using:
 ```bash
