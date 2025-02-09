@@ -24,7 +24,10 @@ To run a model prediction you must first unpickle the model using the following 
 with open("FILENAME", "rb") as f:
     model = pickle.load(f)
 ```
-
+To run a prediction, you will need to input an array of desired feature inputs into the model:
+```python
+model.predict([1,1,0,... 1])
+```
 ### Model Input
 Each model takes the same input: 551 features split between 528 Booleans, 17 Integers, and 7 Floats. The features are as follows:
 
@@ -240,3 +243,49 @@ Each model takes the same input: 551 features split between 528 Booleans, 17 Int
  'Counselor_Not Declared' 'Counselor_Rueben Thompson'
  'Counselor_Sam Anquoe' 'Counselor_Wilma Schilling']
  ```
+
+## JSON
+A JSON object is used to transfer student data within the API. This object is an array of JSON objects that represent individual student data. There can be a minimum of 1 entry per input and a maximum of 100 entries per input. Below is an example of a valid JSON input. Every JSON input must include *ALL* of the key-value pairs listed:
+```json
+[
+    {
+        "Financial Aid Offered Amount": 34000.0,
+        "incoming_text_count": 12,
+        "outgoing_text_count": 12,
+        "phone_successful_count": 12,
+        "phone_unsuccessful_count": 12,
+        "phone_voicemail_count": 12,
+        "Admitted Students Day": 0,
+        "Bison Day": 0,
+        "Bison Day @ The Weekend": 0,
+        "Campus Visit": 0,
+        "Dallas Bison Exclusive": 0,
+        "Football Visit": 0,
+        "Golf Visit": 0,
+        "Oklahoma City Bison Exclusive": 0,
+        "Scholars Bison Day": 0,
+        "Scholars Mixer and Banquet": 0,
+        "Scholarship Interview": 0,
+        "Scholarship Interview Registration": 0,
+        "Softball Visit": 0,
+        "Track Visit": 0,
+        "Tulsa Bison Exclusive": 0,
+        "Volleyball Visit": 0,
+        "Events Attended Count": 0,
+        "Country": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        "State": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        "Gender": [0, 1],
+        "Ethnicity": [0, 0, 0, 0, 0, 0, 0, 0, 1],
+        "Origin Source": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        "Student Type": [0, 0, 0, 0, 1],
+        "Major": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],   
+        "Athlete": 0,
+        "Sport": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        "Raley College Tag Exists": 0,
+        "Recruiting Territory": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        "Counselor": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+    }
+]
+```
+** See `schema_test.py` for proof of concept and validation example code.
+** The arrays in the JSON represent the one-hot encoded values for those features. They are to be arranged in the order found in Section `Model Input`.
