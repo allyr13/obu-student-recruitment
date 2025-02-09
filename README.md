@@ -6,3 +6,5 @@ In order to run the project, Conda must first be installed. Once Conda is instal
 - `bash setup-env-unix.sh`
 - TODO: Create Powershell script for Powershell users
 This creates an environment named 'stu-rec' that contains all the necessary dependencies for the backend API.
+
+Once the environment is set up, it must be activated with `conda activate stu-rec`.
