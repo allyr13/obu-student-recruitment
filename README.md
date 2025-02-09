@@ -23,3 +23,5 @@ From the api folder, run this command in a seperate terminal to test the flask s
 ```bash
 pytest -v tests/test_flask_server.py
 ```
+# React
+To start the app cd into obu-recruting and then npm start and the app will open in your browser.
