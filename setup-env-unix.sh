@@ -3,7 +3,6 @@ if conda info --envs | grep -q stu-rec; then
 else
     conda create -y -n stu-rec
     conda shell.bash activate stu-rec
-    conda install anaconda::psycopg2 
-    conda install anaconda::flask
+    conda install anaconda::psycopg2
     pip install -r requirements.txt
 fi

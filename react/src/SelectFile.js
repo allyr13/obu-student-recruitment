@@ -34,12 +34,23 @@ class FileSelect extends Component {
         // Request made to the backend api
         // Send formData object
 
-        axios.post("localhost:3000/api/batch_job", formData
+        fetch("http://127.0.0.1:6000/api/batch_job", {
+            "method": "POST",
+            "mode": 'cors',
+            body: formData
+        }).then((res) => {
+            console.log("SUCCESS");
+        })
+
+        /*
+        axios.post("http://127.0.0.1:6000/api/batch_job"//, formData
         ).then((res) => {
             //TODO: Display results of predictions
+            console.log(res.status);
         }).catch((err) => {
             //TODO: Catch error
-        })
+            console.log(err);
+        })*/
 
     };
 
