@@ -1,6 +1,7 @@
 // Filename - App.js
 
 import React, { Component } from "react";
+import axios from "axios";
 
 class FileSelect extends Component {
     state = {
@@ -33,18 +34,13 @@ class FileSelect extends Component {
         // Request made to the backend api
         // Send formData object
 
-        /* let response = fetch("localhost:3000/api/batch_job", { TODO: Make this an environment var
-            method: "post",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
+        axios.post("localhost:3000/api/batch_job", formData
+        ).then((res) => {
+            //TODO: Display results of predictions
+        }).catch((err) => {
+            //TODO: Catch error
+        })
 
-            //make sure to serialize your JSON body
-            body: {}
-        });
-        console.log(response.status);*/
-        //axios.post("api/uploadfile", formData);
     };
 
     // File content to be displayed after
