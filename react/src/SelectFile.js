@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import axios from "axios";
+import "./css/StudentForm.css"
 
 class FileSelect extends Component {
     state = {
@@ -22,11 +23,7 @@ class FileSelect extends Component {
         const formData = new FormData();
 
         // Update the formData object
-        formData.append(
-            "myFile",
-            this.state.selectedFile,
-            this.state.selectedFile.name
-        );
+        formData.append("myFile", this.state.selectedFile, this.state.selectedFile.name);
 
         // Details of the uploaded file
         console.log(formData);
@@ -40,7 +37,7 @@ class FileSelect extends Component {
             body: formData
         }).then((res) => {
             console.log("SUCCESS");
-        })
+        });
 
         /*
         axios.post("http://127.0.0.1:6000/api/batch_job"//, formData
@@ -62,13 +59,6 @@ class FileSelect extends Component {
                 <div>
                     <h2>File Details:</h2>
                     <p>File Name: {this.state.selectedFile.name}</p>
-
-                    <p>File Type: {this.state.selectedFile.type}</p>
-
-                    <p>
-                        Last Modified:
-                        {this.state.selectedFile.lastModified}
-                    </p>
                 </div>
             );
         } else {
