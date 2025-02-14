@@ -41,7 +41,7 @@ def delete_example():
     return jsonify({"data": json.loads(test_data_string), "message": "Test data cleared", "status": 200})
 
 
-@app.route('/upload_csv', methods=['POST'])
+@app.route('/api/upload_csv', methods=['POST'])
 def upload_csv():
     try:
         csv_data = request.data.decode('utf-8')

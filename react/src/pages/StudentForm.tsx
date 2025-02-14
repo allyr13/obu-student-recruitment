@@ -118,7 +118,7 @@ const StudentForm: React.FC = () => {
   const sendCSVToServer = async (csvData: string) => {
     console.log("DATA SENT TO SERVER")
     try {
-        const response = await fetch('http://127.0.0.1:5555/upload_csv', {
+        const response = await fetch('http://127.0.0.1:5555/api/upload_csv', {
             method: 'POST',
             headers: {
                 'Content-Type': 'text/csv',

@@ -66,11 +66,11 @@ class TestDemo(unittest.TestCase):
     def test_csv_upload_success(self):
         self.assertFalse(hasattr(self, 'skip_tests'))
 
-        with open('tests/test.csv', 'r') as f:
+        with open('tests/test_dummy.csv', 'r') as f:
             csv_data = f.read()
 
         header = {'Content-type': 'text/csv', 'Accept': 'text/plain'}
-        r = requests.post(f"http://{HOST}:{PORT}/upload_csv", headers=header, data=csv_data)
+        r = requests.post(f"http://{HOST}:{PORT}/api/upload_csv", headers=header, data=csv_data)
         data = r.json() 
         self.assertTrue(data["status"] == 200)
 
@@ -78,7 +78,7 @@ class TestDemo(unittest.TestCase):
         self.assertFalse(hasattr(self, 'skip_tests'))
 
         header = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = requests.post(f"http://{HOST}:{PORT}/upload_csv", headers=header, data=None)
+        r = requests.post(f"http://{HOST}:{PORT}/api/upload_csv", headers=header, data=None)
         data = r.json() 
         self.assertTrue(data["status"] == 400)
 
