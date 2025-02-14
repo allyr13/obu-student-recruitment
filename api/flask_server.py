@@ -4,7 +4,7 @@ from json_loader import get_config, edit_json_data
 import json
 
 app = Flask(__name__)
-cors = CORS(app)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 test_data_string = '{}'
 
@@ -20,25 +20,11 @@ def get_example():
     return response
 
 @app.route('/api/batch_job', methods=['POST'])
-@cross_origin
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def batch_job_api():
     print(request)
-    response = jsonify({"message": "request.files", "status": 200})
+    response = jsonify({"message": "File successfully uploaded", "status": 200})
     return response
-    ##data = request.get_json()
-    #if not data or data == None:
-    #    return jsonify({"error": "No JSON data received", "status": 400})
-    
-    #key = "message"
-    #value = data.get(key)
-
-    #if not key or value is None:
-    #    return jsonify({"error": "Incorrect or missing body key", "status": 400})
-
-    #global test_data_string
-    #test_data_string = edit_json_data(test_data_string, key, value)
-
-    #return jsonify({"message": "Data received and added", "data": json.loads(test_data_string), "status": 200})
 
 
 if __name__ == '__main__':
