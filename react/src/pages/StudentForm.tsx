@@ -110,9 +110,32 @@ const StudentForm: React.FC = () => {
     const a = document.createElement('a');
     a.href = url;
     a.download = 'student_data.csv';
+    sendCSVToServer(csvData);
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  const sendCSVToServer = async (csvData: string) => {
+    console.log("DATA SENT TO SERVER")
+    try {
+        const response = await fetch('http://127.0.0.1:5555/upload_csv', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/csv',
+            },
+            body: csvData,
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to send CSV data to server');
+        }
+
+        console.log('CSV data successfully sent to server');
+    } catch (error) {
+        console.error('Error sending CSV data:', error);
+    }
+  };
+
 
   return (
     <form onSubmit={handleSubmit}>
