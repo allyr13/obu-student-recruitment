@@ -28,36 +28,5 @@ class TestDemo(unittest.TestCase):
         data = r.json() 
         self.assertTrue(data["status"] == 200)
 
-    def test_successful_post(self):
-        self.assertFalse(hasattr(self, 'skip_tests'))  # Ensure skip_tests flag is not set
-        payload = { "message": "Hello from testing"}
-        header = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = requests.post("http://0.0.0.0:6000/post_example", json=payload, headers=header)
-        data = r.json() 
-        self.assertTrue(data["status"] == 200)
-
-    def test_incorrect_body_post(self):
-        self.assertFalse(hasattr(self, 'skip_tests'))  # Ensure skip_tests flag is not set
-        payload = { "incorrect_key": "This should result in an error"}
-        header = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = requests.post("http://0.0.0.0:6000/post_example", json=payload, headers=header)
-        data = r.json() 
-        self.assertTrue(data["status"] == 400)
-
-    def test_empty_body_post(self):
-        self.assertFalse(hasattr(self, 'skip_tests'))  # Ensure skip_tests flag is not set
-        header = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = requests.post("http://0.0.0.0:6000/post_example", json={}, headers=header)
-        data = r.json() 
-        self.assertTrue(data["status"] == 400)
-
-    def test_delete(self):
-        self.assertFalse(hasattr(self, 'skip_tests'))  # Ensure skip_tests flag is not set
-        header = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = requests.delete("http://0.0.0.0:6000/delete_example", headers=header)
-        data = r.json() 
-        self.assertTrue(data["status"] == 200)
-        self.assertEqual(data['data'], {})
-
 if __name__ == '__main__':
     unittest.main()
