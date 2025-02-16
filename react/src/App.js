@@ -1,6 +1,7 @@
 import './App.css';
 import StudentInformationForm from './pages/StudentForm.tsx';
 import Header from './pages/Header.tsx';
+import CSVUpload from './pages/CSVUpload.tsx'
 
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
     <div className="App">
       <Header />
       <StudentInformationForm />
+      <CSVUpload />
     </div>
   );
 }
