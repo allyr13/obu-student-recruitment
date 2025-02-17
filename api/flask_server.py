@@ -4,6 +4,7 @@ from json_loader import get_config, edit_json_data
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 import json
+from process_csv import convertCSVToDataFrame
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -79,6 +80,21 @@ def one_hot_encode_api():
     )
     except Exception as e:
         return jsonify({"error": e}, 400)
+
+
+@app.route('/api/upload_csv', methods=['POST'])
+def upload_csv():
+    try:
+        csv_data = request.data.decode('utf-8')
+        if not csv_data or csv_data == None:
+            return jsonify({"error": "No CSV data received", "status": 400})
+        
+        df = convertCSVToDataFrame(csv_data)
+        print(df)
+
+        return jsonify({"message": "CSV file received and saved successfully", "status": 200})
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
 
 
 if __name__ == '__main__':
