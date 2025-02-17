@@ -82,7 +82,7 @@ pip install -r requirements.txt
 
 
 ### Update using conda
-This option will install all the packages directly to the conda environment. After this is done, you can confirm the installs using [conda list](#list-env-packages)
+This option will install all the packages directly into the conda environment. This script calls a python file that reads the `requirements.txt` file and translates all the libraries into `conda install <package>` commands. After this is done, you can confirm the installations using [conda list](#list-env-packages)
 
 
 ```bash
