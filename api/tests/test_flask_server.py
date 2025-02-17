@@ -35,8 +35,8 @@ class TestDemo(unittest.TestCase):
     def test_csv_upload_success(self):
         self.assertFalse(hasattr(self, 'skip_tests'))
 
-        with open('tests/test_dummy.csv', 'r') as f:
-            csv_data = f.read()
+        # Hard code csv data to avoid file path errors
+        csv_data = "first,last,sex,age\njohn,doe,male,36\njane,smith,female,32\nmark,jackson,male,20\nclark,kent,male,50"
 
         header = {'Content-type': 'text/csv', 'Accept': 'text/plain'}
         r = requests.post(f"http://{HOST}:{PORT}/api/upload_csv", headers=header, data=csv_data)
