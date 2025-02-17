@@ -1,4 +1,0 @@
-numpy
-jsonschema # JSON validation
-flask
-flask-cors

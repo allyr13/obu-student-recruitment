@@ -2,7 +2,7 @@
 
 # Getting Started
 ## Flask Back End
-In order to run the project, Conda must first be installed. Once Conda is installed, run one of the following commands to create an environment and install dependencies:
+In order to run the project, Conda must first be installed. Once Conda is installed, cd to the `api/scripts` folder and run one of the following commands to create an environment and install dependencies:
 - `bash setup-env-unix.sh`
 - TODO: Create Powershell script for Powershell users
 This creates an environment named 'stu-rec' that contains all the necessary dependencies for the backend API.
@@ -25,6 +25,9 @@ From the api folder, run this command in a seperate terminal to test the flask s
 ```bash
 pytest -v tests/test_flask_server.py
 ```
+
+### Troubleshooting Conda Environment
+If you run into problems with your conda environment reference the [TroubleShootConda.md](api/scripts/TroubleShootConda.md) for troubleshooting options.
 
 ## React Front End
 To start the app cd into 'react'. Then run `npm start` and the app will open in your browser.
