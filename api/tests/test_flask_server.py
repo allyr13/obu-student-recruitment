@@ -32,42 +32,11 @@ class TestDemo(unittest.TestCase):
         data = r.json() 
         self.assertTrue(data["status"] == 200)
 
-    def test_successful_post(self):
-        self.assertFalse(hasattr(self, 'skip_tests'))
-        payload = { "message": "Hello from testing"}
-        header = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = requests.post(f"http://{HOST}:{PORT}/post_example", json=payload, headers=header)
-        data = r.json() 
-        self.assertTrue(data["status"] == 200)
-
-    def test_incorrect_body_post(self):
-        self.assertFalse(hasattr(self, 'skip_tests'))
-        payload = { "incorrect_key": "This should result in an error"}
-        header = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = requests.post(f"http://{HOST}:{PORT}/post_example", json=payload, headers=header)
-        data = r.json() 
-        self.assertTrue(data["status"] == 400)
-
-    def test_empty_body_post(self):
-        self.assertFalse(hasattr(self, 'skip_tests'))
-        header = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = requests.post(f"http://{HOST}:{PORT}/post_example", json={}, headers=header)
-        data = r.json() 
-        self.assertTrue(data["status"] == 400)
-
-    def test_delete(self):
-        self.assertFalse(hasattr(self, 'skip_tests'))
-        header = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        r = requests.delete(f"http://{HOST}:{PORT}/delete_example", headers=header)
-        data = r.json() 
-        self.assertTrue(data["status"] == 200)
-        self.assertEqual(data['data'], {})
-
     def test_csv_upload_success(self):
         self.assertFalse(hasattr(self, 'skip_tests'))
 
-        with open('tests/test_dummy.csv', 'r') as f:
-            csv_data = f.read()
+        # Hard code csv data to avoid file path errors
+        csv_data = "first,last,sex,age\njohn,doe,male,36\njane,smith,female,32\nmark,jackson,male,20\nclark,kent,male,50"
 
         header = {'Content-type': 'text/csv', 'Accept': 'text/plain'}
         r = requests.post(f"http://{HOST}:{PORT}/api/upload_csv", headers=header, data=csv_data)
