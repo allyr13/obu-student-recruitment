@@ -48,16 +48,16 @@ def batch_job_api():
 def one_hot_encode_api():
     # Check if a file was uploaded
     if 'file' not in request.files:
-        return jsonify({"error": "No file part"}), 400
+        return jsonify({"error": "No File Part", "status": 500})
     
     file = request.files['file']
 
     # Ensure the file has a name and is a CSV
     if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
+        return jsonify({"error": "No Selected File", "status": 500})
     
     if not file.filename.endswith('.csv'):
-        return jsonify({"error": "Invalid file format"}), 400
+        return jsonify({"error": "Invalid File Format", "status": 500})
     
     try:
         input = pd.read_csv(file)
@@ -74,12 +74,12 @@ def one_hot_encode_api():
         output = encoded_df_final.to_csv(index=False)
         # Return File
         return Response(
-        output,
-        mimetype="text/csv",
-        headers={"Content-Disposition": "attachment;filename=data.csv"}
-    )
+            output,
+            mimetype="text/csv",
+            headers={"Content-Disposition": "attachment;filename=data.csv"}
+        )
     except Exception as e:
-        return jsonify({"error": e}, 400)
+        return jsonify({"error": str(e), "status": 500})
 
 
 @app.route('/api/upload_csv', methods=['POST'])
