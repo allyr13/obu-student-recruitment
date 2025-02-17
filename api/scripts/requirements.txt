@@ -1,0 +1,4 @@
+numpy
+jsonschema
+flask
+flask-cors
