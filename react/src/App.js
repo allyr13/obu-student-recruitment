@@ -1,10 +1,15 @@
-import logo from './logo.svg';
 import './App.css';
+import StudentInformationForm from './pages/StudentForm.tsx';
+import Header from './pages/Header.tsx';
+import CSVUpload from './pages/CSVUpload.tsx'
+
 
 function App() {
   return (
     <div className="App">
-      <h1>Hello World!</h1>
+      <Header />
+      <StudentInformationForm />
+      <CSVUpload />
     </div>
   );
 }

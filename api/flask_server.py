@@ -1,10 +1,28 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
+from flask_cors import CORS, cross_origin
 from json_loader import get_config, edit_json_data
+import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
 import json
+from process_csv import convertCSVToDataFrame
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 test_data_string = '{}'
+## Processing for Encoding
+df = pd.read_csv("prepared_data.csv")
+df = df.drop(columns=['ID', 'Enrolled'])
+categorical_columns = ['Country', 'State', 'Gender', 'Ethnicity', 'Origin Source',
+       'Student Type', 'Major', 'Athlete',
+       'Sport', 'Raley College Tag Exists', 'Recruiting Territory',
+       'Counselor']
+
+encoded_columns = []
+df_encoded = pd.get_dummies(df, columns=categorical_columns, drop_first=True)
+encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore", drop="first")
+encoder.fit(df[categorical_columns])
+
 
 @app.route('/')
 def home():
@@ -12,30 +30,71 @@ def home():
 
 @app.route('/get_example', methods=['GET'])
 def get_example():
-    return jsonify({"data": json.loads(test_data_string), "status": 200})
+    response = jsonify({"data": json.loads(test_data_string), "status": 200, "headers": []})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    return response
 
-@app.route('/post_example', methods=['POST'])
-def post_example():
-    data = request.get_json()
-    if not data or data == None:
-        return jsonify({"error": "No JSON data received", "status": 400})
+@app.route('/api/batch_job', methods=['POST'])
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
+def batch_job_api():
+    print(request)
+    response = jsonify({"message": "File successfully uploaded", "status": 200})
+    return response
+
+## One-Hot Enode Route
+## Requires form-data input: "file": filename.csv
+@app.route('/api/one_hot_encode', methods=['POST'])
+def one_hot_encode_api():
+    # Check if a file was uploaded
+    if 'file' not in request.files:
+        return jsonify({"error": "No File Part", "status": 500})
     
-    key = "message"
-    value = data.get(key)
+    file = request.files['file']
 
-    if not key or value is None:
-        return jsonify({"error": "Incorrect or missing body key", "status": 400})
+    # Ensure the file has a name and is a CSV
+    if file.filename == '':
+        return jsonify({"error": "No Selected File", "status": 500})
+    
+    if not file.filename.endswith('.csv'):
+        return jsonify({"error": "Invalid File Format", "status": 500})
+    
+    try:
+        input = pd.read_csv(file)
+        # Encode new data
+        encoded_input = encoder.transform(input[categorical_columns])
+        # Convert to DataFrame
+        encoded_columns = encoder.get_feature_names_out(categorical_columns)
+        encoded_df = pd.DataFrame(encoded_input, columns=encoded_columns)
+        encoded_df = encoded_df.fillna(0)
+        encoded_df = encoded_df.astype(int)
+        encoded_df_final = pd.concat([input.drop(columns=categorical_columns, axis=1), encoded_df], axis=1)
+        encoded_df_final = encoded_df_final.fillna(0)
 
-    global test_data_string
-    test_data_string = edit_json_data(test_data_string, key, value)
+        output = encoded_df_final.to_csv(index=False)
+        # Return File
+        return Response(
+            output,
+            mimetype="text/csv",
+            headers={"Content-Disposition": "attachment;filename=data.csv"}
+        )
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
 
-    return jsonify({"message": "Data received and added", "data": json.loads(test_data_string), "status": 200})
 
-@app.route('/delete_example', methods=['DELETE'])
-def delete_example():
-    global test_data_string
-    test_data_string = '{}'
-    return jsonify({"data": json.loads(test_data_string), "message": "Test data cleared", "status": 200})
+@app.route('/api/upload_csv', methods=['POST'])
+def upload_csv():
+    try:
+        csv_data = request.data.decode('utf-8')
+        if not csv_data or csv_data == None:
+            return jsonify({"error": "No CSV data received", "status": 400})
+        
+        df = convertCSVToDataFrame(csv_data)
+        print(df)
+
+        return jsonify({"message": "CSV file received and saved successfully", "status": 200})
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
 
 
 if __name__ == '__main__':

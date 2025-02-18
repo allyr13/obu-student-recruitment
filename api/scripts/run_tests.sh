@@ -1,0 +1,1 @@
+pytest -v ../tests/test_flask_server.py

@@ -1,0 +1,17 @@
+/* Header Styling */
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .header h1 {
+    font-size: 2em;
+    color: #388e3c; /* Dark green for header */
+    margin-bottom: 10px;
+  }
+  
+  .header p {
+    font-size: 1.2em;
+    color: #4caf50; /* Medium green for subheading */
+  }
+  
