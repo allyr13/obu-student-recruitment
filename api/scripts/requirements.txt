@@ -4,3 +4,4 @@ flask
 flask-cors
 pandas
 scikit-learn
+xgboost=2.1.4
