@@ -2,3 +2,4 @@
 *settings.json
 *.pytest_cache
 .vscode
+test_models.py
