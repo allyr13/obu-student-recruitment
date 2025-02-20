@@ -42,6 +42,7 @@ interface FormData {
 const StudentForm: React.FC = () => {
   // Initial state for the form with all fields
   const [formData, setFormData] = useState<FormData>({
+    // Default Values
     state: '',
     country: '',
     gender: '',
@@ -50,31 +51,31 @@ const StudentForm: React.FC = () => {
     studentType: '',
     major: '',
     financialAidOfferedAmount: 0,
-    athlete: 'N', // Default to 'N'
+    athlete: 'N', 
     sport: '',
-    raleyCollegeTagExists: 'N', // Default to 'N'
+    raleyCollegeTagExists: 'N', 
     recruitingTerritory: '',
     counselorIncomingTextCount: '',
     counselorOutgoingTextCount: '',
     phoneSuccessfulCount: '',
     phoneUnsuccessfulCount: '',
     phoneVoicemailCount: '',
-    admittedStudentsDay: 'N', // Default to 'N'
-    bisonDay: 'N', // Default to 'N'
-    bisonDayAtTheWeekend: 'N', // Default to 'N'
-    campusVisit: 'N', // Default to 'N'
-    dallasBisonExclusive: 'N', // Default to 'N'
-    footballVisit: 'N', // Default to 'N'
-    golfVisit: 'N', // Default to 'N'
-    oklahomaCityBisonExclusive: 'N', // Default to 'N'
-    scholarsBisonDay: 'N', // Default to 'N'
-    scholarsMixerAndBanquet: 'N', // Default to 'N'
-    scholarshipInterview: 'N', // Default to 'N'
-    scholarshipInterviewRegistration: 'N', // Default to 'N'
-    softballVisit: 'N', // Default to 'N'
-    trackVisit: 'N', // Default to 'N'
-    tulsaBisonExclusive: 'N', // Default to 'N'
-    volleyballVisit: 'N', // Default to 'N'
+    admittedStudentsDay: 'N', 
+    bisonDay: 'N', 
+    bisonDayAtTheWeekend: 'N', 
+    campusVisit: 'N', 
+    dallasBisonExclusive: 'N', 
+    footballVisit: 'N', 
+    golfVisit: 'N', 
+    oklahomaCityBisonExclusive: 'N', 
+    scholarsBisonDay: 'N', 
+    scholarsMixerAndBanquet: 'N', 
+    scholarshipInterview: 'N', 
+    scholarshipInterviewRegistration: 'N', 
+    softballVisit: 'N', 
+    trackVisit: 'N', 
+    tulsaBisonExclusive: 'N', 
+    volleyballVisit: 'N', 
     eventsAttendedCount: '',
   });
 
@@ -117,6 +118,7 @@ const StudentForm: React.FC = () => {
 
   const sendCSVToServer = async (csvData: string) => {
     console.log("DATA SENT TO SERVER")
+    console.log(csvData)
     try {
         const response = await fetch('http://127.0.0.1:5555/api/upload_csv', {
             method: 'POST',
@@ -147,6 +149,7 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
+        <option value="" disabled>Choose a State</option>
         <option value="AL">AL</option>
         <option value="AK">AK</option>
         <option value="AZ">AZ</option>
@@ -540,12 +543,13 @@ const StudentForm: React.FC = () => {
       <br />
 
       {/* Financial Aid Offered Amount */}
-      <label>Financial Aid Offered Amount:</label>
+      <label >Financial Aid Offered Amount:</label>
       <input
         type="number"
         name="financialAidOfferedAmount"
         value={formData.financialAidOfferedAmount}
         onChange={handleInputChange}
+        placeholder="0.00"
         required
       />
       <br />
