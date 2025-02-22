@@ -30,7 +30,7 @@ def one_hot_encode_df(df_input):
     input.columns = [camel_to_title_case(col) for col in input.columns]
     
     # TODO: Counselor needs to be added to the form 
-    input['Counselor'] = 'Andy Hayes'
+    input['Counselor'] = 'C2'
 
     input.rename(columns={'Counselor Incoming Text Count': 'incoming_text_count'}, inplace=True)
     input.rename(columns={'Counselor Outgoing Text Count': 'outgoing_text_count'}, inplace=True)
@@ -61,6 +61,7 @@ def one_hot_encode_df(df_input):
     # Concatenate the non-categorical columns with the encoded columns
     encoded_df_final = pd.concat([input.drop(columns=categorical_columns, axis=1), encoded_df], axis=1)
     encoded_df_final = encoded_df_final.fillna(0)
+    encoded_df_final = encoded_df_final.replace({'N': 0, 'Y': 1})
     
     # Save the final encoded DataFrame
     encoded_df_final.to_csv('oneHotEncoded_data.csv', index=False)
