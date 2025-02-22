@@ -3,3 +3,4 @@
 *.pytest_cache
 .vscode
 test_models.py
+*package-lock.json
