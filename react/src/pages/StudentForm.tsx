@@ -111,6 +111,7 @@ const StudentForm: React.FC = () => {
     a.href = url;
     a.download = 'student_data.csv';
     sendCSVToServer(csvData);
+    var encodedDf = oneHotEncode(csvData)
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -135,6 +136,29 @@ const StudentForm: React.FC = () => {
         console.error('Error sending CSV data:', error);
     }
   };
+
+  const oneHotEncode = async (csvData: string) => {
+    console.log("DATA SENT TO SERVER")
+    try {
+        const response = await fetch('http://127.0.0.1:5555/api/one_hot_encode_no_file', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/csv',
+            },
+            body: csvData,
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to send CSV data to server');
+        }
+
+        console.log('CSV data successfully sent to server');
+    } catch (error) {
+        console.error('Error sending CSV data:', error);
+    }
+  };
+
+  
 
 
   return (

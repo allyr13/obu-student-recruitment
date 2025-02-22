@@ -1,3 +1,4 @@
+from io import StringIO
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
 from json_loader import get_config, edit_json_data
@@ -83,6 +84,56 @@ def one_hot_encode_api():
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
 
+# Example encoder and columns (ensure the categorical columns are correctly defined in lowercase)
+encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+
+# Define categorical columns in lowercase and without spaces
+categorical_columns = [
+    'country', 'state', 'gender', 'ethnicity', 'originsource', 'studenttype', 'major',
+    'athlete', 'sport', 'raleycollegetagexists', 'recruitingterritory'
+]
+
+
+@app.route('/api/one_hot_encode_no_file', methods=['POST'])
+def one_hot_encode_no_file_api():
+    csv_data = request.data.decode('utf-8')  # Decode raw byte data into a string
+
+    if not csv_data:
+        return jsonify({"error": "No data provided", "status": 500})
+
+    try:
+        csv_file = StringIO(csv_data)
+        input_df = pd.read_csv(csv_file)
+        print("Raw columns in the input CSV: ", input_df.columns.tolist())
+        input_df.columns = input_df.columns.str.strip().str.lower()
+        missing_columns = [col for col in categorical_columns if col not in input_df.columns]
+        if missing_columns:
+            print(f"Missing columns: {missing_columns}")
+            # Add missing columns with a default value (e.g., 'unknown')
+            for col in missing_columns:
+                input_df[col] = 'unknown'  # Use a default value for missing columns
+
+        encoded_input = encoder.fit_transform(input_df[categorical_columns])
+        encoded_columns = encoder.get_feature_names_out(categorical_columns)
+        encoded_df = pd.DataFrame(encoded_input, columns=encoded_columns)
+        encoded_df_final = pd.concat([input_df.drop(columns=categorical_columns), encoded_df], axis=1)
+
+        output = encoded_df_final.to_csv(index=False)
+
+        print("prediction ", predict(encoded_df_final))
+
+        # Step 11: Return the result as a CSV file
+        return Response(
+            output,
+            mimetype="text/csv",
+            headers={"Content-Disposition": "attachment;filename=encoded_data.csv"}
+        )
+
+    except Exception as e:
+        print(f"Error occurred: {str(e)}")
+        return jsonify({"error": str(e), "status": 500})
+
+    
 
 @app.route('/api/upload_csv', methods=['POST'])
 def upload_csv():
