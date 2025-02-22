@@ -95,25 +95,38 @@ const StudentForm: React.FC = () => {
     }
   };
 
-  // Handle form submission
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    // Convert form data to CSV format
-    const csvHeader = Object.keys(formData).join(', ');
-    const csvRow = Object.values(formData).join(', ');
-    const csvData = `${csvHeader}\n${csvRow}`;
+    try {
+        const csvHeader = Object.keys(formData).join(',');
+        const csvRow = Object.values(formData).join(',');
+        const csvData = `${csvHeader}\n${csvRow}`;
 
-    // Trigger CSV download
-    const csvBlob = new Blob([csvData], { type: 'text/csv' });
-    const url = URL.createObjectURL(csvBlob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'student_data.csv';
-    sendCSVToServer(csvData);
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+        const csvBlob = new Blob([csvData], { type: 'text/csv' });
+        const formDataToSend = new FormData();
+        formDataToSend.append('file', csvBlob, 'student_data.csv');
+
+        const response = await fetch('/api/upload_form', {
+            method: 'POST',
+            body: formDataToSend,
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            console.error(result.error);
+            alert(`Error: ${result.error}`);
+            return;
+        }
+
+        console.log('Success:', result);
+        alert('File uploaded and processed successfully!');
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while uploading the file.');
+    }
+};
 
   const sendCSVToServer = async (csvData: string) => {
     console.log("DATA SENT TO SERVER")
