@@ -5,6 +5,7 @@ import numpy as np
 f = open("../models/dtree_model.pkl", "rb") #TODO: load different models as needed/specified
 model = pickle.load(f)
 
+## Input: A one-hot encoded Pandas dataframe
 def predict(ohe_df):
     numpy_version = ohe_df.to_numpy()
     predictions = []
