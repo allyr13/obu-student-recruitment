@@ -1,9 +1,14 @@
-*__pycache__
 *settings.json
 *.pytest_cache
 .vscode
 test_models.py
-*package-lock.json
-package-lock.json
-package-lock.json*
 .ipynb_checkpoints
+package-lock.json
+*package-lock.json
+
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.DS_Store
