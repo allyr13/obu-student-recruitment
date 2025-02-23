@@ -5,6 +5,8 @@ import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 import json
 from processing.one_hot_encode_df import one_hot_encode_df
+from processing.run_model import predict
+
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -69,7 +71,7 @@ def one_hot_encode_api():
         encoded_df = encoded_df.fillna(0)
         encoded_df = encoded_df.astype(int)
         encoded_df_final = pd.concat([input.drop(columns=categorical_columns, axis=1), encoded_df], axis=1)
-        encoded_df_final = encoded_df_final.fillna(0)
+        encoded_df_final = encoded_df_final.fillna(0) #TODO: Figure out how to normalize numeric columns
 
         output = encoded_df_final.to_csv(index=False)
         # Return File
