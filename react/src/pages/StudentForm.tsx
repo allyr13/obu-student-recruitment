@@ -212,6 +212,7 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
+        <option value="" disabled>Choose a Country</option>
         <option value="USA">USA</option>
         <option value="AGF">AFG</option>
         <option value="ALB">ALB</option>
@@ -473,6 +474,7 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
+        <option value="" disabled>Choose a Gender</option>
         <option value="Male">Male</option>
         <option value="Female">Female</option>
         <option value="Other">Other</option>
@@ -487,6 +489,7 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
+        <option value="" disabled>Choose an Ethnicity</option>
         <option value="Eth-1">Eth-1</option>
         <option value="Eth-2">Eth-2</option>
         <option value="Eth-3">Eth-3</option>
@@ -507,6 +510,7 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
+        <option value="" disabled>Choose an Origin Source</option>
         <option value="NA">NA</option>
         <option value="Origin1">Origin1</option>
         <option value="Origin2">Origin2</option>
@@ -521,6 +525,7 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
+        <option value="" disabled>Choose a Student Type</option>
         <option value="First time">First time</option>
         <option value="Transfer">Transfer</option>
         <option value="Test Optional">Test Optional</option>
@@ -536,6 +541,7 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
+        <option value="" disabled>Choose a Major</option>
         <option value="Computer Science">Computer Science</option>
         <option value="Accounting">Accounting</option>
         <option value="Business">Business</option>
@@ -575,6 +581,8 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
+        <option value="" disabled>Choose a Sport</option>
+        <option value="No Sport">No Sport</option>
         <option value="Volleyball">Volleyball</option>
         <option value="Softball">Softball</option>
         <option value="Baseball">Baseball</option>
@@ -612,6 +620,7 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
+        <option value="" disabled>Choose a Territory</option>
         <option value="territory1">Territory 1</option>
         <option value="territory2">Territory 2</option>
       </select>
@@ -620,10 +629,11 @@ const StudentForm: React.FC = () => {
       {/* Counselor Incoming Text Count */}
       <label>Counselor Incoming Text Count:</label>
       <input
-        type="text"
+        type="number"
         name="counselorIncomingTextCount"
         value={formData.counselorIncomingTextCount}
         onChange={handleInputChange}
+        placeholder="0.00"
         required
       />
       <br />
@@ -631,10 +641,11 @@ const StudentForm: React.FC = () => {
       {/* Counselor Outgoing Text Count */}
       <label>Counselor Outgoing Text Count:</label>
       <input
-        type="text"
+        type="number"
         name="counselorOutgoingTextCount"
         value={formData.counselorOutgoingTextCount}
         onChange={handleInputChange}
+        placeholder="0.00"
         required
       />
       <br />
@@ -642,10 +653,11 @@ const StudentForm: React.FC = () => {
       {/* Phone Successful Count */}
       <label>Phone Successful Count:</label>
       <input
-        type="text"
+        type="number"
         name="phoneSuccessfulCount"
         value={formData.phoneSuccessfulCount}
         onChange={handleInputChange}
+        placeholder="0.00"
         required
       />
       <br />
@@ -653,10 +665,11 @@ const StudentForm: React.FC = () => {
       {/* Phone Unsuccessful Count */}
       <label>Phone Unsuccessful Count:</label>
       <input
-        type="text"
+        type="number"
         name="phoneUnsuccessfulCount"
         value={formData.phoneUnsuccessfulCount}
         onChange={handleInputChange}
+        placeholder="0.00"
         required
       />
       <br />
@@ -664,10 +677,11 @@ const StudentForm: React.FC = () => {
       {/* Phone Voicemail Count */}
       <label>Phone Voicemail Count:</label>
       <input
-        type="text"
+        type="number"
         name="phoneVoicemailCount"
         value={formData.phoneVoicemailCount}
         onChange={handleInputChange}
+        placeholder="0.00"
         required
       />
       <br />
@@ -883,10 +897,11 @@ const StudentForm: React.FC = () => {
       {/* Events Attended Count */}
       <label>Events Attended Count:</label>
       <input
-        type="text"
+        type="number"
         name="eventsAttendedCount"
         value={formData.eventsAttendedCount}
         onChange={handleInputChange}
+        placeholder="0.00"
         required
       />
       <br />
