@@ -56,6 +56,33 @@ const FileUpload: React.FC = () => {
                         reject(false);
                         return;
                     }
+
+                    let skip_cols = ["incoming_text_count", "outgoing_text_count", "phone_successful_count", "phone_unsuccessful_count", "phone_voicemail_count"]
+                    
+                    let num_cols = ["Financial Aid Offered Amount", "Events Attended Count"]
+                    for(const row of data) {
+                        for(const header of headers){
+                            if(row[header] === undefined || row[header] === null){
+                                setMessage(`Invalid value in column ${header} for row ${data.indexOf(row) + 1}`);
+                                reject(false);
+                                return;
+                            }
+                            else if(num_cols.includes(header)){
+                                if(isNaN(parseFloat(row[header]))){
+                                    setMessage(`Invalid value in column ${header} for row ${data.indexOf(row) + 1}`);
+                                    reject(false);
+                                    return;
+                                }
+                            }
+                            else if(!skip_cols.includes(header)){
+                                if(row[header] != 1 || row[header] != 0){
+                                    setMessage(`Invalid value in column ${header} for row ${data.indexOf(row) + 1}`);
+                                    reject(false);
+                                    return;
+                                }
+                            }
+                        }
+                    }
                     
                     resolve(true);
                 }
