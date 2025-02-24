@@ -30,25 +30,34 @@ const FileUpload: React.FC = () => {
     const validateCSVContent = (file: File): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             Papa.parse(file, {
+                header: true, // Ensure the first row is treated as headers
                 complete: (result) => {
                     const { data, errors } = result;
                     if (errors.length > 0) {
                         setMessage("Error parsing CSV file.");
                         reject(false);
                     }
-
+                    
                     const requiredColumns = all_expected_cols;
-                    const headers = data[0];
+                    const headers = Object.keys(data[0]); // Get the headers from the first row
+                    console.log("Headers:", headers);
+
+                    if (!Array.isArray(headers)) {
+                        setMessage("Invalid CSV format.");
+                        reject(false);
+                        return;
+                    }
+
                     const hasRequiredColumns = requiredColumns.every(col => headers.includes(col));
 
                     if (!hasRequiredColumns) {
                         setMessage("CSV file is missing required columns.");
                         reject(false);
+                        return;
                     }
-
+                    
                     resolve(true);
-                },
-                header: true
+                }
             });
         });
     };
