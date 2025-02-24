@@ -103,6 +103,11 @@ def upload_csv_file():
         ohe_df = one_hot_encode_df(df)
         print(ohe_df)
 
+        ## prints predicted value
+        results = predict(ohe_df)
+        print("results: ")
+        print(results)
+
         return jsonify({"message": "CSV file received and saved successfully", "status": 200})
 
     except Exception as e:
@@ -114,6 +119,12 @@ def upload_default_form():
         df = pd.read_csv('default_copy.csv')
         ohe_df = one_hot_encode_df(df)
         print(ohe_df)
+
+        ## prints predicted value
+        results = predict(ohe_df)
+        print("results: ")
+        print(results)
+
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
