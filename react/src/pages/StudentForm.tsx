@@ -512,7 +512,6 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
-        <option value="Eth-1">Eth-1</option>
         <option value="Eth-2">Eth-2</option>
         <option value="Eth-3">Eth-3</option>
         <option value="Eth-4">Eth-4</option>
