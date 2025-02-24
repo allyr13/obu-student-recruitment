@@ -78,7 +78,7 @@ const StudentForm: React.FC = () => {
     trackVisit: '0.0', 
     tulsaBisonExclusive: '0.0', 
     volleyballVisit: '0.0', 
-    eventsAttendedCount: '',
+    eventsAttendedCount: '1.4',
   });
 
   // Handle input change
