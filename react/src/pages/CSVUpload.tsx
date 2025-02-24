@@ -28,6 +28,7 @@ const FileUpload: React.FC = () => {
     };
 
     const validateCSVContent = (file: File): Promise<boolean> => {
+        console.log("TESTTESTTEST")
         return new Promise((resolve, reject) => {
             Papa.parse(file, {
                 complete: (result) => {
