@@ -3,6 +3,7 @@ import '../css/FileUpload.css';
 import UploadService from "../services/FileUploadService.ts";
 import React from "react";
 import Papa from "papaparse";
+import all_expected_cols from "../all_expected_cols.json";
 
 const FileUpload: React.FC = () => {
 
@@ -11,7 +12,7 @@ const FileUpload: React.FC = () => {
 
     const validateFile = (file: File): boolean => {
         const validTypes = ["text/csv"];
-        const maxSize = 100 * 1024 * 1024;
+        const maxSize = 100 * 1024 * 1024; // 100 MB, can be changed easily if need be
 
         if (!validTypes.includes(file.type)) {
             setMessage("Invalid file type. Please upload a CSV file.");
@@ -36,8 +37,7 @@ const FileUpload: React.FC = () => {
                         reject(false);
                     }
 
-                    /*
-                    const requiredColumns = ["Name", "Email", "Age"];
+                    const requiredColumns = all_expected_cols;
                     const headers = data[0];
                     const hasRequiredColumns = requiredColumns.every(col => headers.includes(col));
 
@@ -45,7 +45,6 @@ const FileUpload: React.FC = () => {
                         setMessage("CSV file is missing required columns.");
                         reject(false);
                     }
-                    */
 
                     resolve(true);
                 },
