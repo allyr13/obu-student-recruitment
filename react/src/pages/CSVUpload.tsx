@@ -28,6 +28,7 @@ const FileUpload: React.FC = () => {
     };
 
     const validateCSVContent = (file: File): Promise<boolean> => {
+        console.log("TESTTESTTEST")
         return new Promise((resolve, reject) => {
             Papa.parse(file, {
                 header: true, // Ensure the first row is treated as headers
