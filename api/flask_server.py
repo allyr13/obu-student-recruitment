@@ -4,7 +4,7 @@ from json_loader import get_config, edit_json_data
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 import json
-from processing.process_csv import convertCSVToDataFrame
+from processing.one_hot_encode_df import one_hot_encode_df
 from processing.run_model import predict
 
 
@@ -84,17 +84,41 @@ def one_hot_encode_api():
         return jsonify({"error": str(e), "status": 500})
 
 
-@app.route('/api/upload_csv', methods=['POST'])
-def upload_csv():
+@app.route('/api/upload_form', methods=['POST'])
+def upload_csv_file():
+    if 'file' not in request.files:
+        return jsonify({"error": "No File Part", "status": 500})
+    
+    file = request.files['file']
+
+    # Ensure the file has a name and is a CSV
+    if file.filename == '':
+        return jsonify({"error": "No Selected File", "status": 500})
+    
+    if not file.filename.endswith('.csv'):
+        return jsonify({"error": "Invalid File Format", "status": 500})
+    
     try:
-        csv_data = request.data.decode('utf-8')
-        if not csv_data or csv_data == None:
-            return jsonify({"error": "No CSV data received", "status": 400})
-        
-        df = convertCSVToDataFrame(csv_data)
+        df = pd.read_csv(file)
+        # df = pd.read_csv('default_copy.csv')
         print(df)
+        ohe_df = one_hot_encode_df(df)
+        print()
+        print(ohe_df)
+        print()
 
         return jsonify({"message": "CSV file received and saved successfully", "status": 200})
+
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
+    
+@app.route('/api/test_model', methods=['GET'])
+def upload_default_form():
+    try:
+        df = pd.read_csv('default_copy.csv')
+        ohe_df = one_hot_encode_df(df)
+        print(ohe_df)
+        return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
 
