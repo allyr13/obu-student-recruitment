@@ -602,6 +602,7 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
+        <option value="First-Time Freshman">First-Time Freshman</option>
         <option value="Readmit">Readmit</option>
         <option value="Second Degree">Second Degree</option>
         <option value="Test Optional">Test Optional</option>
@@ -741,7 +742,8 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
-        <option value="Y">Y</option>
+        <option value="1">Y</option>
+        <option value="0">N</option>
       </select>
       <br />
 
@@ -777,7 +779,8 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
-        <option value="Y">Y</option>
+        <option value="1">Y</option>
+        <option value="0">N</option>
       </select>
       <br />
 
