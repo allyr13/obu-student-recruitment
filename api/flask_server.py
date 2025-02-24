@@ -100,12 +100,8 @@ def upload_csv_file():
     
     try:
         df = pd.read_csv(file)
-        # df = pd.read_csv('default_copy.csv')
-        print(df)
         ohe_df = one_hot_encode_df(df)
-        print()
         print(ohe_df)
-        print()
 
         ## prints predicted value
         results = predict(ohe_df)
