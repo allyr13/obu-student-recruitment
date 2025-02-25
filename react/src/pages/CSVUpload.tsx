@@ -75,7 +75,7 @@ const FileUpload: React.FC = () => {
                                 }
                             }
                             else if(!skip_cols.includes(header)){
-                                if(row[header] != 1 || row[header] != 0){
+                                if(row[header] !== 1 || row[header] !== 0){
                                     setMessage(`Invalid value in column ${header} for row ${data.indexOf(row) + 1}`);
                                     reject(false);
                                     return;
