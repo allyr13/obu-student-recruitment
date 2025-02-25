@@ -265,6 +265,23 @@ Each model takes the same input: 551 features split between 528 Booleans, 17 Int
  'Counselor_Sam Anquoe' 'Counselor_Wilma Schilling']
  ```
 
+### Model Output
+Models returns an array of single value, 0 or 1, in the format `[0]`.
+You can demonstrate this with the following code:
+```python
+import pickle
+import os
+import numpy as np
+
+mods = os.listdir("./models")
+arr = np.zeros((1, 551))
+for mod in mods:
+    file_path = os.path.join("./models", mod)
+    with open(file_path, "rb") as f:
+        model = pickle.load(f)
+        print(model.predict(arr))
+```
+
 ## JSON
 A JSON object is used to transfer student data within the API. This object is an array of JSON objects that represent individual student data. There can be a minimum of 1 entry per input and a maximum of 100 entries per input. Below is an example of a valid JSON input. Every JSON input must include *ALL* of the key-value pairs listed:
 ```json

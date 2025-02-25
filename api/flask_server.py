@@ -1,15 +1,35 @@
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
+from flask import Flask, request, jsonify, Response
+from flask_cors import CORS, cross_origin
 from json_loader import get_config, edit_json_data
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
+import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
 import json
-from process_csv import convertCSVToDataFrame
+from processing.one_hot_encode_df import one_hot_encode_df
+from processing.run_model import predict
+
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 test_data_string = '{}'
+## Processing for Encoding
+df = pd.read_csv("prepared_data.csv")
+df = df.drop(columns=['ID', 'Enrolled'])
+categorical_columns = ['Country', 'State', 'Gender', 'Ethnicity', 'Origin Source',
+       'Student Type', 'Major', 'Athlete',
+       'Sport', 'Raley College Tag Exists', 'Recruiting Territory',
+       'Counselor']
+
+encoded_columns = []
+df_encoded = pd.get_dummies(df, columns=categorical_columns, drop_first=True)
+encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore", drop="first")
+encoder.fit(df[categorical_columns])
+
 ## Processing for Encoding
 df = pd.read_csv("prepared_data.csv")
 df = df.drop(columns=['ID', 'Enrolled'])
@@ -69,7 +89,7 @@ def one_hot_encode_api():
         encoded_df = encoded_df.fillna(0)
         encoded_df = encoded_df.astype(int)
         encoded_df_final = pd.concat([input.drop(columns=categorical_columns, axis=1), encoded_df], axis=1)
-        encoded_df_final = encoded_df_final.fillna(0)
+        encoded_df_final = encoded_df_final.fillna(0) #TODO: Figure out how to normalize numeric columns
 
         output = encoded_df_final.to_csv(index=False)
         # Return File
@@ -82,17 +102,48 @@ def one_hot_encode_api():
         return jsonify({"error": str(e), "status": 500})
 
 
-@app.route('/api/upload_csv', methods=['POST'])
-def upload_csv():
+@app.route('/api/upload_form', methods=['POST'])
+def upload_csv_file():
+    if 'file' not in request.files:
+        return jsonify({"error": "No File Part", "status": 500})
+    
+    file = request.files['file']
+
+    # Ensure the file has a name and is a CSV
+    if file.filename == '':
+        return jsonify({"error": "No Selected File", "status": 500})
+    
+    if not file.filename.endswith('.csv'):
+        return jsonify({"error": "Invalid File Format", "status": 500})
+    
     try:
-        csv_data = request.data.decode('utf-8')
-        if not csv_data or csv_data == None:
-            return jsonify({"error": "No CSV data received", "status": 400})
-        
-        df = convertCSVToDataFrame(csv_data)
-        print(df)
+        df = pd.read_csv(file)
+        ohe_df = one_hot_encode_df(df)
+        print(ohe_df)
+
+        ## prints predicted value
+        results = predict(ohe_df)
+        print("results: ")
+        print(results)
 
         return jsonify({"message": "CSV file received and saved successfully", "status": 200})
+
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
+    
+@app.route('/api/test_model', methods=['GET'])
+def upload_default_form():
+    try:
+        df = pd.read_csv('default_copy.csv')
+        ohe_df = one_hot_encode_df(df)
+        print(ohe_df)
+
+        ## prints predicted value
+        results = predict(ohe_df)
+        print("results: ")
+        print(results)
+
+        return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
 
