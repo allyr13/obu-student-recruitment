@@ -7,6 +7,7 @@ interface FormData {
   country: string;
   gender: string;
   ethnicity: string;
+  studentIDs: string;
   originSource: string;
   studentType: string;
   major: string;
@@ -48,6 +49,7 @@ const StudentForm: React.FC = () => {
     country: 'USA',
     gender: 'F',
     ethnicity: 'Not Declared',
+    studentIDs: '01304217',
     originSource: 'Falls Creek',
     studentType: 'First-Time Freshman',
     major: 'Undecided',
@@ -500,6 +502,19 @@ const StudentForm: React.FC = () => {
         <option value="Eth-9">Eth-9</option>
         <option value="Not Declared">Not Declared</option>
       </select>
+      <br />
+
+      {/* Student ID */}
+      <label>Student ID:</label>
+      <input
+        type="text"
+        name="stduentId"
+        value={formData.studentIDs}
+        onChange={handleInputChange}
+        maxLength={8}
+        required
+      >
+      </input>
       <br />
 
       {/* Origin Source */}

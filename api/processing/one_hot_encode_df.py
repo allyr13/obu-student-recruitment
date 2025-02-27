@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 import re
+from processing.run_model import predict
 
 ## Processing for Encoding
 pre_processing_df = pd.read_csv("prepared_data.csv")
@@ -71,7 +72,7 @@ def order_columns(df, final_cols):
         return None
 
 def convert_YN_to_binary(df):
-    df = df.applymap(lambda x: 1 if x == 'Y' else 0 if x == 'N' else x)
+    df = df.map(lambda x: 1 if x == 'Y' else 0 if x == 'N' else x)
     return df
 
 def one_hot_encode(df, categorical_columns, encoder):
@@ -112,6 +113,7 @@ def save_dataframe(df, filename):
 def one_hot_encode_df(df_input):
     df = copy_dataframe(df_input)
     if df is None: return None
+    print(df.head())
 
     df = rename_columns(df)
     if df is None: return None
@@ -137,4 +139,5 @@ def one_hot_encode_df(df_input):
 
     save_dataframe(encoded_df_final, 'oneHotEncoded_data.csv')
 
-    return encoded_df_final
+    prediction_df = predict(encoded_df_final)
+    return prediction_df

@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
-from json_loader import get_config, edit_json_data
+from json_loader import get_config
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
@@ -118,30 +118,40 @@ def upload_csv_file():
     
     try:
         df = pd.read_csv(file)
-        ohe_df = one_hot_encode_df(df)
-        print(ohe_df)
-
-        ## prints predicted value
-        results = predict(ohe_df)
+        results = pass_data_and_recieve_prediction(df)
         print("results: ")
-        print(results)
+        print(results.head())
 
         return jsonify({"message": "CSV file received and saved successfully", "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
+
+def pass_data_and_recieve_prediction(given_df):
+    studentIDs_column = given_df.pop('studentIDs')
+    prediction_df = one_hot_encode_df(given_df)
+    prediction_df.insert(4, 'Student IDs', studentIDs_column)
+    return prediction_df
     
 @app.route('/api/test_model', methods=['GET'])
 def upload_default_form():
     try:
         df = pd.read_csv('default_copy.csv')
-        ohe_df = one_hot_encode_df(df)
-        print(ohe_df)
-
-        ## prints predicted value
-        results = predict(ohe_df)
+        results = pass_data_and_recieve_prediction(df)
         print("results: ")
-        print(results)
+        print(results.head())
+
+        return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
+    
+@app.route('/api/test_batch', methods=['GET'])
+def test_batch_job():
+    try:
+        df = pd.read_csv('default_batch.csv')
+        results = pass_data_and_recieve_prediction(df)
+        print("results: ")
+        print(results.head())
 
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
