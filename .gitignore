@@ -14,3 +14,4 @@ __pycache__/
 *.DS_Store
 
 oneHotEncoded_data.csv
+*oneHotEncoded_data.csv
