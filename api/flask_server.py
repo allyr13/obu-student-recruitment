@@ -1,10 +1,6 @@
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
-from flask import Flask, request, jsonify, Response
-from flask_cors import CORS, cross_origin
 from json_loader import get_config, edit_json_data
-import pandas as pd
-from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 import json
@@ -14,22 +10,8 @@ from processing.run_model import predict
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 test_data_string = '{}'
-## Processing for Encoding
-df = pd.read_csv("prepared_data.csv")
-df = df.drop(columns=['ID', 'Enrolled'])
-categorical_columns = ['Country', 'State', 'Gender', 'Ethnicity', 'Origin Source',
-       'Student Type', 'Major', 'Athlete',
-       'Sport', 'Raley College Tag Exists', 'Recruiting Territory',
-       'Counselor']
-
-encoded_columns = []
-df_encoded = pd.get_dummies(df, columns=categorical_columns, drop_first=True)
-encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore", drop="first")
-encoder.fit(df[categorical_columns])
-
 ## Processing for Encoding
 df = pd.read_csv("prepared_data.csv")
 df = df.drop(columns=['ID', 'Enrolled'])
