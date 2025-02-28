@@ -8,7 +8,7 @@ from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 import json
-from processing.one_hot_encode_df import one_hot_encode_df
+from processing.one_hot_encode_df import one_hot_encode_df, decode_df
 from processing.run_model import predict
 
 
@@ -122,9 +122,12 @@ def upload_csv_file():
         print(ohe_df)
 
         ## prints predicted value
-        results = predict(ohe_df)
-        print("results: ")
-        print(results)
+        encoded_results = predict(ohe_df)
+        print("encoded results: ")
+        print(encoded_results)
+        decoded_results = decode_df(encoded_results)
+        print("decoded results: ")
+        print(decoded_results)
 
         return jsonify({"message": "CSV file received and saved successfully", "status": 200})
 
