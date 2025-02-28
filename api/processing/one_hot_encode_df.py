@@ -10,9 +10,9 @@ categorical_columns = ['Country', 'State', 'Gender', 'Ethnicity', 'Origin Source
        'Student Type', 'Major', 'Athlete',
        'Sport', 'Raley College Tag Exists', 'Recruiting Territory',
        'Counselor']
-
+numeric_columns = ['Financial Aid Offered Amount','incoming_text_count','outgoing_text_count','phone_successful_count','phone_unsuccessful_count','phone_voicemail_count','Admitted Students Day','Bison Day','Bison Day @ The Weekend','Campus Visit','Dallas Bison Exclusive','Football Visit','Golf Visit','Oklahoma City Bison Exclusive','Scholars Bison Day','Scholars Mixer and Banquet','Scholarship Interview','Scholarship Interview Registration','Softball Visit','Track Visit','Tulsa Bison Exclusive','Volleyball Visit','Events Attended Count']
 final_cols = categorical_columns[:]
-final_cols.extend(['Financial Aid Offered Amount','incoming_text_count','outgoing_text_count','phone_successful_count','phone_unsuccessful_count','phone_voicemail_count','Admitted Students Day','Bison Day','Bison Day @ The Weekend','Campus Visit','Dallas Bison Exclusive','Football Visit','Golf Visit','Oklahoma City Bison Exclusive','Scholars Bison Day','Scholars Mixer and Banquet','Scholarship Interview','Scholarship Interview Registration','Softball Visit','Track Visit','Tulsa Bison Exclusive','Volleyball Visit','Events Attended Count'])
+final_cols.extend(numeric_columns)
 
 
 encoded_columns = []
@@ -109,7 +109,7 @@ def save_dataframe(df, filename):
     except Exception as e:
         print(f"Error saving DataFrame to CSV: {e}")
 
-## Main Function
+## Main Encoding Function
 def one_hot_encode_df(df_input):
     df = copy_dataframe(df_input)
     if df is None: return None
@@ -140,4 +140,26 @@ def one_hot_encode_df(df_input):
     save_dataframe(encoded_df_final, 'oneHotEncoded_data.csv')
 
     prediction_df = predict(encoded_df_final)
-    return prediction_df
+    decoded_results = decode_df(prediction_df)
+    return decoded_results
+
+## Main Decoding Function
+def decode_df(input_df):
+
+    # Copy Dataframe
+    encoded_df = copy_dataframe(input_df)
+    if encoded_df is None: return None
+
+    # Decode Categorical columns
+    try:
+        decoded_array = encoder.inverse_transform(encoded_df[encoder.get_feature_names_out()])
+        decoded_categorical_df = pd.DataFrame(decoded_array, columns=encoder.feature_names_in_)
+    except Exception as e:
+        print(f"Error during decoding: {e}")
+        return None
+
+    # Add columns back
+    decoded_df = pd.concat([encoded_df.drop(columns=list(encoder.get_feature_names_out()) + ["Prediction"]), decoded_categorical_df, encoded_df["Prediction"]], axis=1)
+    if decoded_df is None: return None
+
+    return decoded_df
