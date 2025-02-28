@@ -131,28 +131,6 @@ const StudentForm: React.FC = () => {
     }
 };
 
-  const sendCSVToServer = async (csvData: string) => {
-    console.log("DATA SENT TO SERVER")
-    console.log(csvData)
-    try {
-        const response = await fetch('http://127.0.0.1:5555/api/upload_csv', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'text/csv',
-            },
-            body: csvData,
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to send CSV data to server');
-        }
-
-        console.log('CSV data successfully sent to server');
-    } catch (error) {
-        console.error('Error sending CSV data:', error);
-    }
-  };
-
 
   return (
     <form onSubmit={handleSubmit}>
@@ -512,6 +490,7 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
+        <option value="Eth-1">Eth-2</option>
         <option value="Eth-2">Eth-2</option>
         <option value="Eth-3">Eth-3</option>
         <option value="Eth-4">Eth-4</option>

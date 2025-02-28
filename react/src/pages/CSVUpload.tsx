@@ -56,10 +56,12 @@ const FileUpload: React.FC = () => {
                         return;
                     }
 
+                    let idx = 0;
                     for(const row of data) {
+                        idx++;
                         for (const [key, value] of Object.entries(row)) {
                             if (reference_dict[key] && !reference_dict[key].includes(value)) {
-                                setMessage(`Invalid value "${value}" for column "${key}".`);
+                                setMessage(`Invalid value "${value}" for column "${key}" on row ${idx}.`);
                                 reject(false);
                                 return;
                             }
@@ -90,7 +92,7 @@ const FileUpload: React.FC = () => {
         try {
             const isValidCSV = await validateCSVContent(currentFile);
             if (!isValidCSV) return;
-
+            console.log("CSV Validation Successful", isValidCSV)
             UploadService.upload(currentFile, (event: any) => {
             }).then((response) => {
                 setMessage(response.data.message);
