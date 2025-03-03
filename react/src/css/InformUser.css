@@ -1,0 +1,70 @@
+/* InformUser.css */
+
+/* General container styling */
+div {
+    margin: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Heading styling */
+  h3 {
+    font-size: 30px;
+    color: #4CAF50; /* Green color for the heading */
+    margin-bottom: 10px;
+    text-align: center; /* Center align the heading */
+    font-weight: 600;
+  }
+  
+  /* Prediction message styling */
+  h4 {
+    font-size: 20px;
+    color: #333; /* Dark color for the prediction message */
+    text-align: center; /* Center align the prediction message */
+    margin-bottom: 20px;
+  }
+  
+  /* Table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff; /* White background for the table */
+    border-radius: 8px;
+    overflow: hidden; /* Makes the borders rounded */
+  }
+  
+  /* Table header styling */
+  th {
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  /* Table data cell styling */
+  td {
+    padding: 12px 15px;
+    border: 1px solid #ddd; /* Light grey border */
+    text-align: left;
+    font-size: 14px;
+    color: #333; /* Darker text for readability */
+  }
+  
+  /* Hover effect for table rows */
+  tr:hover {
+    background-color: #f1f1f1; /* Light grey background on hover */
+  }
+  
+  /* Loading spinner styling */
+  .loading {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4CAF50; /* Green color for the loading */
+  }  

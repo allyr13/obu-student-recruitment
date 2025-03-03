@@ -1,5 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import '../css/StudentForm.css';
+import { useNavigate } from 'react-router-dom';
+
 
 
 interface FormData {
@@ -81,6 +83,8 @@ const StudentForm: React.FC = () => {
     eventsAttendedCount: 1.4,
   });
 
+  const navigate = useNavigate();
+
   // Handle input change
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -116,18 +120,47 @@ const StudentForm: React.FC = () => {
         });
 
         const result = await response.json();
+        console.log("FULL RESULT: " + result)
 
+        // Ensure the response is okay before continuing
         if (!response.ok) {
             console.error(result.error);
             alert(`Error: ${result.error}`);
             return;
         }
 
-        console.log('Success:', result);
-        alert('File uploaded and processed successfully!');
+        // Parse the JSON data from result
+        const json_data = JSON.parse(result.data_results);
+        console.log('results:', JSON.stringify(json_data));
+
+        // If upload and processing were successful, send the prediction data
+        if (result.status === 200) {
+            console.log('Success:', result.status);
+            
+            // Send the prediction data to the next endpoint
+            const predictionResponse = await fetch('/api/set_table_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',  // Specify content type as JSON
+                },
+                body: JSON.stringify(json_data),
+            });
+
+            console.log('Sending prediction:', predictionResponse.status);
+
+            if (!predictionResponse.ok) {
+                const predictionResult = await predictionResponse.json();
+                console.error('Prediction error:', predictionResult.error);
+                alert(`Error sending prediction: ${predictionResult.error}`);
+            } else {
+                alert('File uploaded and prediction sent successfully!');
+            }
+            navigate('/table');
+        }
+
     } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred while uploading the file.');
+        alert('An error occurred while uploading the file or sending the prediction.');
     }
 };
 
