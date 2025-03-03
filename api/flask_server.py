@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
 from json_loader import get_config
-from processing.data_processing import get_prediction
+from processing.data_processing import get_prediction, get_results_json, get_table_data_results
 import pandas as pd
 import json
 from flask import render_template
@@ -40,14 +40,10 @@ def upload_csv_file():
     try:
         get_prediction(file)
 
-        
-        results_json = encoded_results.to_json()
-        table_data_results = decoded_results.to_json()
-
         global table_data
-        table_data = json.loads(table_data_results)
+        table_data = json.loads(get_table_data_results())
 
-        return jsonify({"data_results": results_json, "message": "CSV file received and saved successfully", "status": 200})
+        return jsonify({"data_results": get_results_json(), "message": "CSV file received and saved successfully", "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
