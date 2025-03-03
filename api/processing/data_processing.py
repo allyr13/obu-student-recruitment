@@ -99,14 +99,6 @@ def one_hot_encode(df, categorical_columns, encoder):
         print(f"Error during one-hot encoding: {e}")
         return None
 
-def normalize(df):
-    try:
-        normalized_df = scaler.transform(df[numerical_columns])
-        return normalized_df
-    except Exception as e:
-        print(f"Error during one-hot encoding: {e}")
-        return None
-
 def create_encoded_dataframe(encoded_input, categorical_columns, encoder):
     try:
         encoded_columns = encoder.get_feature_names_out(categorical_columns)
@@ -191,7 +183,7 @@ def get_prediction(data):
     df_input = pd.read_csv(data)
     studentIDs_column = df_input.pop('studentIDs')
     df_output = one_hot_encode_df(df_input)
-    df_output = normalize(df_output)
+    df_output[numerical_columns] = scaler.transform(df_output[numerical_columns])
     global results_json
     results_json = df_output.to_json()
     df_output = predict(df_output)
