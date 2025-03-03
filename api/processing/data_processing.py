@@ -112,6 +112,7 @@ def save_dataframe(df, filename):
 ## Main Encoding Function
 def one_hot_encode_df(df_input):
     df = copy_dataframe(df_input)
+
     if df is None: return None
     print(df.head())
 
@@ -139,14 +140,10 @@ def one_hot_encode_df(df_input):
 
     save_dataframe(encoded_df_final, 'oneHotEncoded_data.csv')
 
-    prediction_df = predict(encoded_df_final)
-    decoded_results = decode_df(prediction_df)
-    return decoded_results
+    return encoded_df_final
 
 ## Main Decoding Function
 def decode_df(input_df):
-
-    # Copy Dataframe
     encoded_df = copy_dataframe(input_df)
     if encoded_df is None: return None
 
@@ -163,3 +160,17 @@ def decode_df(input_df):
     if decoded_df is None: return None
 
     return decoded_df
+
+def get_prediction(data):
+    # This function's purpose is to centralize function calls and
+    # make it clear to the server the expected return from this function. 
+
+    df_input = pd.read_csv(data)
+    studentIDs_column = df_input.pop('studentIDs')
+    df_output = one_hot_encode_df(df_input)
+    df_output = predict(df_output)
+    df_output = decode_df(df_output)
+    df_output.insert(4, 'Student IDs', studentIDs_column)
+    print("results: ")
+    print(df_output.head())
+    return df_output

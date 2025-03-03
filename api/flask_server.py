@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
 from json_loader import get_config
-import pandas as pd
-from processing.pass_data_and_recieve_prediction import pass_data_and_recieve_prediction
+from processing.data_processing import get_prediction
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -33,10 +32,7 @@ def upload_csv_file():
         return jsonify({"error": "Invalid File Format", "status": 500})
     
     try:
-        df = pd.read_csv(file)
-        results = pass_data_and_recieve_prediction(df)
-        print("results: ")
-        print(results.head())
+        get_prediction(file)
 
         return jsonify({"message": "CSV file received and saved successfully", "status": 200})
 
@@ -46,10 +42,7 @@ def upload_csv_file():
 @app.route('/api/test_model', methods=['GET'])
 def upload_default_form():
     try:
-        df = pd.read_csv('default_copy.csv')
-        results = pass_data_and_recieve_prediction(df)
-        print("results: ")
-        print(results.head())
+        get_prediction('default_copy.csv')
 
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
@@ -58,15 +51,11 @@ def upload_default_form():
 @app.route('/api/test_batch', methods=['GET'])
 def test_batch_job():
     try:
-        df = pd.read_csv('default_batch.csv')
-        results = pass_data_and_recieve_prediction(df)
-        print("results: ")
-        print(results.head())
+        get_prediction('default_batch.csv')
 
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
-
 
 if __name__ == '__main__':
     host = get_config("host")
