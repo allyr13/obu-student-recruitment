@@ -2,9 +2,15 @@ from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
 from json_loader import get_config
 from processing.data_processing import get_prediction
+import pandas as pd
+import json
+from flask import render_template
+
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
+table_data = []
 
 @app.route('/')
 def home():
@@ -34,7 +40,14 @@ def upload_csv_file():
     try:
         get_prediction(file)
 
-        return jsonify({"message": "CSV file received and saved successfully", "status": 200})
+        
+        results_json = encoded_results.to_json()
+        table_data_results = decoded_results.to_json()
+
+        global table_data
+        table_data = json.loads(table_data_results)
+
+        return jsonify({"data_results": results_json, "message": "CSV file received and saved successfully", "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
@@ -47,15 +60,31 @@ def upload_default_form():
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
-    
+
+      
 @app.route('/api/test_batch', methods=['GET'])
 def test_batch_job():
     try:
         get_prediction('default_batch.csv')
-
+        
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
+
+
+@app.route('/api/set_table_data', methods=['POST'])
+def set_table_data():
+    return jsonify({"message": "Data was successfully sent to table", "status": 200})
+
+
+@app.route('/api/get_table_data', methods=['GET'])
+def get_table_data():
+    print(table_data)
+
+    if not table_data:
+        return jsonify({"error": "No data available", "status": 404})
+
+    return jsonify({"data": table_data, "status": 200})
 
 if __name__ == '__main__':
     host = get_config("host")
