@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
 from json_loader import get_config, edit_json_data
 import pandas as pd
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 import json
 from processing.one_hot_encode_df import one_hot_encode_df
 from processing.run_model import predict
@@ -19,11 +19,16 @@ categorical_columns = ['Country', 'State', 'Gender', 'Ethnicity', 'Origin Source
        'Student Type', 'Major', 'Athlete',
        'Sport', 'Raley College Tag Exists', 'Recruiting Territory',
        'Counselor']
+numerical_columns = ['Financial Aid Offered Amount', 'incoming_text_count',
+                     'outgoing_text_count', 'phone_successful_count', 'phone_unsuccessful_count',
+                     'phone_voicemail_count','Events Attended Count']
 
 encoded_columns = []
 df_encoded = pd.get_dummies(df, columns=categorical_columns, drop_first=True)
 encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore", drop="first")
 encoder.fit(df[categorical_columns])
+scaler = MinMaxScaler()
+df_encoded[numerical_columns] = scaler.fit_transform(df_encoded[numerical_columns])
 
 
 @app.route('/')
@@ -72,6 +77,7 @@ def one_hot_encode_api():
         encoded_df = encoded_df.astype(int)
         encoded_df_final = pd.concat([input.drop(columns=categorical_columns, axis=1), encoded_df], axis=1)
         encoded_df_final = encoded_df_final.fillna(0) #TODO: Figure out how to normalize numeric columns
+        encoded_df_final[numerical_columns] = scaler.transform(encoded_df_final[numerical_columns])
 
         output = encoded_df_final.to_csv(index=False)
         # Return File
