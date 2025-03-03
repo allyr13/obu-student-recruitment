@@ -6,6 +6,7 @@ from sklearn.preprocessing import OneHotEncoder
 import json
 from processing.one_hot_encode_df import one_hot_encode_df, decode_df
 from processing.run_model import predict
+from flask import render_template
 
 
 app = Flask(__name__)
@@ -24,6 +25,9 @@ encoded_columns = []
 df_encoded = pd.get_dummies(df, columns=categorical_columns, drop_first=True)
 encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore", drop="first")
 encoder.fit(df[categorical_columns])
+
+
+table_data = []
 
 
 @app.route('/')
@@ -111,7 +115,14 @@ def upload_csv_file():
         print("decoded results: ")
         print(decoded_results)
 
-        return jsonify({"message": "CSV file received and saved successfully", "status": 200})
+        
+        results_json = encoded_results.to_json()
+        table_data_results = decoded_results.to_json()
+
+        global table_data
+        table_data = json.loads(table_data_results)
+
+        return jsonify({"data_results": results_json, "message": "CSV file received and saved successfully", "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
@@ -131,6 +142,20 @@ def upload_default_form():
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
+    
+@app.route('/api/set_table_data', methods=['POST'])
+def set_table_data():
+    return jsonify({"message": "Data was successfully sent to table", "status": 200})
+
+
+@app.route('/api/get_table_data', methods=['GET'])
+def get_table_data():
+    print(table_data)
+
+    if not table_data:
+        return jsonify({"error": "No data available", "status": 404})
+
+    return jsonify({"data": table_data, "status": 200})
 
 
 if __name__ == '__main__':
