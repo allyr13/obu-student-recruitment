@@ -20,14 +20,8 @@ python flask_server.py
 ```
 The flask server currently runs on host 0.0.0.0 and port 6000, but these can be changed by editing the `config.json` file. 
 
-### Running Tests
-From the api folder, run this command in a seperate terminal to test the flask server:
-```bash
-pytest -v tests/test_flask_server.py
-```
-
 ### Troubleshooting Conda Environment
-If you run into problems with your conda environment reference the [TroubleShootConda.md](api/scripts/TroubleShootConda.md) for troubleshooting options.
+If you run into problems with your conda environment reference the [TroubleShootConda.md](api/scripts/TroubleShootConda.md) for troubleshooting options
 
 ## React Front End
 To start the app cd into 'react'. Then run `npm start` and the app will open in your browser.

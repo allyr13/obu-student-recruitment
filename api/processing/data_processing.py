@@ -1,6 +1,11 @@
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 import re
+from processing.run_model import predict
+import json
+
+results_json = None
+table_data_results = None
 
 ## Processing for Encoding
 pre_processing_df = pd.read_csv("prepared_data.csv")
@@ -71,7 +76,7 @@ def order_columns(df, final_cols):
         return None
 
 def convert_YN_to_binary(df):
-    df = df.applymap(lambda x: 1 if x == 'Y' else 0 if x == 'N' else x)
+    df = df.map(lambda x: 1 if x == 'Y' else 0 if x == 'N' else x)
     return df
 
 def one_hot_encode(df, categorical_columns, encoder):
@@ -111,7 +116,9 @@ def save_dataframe(df, filename):
 ## Main Encoding Function
 def one_hot_encode_df(df_input):
     df = copy_dataframe(df_input)
+
     if df is None: return None
+    print(df.head())
 
     df = rename_columns(df)
     if df is None: return None
@@ -141,8 +148,6 @@ def one_hot_encode_df(df_input):
 
 ## Main Decoding Function
 def decode_df(input_df):
-
-    # Copy Dataframe
     encoded_df = copy_dataframe(input_df)
     if encoded_df is None: return None
 
@@ -159,3 +164,27 @@ def decode_df(input_df):
     if decoded_df is None: return None
 
     return decoded_df
+
+def get_prediction(data):
+    # This function's purpose is to centralize function calls and
+    # make it clear to the server the expected return from this function. 
+
+    df_input = pd.read_csv(data)
+    studentIDs_column = df_input.pop('studentIDs')
+    df_output = one_hot_encode_df(df_input)
+    global results_json
+    results_json = df_output.to_json()
+    df_output = predict(df_output)
+    df_output = decode_df(df_output)
+    global table_data_results
+    table_data_results = df_output.to_json()
+    df_output.insert(4, 'Student IDs', studentIDs_column)
+    print("results: ")
+    print(df_output.head())
+    return df_output
+
+def get_results_json():
+    return results_json
+
+def get_table_data_results():
+    return table_data_results
