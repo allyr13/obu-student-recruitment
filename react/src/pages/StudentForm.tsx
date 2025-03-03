@@ -16,28 +16,28 @@ interface FormData {
   raleyCollegeTagExists: string;
   recruitingTerritory: string;
   counselor: string;
-  counselorIncomingTextCount: string;
-  counselorOutgoingTextCount: string;
-  phoneSuccessfulCount: string;
-  phoneUnsuccessfulCount: string;
-  phoneVoicemailCount: string;
-  admittedStudentsDay: string;
-  bisonDay: string;
-  bisonDayAtTheWeekend: string;
-  campusVisit: string;
-  dallasBisonExclusive: string;
-  footballVisit: string;
-  golfVisit: string;
-  oklahomaCityBisonExclusive: string;
-  scholarsBisonDay: string;
-  scholarsMixerAndBanquet: string;
-  scholarshipInterview: string;
-  scholarshipInterviewRegistration: string;
-  softballVisit: string;
-  trackVisit: string;
-  tulsaBisonExclusive: string;
-  volleyballVisit: string;
-  eventsAttendedCount: string;
+  counselorIncomingTextCount: number;
+  counselorOutgoingTextCount: number;
+  phoneSuccessfulCount: number;
+  phoneUnsuccessfulCount: number;
+  phoneVoicemailCount: number;
+  admittedStudentsDay: number;
+  bisonDay: number;
+  bisonDayAtTheWeekend: number;
+  campusVisit: number;
+  dallasBisonExclusive: number;
+  footballVisit: number;
+  golfVisit: number;
+  oklahomaCityBisonExclusive: number;
+  scholarsBisonDay: number;
+  scholarsMixerAndBanquet: number;
+  scholarshipInterview: number;
+  scholarshipInterviewRegistration: number;
+  softballVisit: number;
+  trackVisit: number;
+  tulsaBisonExclusive: number;
+  volleyballVisit: number;
+  eventsAttendedCount: number;
 }
 
 const StudentForm: React.FC = () => {
@@ -52,33 +52,33 @@ const StudentForm: React.FC = () => {
     studentType: 'First-Time Freshman',
     major: 'Undecided',
     financialAidOfferedAmount: 24724.1,
-    athlete: 'N', 
+    athlete: 'Not Declared', 
     sport: 'Not Declared',
-    raleyCollegeTagExists: '1.0', 
+    raleyCollegeTagExists: 'Not Declared', 
     recruitingTerritory: 'Raley College',
     counselor: 'C11',
-    counselorIncomingTextCount: '5.6',
-    counselorOutgoingTextCount: '14.3',
-    phoneSuccessfulCount: '2.1',
-    phoneUnsuccessfulCount: '2.0',
-    phoneVoicemailCount: '3.1',
-    admittedStudentsDay: '0.0', 
-    bisonDay: '0.0', 
-    bisonDayAtTheWeekend: '0.0', 
-    campusVisit: '0.0', 
-    dallasBisonExclusive: '0.0', 
-    footballVisit: '0.0', 
-    golfVisit: '0.0', 
-    oklahomaCityBisonExclusive: '0.0', 
-    scholarsBisonDay: '0.0', 
-    scholarsMixerAndBanquet: '0.0', 
-    scholarshipInterview: '0.0', 
-    scholarshipInterviewRegistration: '0.0', 
-    softballVisit: '0.0', 
-    trackVisit: '0.0', 
-    tulsaBisonExclusive: '0.0', 
-    volleyballVisit: '0.0', 
-    eventsAttendedCount: '',
+    counselorIncomingTextCount: 5.6,
+    counselorOutgoingTextCount: 14.3,
+    phoneSuccessfulCount: 2.1,
+    phoneUnsuccessfulCount: 2.0,
+    phoneVoicemailCount: 3.1,
+    admittedStudentsDay: 0.0, 
+    bisonDay: 0.0, 
+    bisonDayAtTheWeekend: 0.0, 
+    campusVisit: 0.0, 
+    dallasBisonExclusive: 0.0, 
+    footballVisit: 0.0, 
+    golfVisit: 0.0, 
+    oklahomaCityBisonExclusive: 0.0, 
+    scholarsBisonDay: 0.0, 
+    scholarsMixerAndBanquet: 0.0, 
+    scholarshipInterview: 0.0, 
+    scholarshipInterviewRegistration: 0.0, 
+    softballVisit: 0.0, 
+    trackVisit: 0.0, 
+    tulsaBisonExclusive: 0.0, 
+    volleyballVisit: 0.0, 
+    eventsAttendedCount: 1.4,
   });
 
   // Handle input change
@@ -130,28 +130,6 @@ const StudentForm: React.FC = () => {
         alert('An error occurred while uploading the file.');
     }
 };
-
-  const sendCSVToServer = async (csvData: string) => {
-    console.log("DATA SENT TO SERVER")
-    console.log(csvData)
-    try {
-        const response = await fetch('http://127.0.0.1:5555/api/upload_csv', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'text/csv',
-            },
-            body: csvData,
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to send CSV data to server');
-        }
-
-        console.log('CSV data successfully sent to server');
-    } catch (error) {
-        console.error('Error sending CSV data:', error);
-    }
-  };
 
 
   return (
@@ -743,8 +721,8 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
-        <option value="1">Y</option>
-        <option value="0">N</option>
+        <option value="Y">Y</option>
+        <option value="Not Declared">N</option>
       </select>
       <br />
 
@@ -780,8 +758,8 @@ const StudentForm: React.FC = () => {
         onChange={handleInputChange}
         required
       >
-        <option value="1">Y</option>
-        <option value="0">N</option>
+        <option value="Y">Y</option>
+        <option value="Not Declared">N</option>
       </select>
       <br />
 

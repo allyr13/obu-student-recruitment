@@ -4,7 +4,7 @@ from json_loader import get_config, edit_json_data
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 import json
-from processing.one_hot_encode_df import one_hot_encode_df
+from processing.one_hot_encode_df import one_hot_encode_df, decode_df
 from processing.run_model import predict
 
 
@@ -106,12 +106,16 @@ def upload_csv_file():
     
     try:
         df = pd.read_csv(file)
-        # df = pd.read_csv('default_copy.csv')
-        print(df)
         ohe_df = one_hot_encode_df(df)
-        print()
         print(ohe_df)
-        print()
+
+        ## prints predicted value
+        encoded_results = predict(ohe_df)
+        print("encoded results: ")
+        print(encoded_results)
+        decoded_results = decode_df(encoded_results)
+        print("decoded results: ")
+        print(decoded_results)
 
         return jsonify({"message": "CSV file received and saved successfully", "status": 200})
 
@@ -124,6 +128,12 @@ def upload_default_form():
         df = pd.read_csv('default_copy.csv')
         ohe_df = one_hot_encode_df(df)
         print(ohe_df)
+
+        ## prints predicted value
+        results = predict(ohe_df)
+        print("results: ")
+        print(results)
+
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
