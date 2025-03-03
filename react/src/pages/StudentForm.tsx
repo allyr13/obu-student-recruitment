@@ -1,5 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import '../css/StudentForm.css';
+import { useNavigate } from 'react-router-dom';
+
 
 
 interface FormData {
@@ -7,6 +9,7 @@ interface FormData {
   country: string;
   gender: string;
   ethnicity: string;
+  studentIDs: string;
   originSource: string;
   studentType: string;
   major: string;
@@ -48,6 +51,7 @@ const StudentForm: React.FC = () => {
     country: 'USA',
     gender: 'F',
     ethnicity: 'Not Declared',
+    studentIDs: '01304217',
     originSource: 'Falls Creek',
     studentType: 'First-Time Freshman',
     major: 'Undecided',
@@ -80,6 +84,8 @@ const StudentForm: React.FC = () => {
     volleyballVisit: 0.0, 
     eventsAttendedCount: 1.4,
   });
+
+  const navigate = useNavigate();
 
   // Handle input change
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -116,6 +122,7 @@ const StudentForm: React.FC = () => {
         });
 
         const result = await response.json();
+        console.log("FULL RESULT: " + result)
 
         if (!response.ok) {
             console.error(result.error);
@@ -123,11 +130,35 @@ const StudentForm: React.FC = () => {
             return;
         }
 
-        console.log('Success:', result);
-        alert('File uploaded and processed successfully!');
+        const json_data = JSON.parse(result.data_results);
+        console.log('results:', JSON.stringify(json_data));
+
+        if (result.status === 200) {
+            console.log('Success:', result.status);
+            
+            const predictionResponse = await fetch('/api/set_table_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', 
+                },
+                body: JSON.stringify(json_data),
+            });
+
+            console.log('Sending prediction:', predictionResponse.status);
+
+            if (!predictionResponse.ok) {
+                const predictionResult = await predictionResponse.json();
+                console.error('Prediction error:', predictionResult.error);
+                alert(`Error sending prediction: ${predictionResult.error}`);
+            } else {
+                alert('File uploaded and prediction sent successfully!');
+            }
+            navigate('/table');
+        }
+
     } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred while uploading the file.');
+        alert('An error occurred while uploading the file or sending the prediction.');
     }
 };
 
@@ -501,6 +532,19 @@ const StudentForm: React.FC = () => {
         <option value="Eth-9">Eth-9</option>
         <option value="Not Declared">Not Declared</option>
       </select>
+      <br />
+
+      {/* Student ID */}
+      <label>Student ID:</label>
+      <input
+        type="text"
+        name="stduentId"
+        value={formData.studentIDs}
+        onChange={handleInputChange}
+        maxLength={8}
+        required
+      >
+      </input>
       <br />
 
       {/* Origin Source */}
