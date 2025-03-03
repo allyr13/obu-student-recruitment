@@ -2,7 +2,7 @@ import pickle
 import pandas as pd
 import numpy as np
 
-f = open("../models/dtree_model.pkl", "rb") #TODO: load different models as needed/specified
+f = open("../models/xgb_model.pkl", "rb") #TODO: load different models as needed/specified
 model = pickle.load(f)
 
 ## Input: A one-hot encoded Pandas dataframe
