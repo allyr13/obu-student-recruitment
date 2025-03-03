@@ -2,6 +2,10 @@ import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 import re
 from processing.run_model import predict
+import json
+
+results_json = None
+table_data_results = None
 
 ## Processing for Encoding
 pre_processing_df = pd.read_csv("prepared_data.csv")
@@ -168,9 +172,19 @@ def get_prediction(data):
     df_input = pd.read_csv(data)
     studentIDs_column = df_input.pop('studentIDs')
     df_output = one_hot_encode_df(df_input)
+    global results_json
+    results_json = df_output.to_json()
     df_output = predict(df_output)
     df_output = decode_df(df_output)
+    global table_data_results
+    table_data_results = df_output.to_json()
     df_output.insert(4, 'Student IDs', studentIDs_column)
     print("results: ")
     print(df_output.head())
     return df_output
+
+def get_results_json():
+    return results_json
+
+def get_table_data_results():
+    return table_data_results
