@@ -30,7 +30,6 @@ const InformUser: React.FC = () => {
 
           setData(filteredData);
 
-          // Check if 'Prediction' exists and set the prediction message
           if (result.data['Prediction'] !== undefined) {
             const predictionValue = result.data['Prediction'][0]; 
             if (predictionValue === 1) {
@@ -60,8 +59,6 @@ const InformUser: React.FC = () => {
   return (
     <div>
       <h3>Student Prediction Data</h3>
-
-      {/* Display the Prediction message */}
       <h4>{predictionMessage}</h4>
 
       <table>
