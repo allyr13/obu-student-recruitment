@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../css/InformUser.css'; // Import the CSS file
+import '../css/InformUser.css'; 
 
 interface Data {
   [key: string]: string | number;
@@ -8,9 +8,8 @@ interface Data {
 const InformUser: React.FC = () => {
   const [data, setData] = useState<Data>({});
   const [loading, setLoading] = useState<boolean>(true);
-  const [predictionMessage, setPredictionMessage] = useState<string>(''); // State to store prediction message
+  const [predictionMessage, setPredictionMessage] = useState<string>(''); 
 
-  // Fetch data from the backend
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -20,7 +19,6 @@ const InformUser: React.FC = () => {
         if (result.status === 200 && result.data) {
           const filteredData: Data = {};
 
-          // Filter out the keys with values of 0
           for (const [key, value] of Object.entries(result.data)) {
             const valueObj = value as { [key: number]: string | number };
             const firstValue = valueObj[0];
@@ -34,7 +32,7 @@ const InformUser: React.FC = () => {
 
           // Check if 'Prediction' exists and set the prediction message
           if (result.data['Prediction'] !== undefined) {
-            const predictionValue = result.data['Prediction'][0]; // Get the first value
+            const predictionValue = result.data['Prediction'][0]; 
             if (predictionValue === 1) {
               setPredictionMessage('Prediction is Yes');
             } else if (predictionValue === 0) {
@@ -47,7 +45,7 @@ const InformUser: React.FC = () => {
       } catch (err) {
         console.error('Error fetching data:', err);
       } finally {
-        setLoading(false); // stop loading after fetching data
+        setLoading(false); 
       }
     };
 

@@ -119,7 +119,6 @@ def upload_csv_file():
         results_json = encoded_results.to_json()
         table_data_results = decoded_results.to_json()
 
-        # Set table data using the results
         global table_data
         table_data = json.loads(table_data_results)
 
@@ -146,28 +145,17 @@ def upload_default_form():
     
 @app.route('/api/set_table_data', methods=['POST'])
 def set_table_data():
-    print('Received table data:', table_data)
-
     return jsonify({"message": "Data was successfully sent to table", "status": 200})
 
 
-# @app.route('/api/get_table_data', methods=['GET'])
-# def get_table_data():
-#     print('get table data is running')
-#     print(table_data)
-#     return jsonify(table_data)
-
 @app.route('/api/get_table_data', methods=['GET'])
 def get_table_data():
-    print('Fetching table data...')
     print(table_data)
 
     if not table_data:
         return jsonify({"error": "No data available", "status": 404})
 
     return jsonify({"data": table_data, "status": 200})
-
-
 
 
 if __name__ == '__main__':
