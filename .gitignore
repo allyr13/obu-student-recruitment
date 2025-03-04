@@ -12,3 +12,6 @@ __pycache__/
 *.pyo
 *.pyd
 *.DS_Store
+
+oneHotEncoded_data.csv
+*oneHotEncoded_data.csv
