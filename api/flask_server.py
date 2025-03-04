@@ -57,7 +57,6 @@ def upload_default_form():
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
 
-      
 @app.route('/api/test_batch', methods=['GET'])
 def test_batch_job():
     try:
@@ -66,11 +65,6 @@ def test_batch_job():
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
-
-
-@app.route('/api/set_table_data', methods=['POST'])
-def set_table_data():
-    return jsonify({"message": "Data was successfully sent to table", "status": 200})
 
 
 @app.route('/api/get_table_data', methods=['GET'])
