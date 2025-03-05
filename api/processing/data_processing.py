@@ -188,9 +188,9 @@ def get_prediction(data):
     results_json = df_output.to_json()
     df_output = predict(df_output)
     df_output = decode_df(df_output)
+    df_output.insert(4, 'Student IDs', studentIDs_column)
     global table_data_results
     table_data_results = df_output.to_json()
-    df_output.insert(4, 'Student IDs', studentIDs_column)
     print("results: ")
     print(df_output.head())
     return df_output

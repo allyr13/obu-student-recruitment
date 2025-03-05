@@ -38,7 +38,7 @@ def upload_csv_file():
         return jsonify({"error": "Invalid File Format", "status": 500})
     
     try:
-        get_prediction(file)
+        df = get_prediction(file)
 
         global table_data
         table_data = json.loads(get_table_data_results())
@@ -51,7 +51,7 @@ def upload_csv_file():
 @app.route('/api/test_model', methods=['GET'])
 def upload_default_form():
     try:
-        get_prediction('default_copy.csv')
+        df = get_prediction('default_copy.csv')
 
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
@@ -60,7 +60,7 @@ def upload_default_form():
 @app.route('/api/test_batch', methods=['GET'])
 def test_batch_job():
     try:
-        get_prediction('default_batch.csv')
+        df = get_prediction('default_batch.csv')
         
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
@@ -69,7 +69,6 @@ def test_batch_job():
 
 @app.route('/api/get_table_data', methods=['GET'])
 def get_table_data():
-    print(table_data)
 
     if not table_data:
         return jsonify({"error": "No data available", "status": 404})
