@@ -22,6 +22,17 @@ const InformUser: React.FC = () => {
         const storedData = localStorage.getItem('tableData');
         const tableData = storedData ? JSON.parse(storedData) : {};
 
+        /*
+        for (const [key, keyObject] of Object.entries(location.state.data)) {
+
+          if (keyObject !== 0 && keyObject !== null && keyObject !== undefined) {
+              const value = Object.values(keyObject);
+              filteredData[key] = String(value[0]);
+              console.log(value[0])
+          }
+        }
+        */
+
         const response = await fetch('/api/get_table_data');
         const result = await response.json();
         tableData['Prediction'] = result.data['Prediction'];
