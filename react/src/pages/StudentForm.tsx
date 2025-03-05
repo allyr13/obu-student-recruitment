@@ -120,7 +120,6 @@ const StudentForm: React.FC = () => {
             });
 
             const result = await response.json();
-            console.log("FULL RESULT: " + result)
 
             if (!response.ok) {
                 console.error(result.error);

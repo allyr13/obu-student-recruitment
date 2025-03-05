@@ -17,8 +17,6 @@ const InformUser: React.FC = () => {
             const filteredData: Data = {};
 
             for (const [key, value] of Object.entries(location.state.data)) {
-                console.log(value);
-
                 if (value !== 0 && value !== null && value !== undefined) {
                     filteredData[key] = String(value);
                 }
@@ -38,9 +36,6 @@ const InformUser: React.FC = () => {
 
         fillForm();
     }, []);
-
-
-    console.log(location.state.prediction);
 
     return (
         <div>
