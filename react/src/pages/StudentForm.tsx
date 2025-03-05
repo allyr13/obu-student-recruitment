@@ -134,25 +134,6 @@ const StudentForm: React.FC = () => {
         console.log('results:', JSON.stringify(json_data));
 
         if (result.status === 200) {
-            console.log('Success:', result.status);
-            
-            const predictionResponse = await fetch('/api/set_table_data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json', 
-                },
-                body: JSON.stringify(json_data),
-            });
-
-            console.log('Sending prediction:', predictionResponse.status);
-
-            if (!predictionResponse.ok) {
-                const predictionResult = await predictionResponse.json();
-                console.error('Prediction error:', predictionResult.error);
-                alert(`Error sending prediction: ${predictionResult.error}`);
-            } else {
-                alert('File uploaded and prediction sent successfully!');
-            }
             navigate('/table');
         }
 
