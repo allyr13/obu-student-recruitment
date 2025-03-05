@@ -52,8 +52,8 @@ const InformUser: React.FC = () => {
       }
     };
 
-    fetchData();
-  }, []);
+        fillForm();
+    }, []);
 
   // Fetch config to set default display columns
   useEffect(() => {
