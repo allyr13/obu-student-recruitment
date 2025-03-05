@@ -11,51 +11,36 @@ const InformUser: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [predictionMessage, setPredictionMessage] = useState<string>('');
 
+    const location = useLocation();
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('/api/get_table_data');
-                const result = await response.json();
+        function fillForm() {
+            const filteredData: Data = {};
 
-                if (result.status === 200 && result.data) {
-                    const filteredData: Data = {};
+            for (const [key, value] of Object.entries(location.state.data)) {
+                console.log(value);
 
-                    for (const [key, value] of Object.entries(result.data)) {
-                        const valueObj = value as { [key: number]: string | number };
-                        const firstValue = valueObj[0];
-
-                        if (firstValue !== 0 && firstValue !== null && firstValue !== undefined) {
-                            filteredData[key] = firstValue;
-                        }
-                    }
-
-                    setData(filteredData);
-
-                    if (result.data['Prediction'] !== undefined) {
-                        const predictionValue = result.data['Prediction'][0];
-                        if (predictionValue === 1) {
-                            setPredictionMessage('Prediction is Yes');
-                        } else if (predictionValue === 0) {
-                            setPredictionMessage('Prediction is No');
-                        }
-                    }
-                } else {
-                    console.error('Error: Invalid data format or status');
+                if (value !== 0 && value !== null && value !== undefined) {
+                    filteredData[key] = String(value);
                 }
-            } catch (err) {
-                console.error('Error fetching data:', err);
-            } finally {
-                setLoading(false);
             }
-        };
 
-        fetchData();
+            setData(filteredData);
+
+            if (location.state.prediction !== undefined) {
+                const predictionValue = location.state.prediction[0];
+                if (predictionValue === 1) {
+                    setPredictionMessage('Prediction is Yes');
+                } else if (predictionValue === 0) {
+                    setPredictionMessage('Prediction is No');
+                }
+            }
+        }
+
+        fillForm();
     }, []);
 
-    // Render a loading state until data is fetched
-    if (loading) {
-        return <div className="loading">Loading...</div>;
-    }
+
+    console.log(location.state.prediction);
 
     return (
         <div>
@@ -80,6 +65,7 @@ const InformUser: React.FC = () => {
             </table>
         </div>
     );
+
 };
 
 export default InformUser;

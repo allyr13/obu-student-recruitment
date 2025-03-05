@@ -132,7 +132,7 @@ const StudentForm: React.FC = () => {
             console.log('results:', JSON.stringify(json_data));
 
             if (result.status === 200) {
-                navigate('/table', {state: {data: formData, prediction: json_data.prediction}});
+                navigate('/table', {state: {data: formData, prediction: json_data.Prediction}});
             }
 
         } catch (error) {

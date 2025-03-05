@@ -43,7 +43,7 @@ def upload_csv_file():
         global table_data
         table_data = json.loads(get_table_data_results())
 
-        return jsonify({"data_results": get_results_json(), "message": "CSV file received and saved successfully", "status": 200})
+        return jsonify({"data_results": get_table_data_results(), "message": "CSV file received and saved successfully", "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
