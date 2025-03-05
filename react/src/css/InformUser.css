@@ -1,15 +1,15 @@
 
 table tr:nth-child(even) {
     background-color: #00751215 !important;
-  }
+}
   
-  table tr:hover {
+table tr:hover {
     background-color: #ddd !important;
-  }
+}
   
 
 h3 {
-    font-size: 30px;
+    font-size: 32px;
     color: #4CAF50; 
     margin-bottom: 10px;
     text-align: center; 
@@ -24,7 +24,7 @@ h4 {
 }
 
 #mainTable {
-    width: 90vw;
+    width: 98vw;
     border-collapse: collapse;
     margin-top: 20px;
     margin-left: auto;
@@ -32,6 +32,8 @@ h4 {
     background-color: #ffffff; 
     border-radius: 8px;
     overflow: hidden; 
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    margin-bottom: 60px;
 }
 
 th {
@@ -41,6 +43,16 @@ th {
     text-align: left;
     font-weight: bold;
     font-size: 20px;
+}
+
+#bufferRow {
+    height: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
+    background-color: white !important;
+}
+
+#bufferRow:hover {
+    background-color: white !important;
 }
 
 .expanded-row-header > td {

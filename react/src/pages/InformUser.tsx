@@ -127,6 +127,9 @@ const InformUser: React.FC = () => {
                 {expandedRows[studentId] && (
                 <>
                   {/* New row at the top of expanded rows */}
+                  <tr>
+                    <td id="bufferRow" colSpan={defaultDisplayColumns.length + 2}></td>
+                  </tr>
                   <tr id="subHeader" key={`${studentId}-header`} className="expanded-row-header">
                     <td>Category</td>
                     <td colSpan={defaultDisplayColumns.length + 1}>Value</td>
