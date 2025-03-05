@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 import re
 from processing.run_model import predict
 import json
@@ -14,7 +14,13 @@ categorical_columns = ['Country', 'State', 'Gender', 'Ethnicity', 'Origin Source
        'Student Type', 'Major', 'Athlete',
        'Sport', 'Raley College Tag Exists', 'Recruiting Territory',
        'Counselor']
-numeric_columns = ['Financial Aid Offered Amount','incoming_text_count','outgoing_text_count','phone_successful_count','phone_unsuccessful_count','phone_voicemail_count','Admitted Students Day','Bison Day','Bison Day @ The Weekend','Campus Visit','Dallas Bison Exclusive','Football Visit','Golf Visit','Oklahoma City Bison Exclusive','Scholars Bison Day','Scholars Mixer and Banquet','Scholarship Interview','Scholarship Interview Registration','Softball Visit','Track Visit','Tulsa Bison Exclusive','Volleyball Visit','Events Attended Count']
+numeric_columns = ['Financial Aid Offered Amount','incoming_text_count','outgoing_text_count',
+                   'phone_successful_count','phone_unsuccessful_count','phone_voicemail_count',
+                   'Admitted Students Day','Bison Day','Bison Day @ The Weekend','Campus Visit',
+                   'Dallas Bison Exclusive','Football Visit','Golf Visit','Oklahoma City Bison Exclusive',
+                   'Scholars Bison Day','Scholars Mixer and Banquet','Scholarship Interview',
+                   'Scholarship Interview Registration','Softball Visit','Track Visit','Tulsa Bison Exclusive',
+                   'Volleyball Visit','Events Attended Count']
 final_cols = categorical_columns[:]
 final_cols.extend(numeric_columns)
 
@@ -23,6 +29,11 @@ encoded_columns = []
 df_encoded = pd.get_dummies(pre_processing_df, columns=categorical_columns, drop_first=True)
 encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore", drop="first")
 encoder.fit(pre_processing_df[categorical_columns])
+scaler = scaler = MinMaxScaler()
+numerical_columns = ['Financial Aid Offered Amount', 'incoming_text_count',
+                     'outgoing_text_count', 'phone_successful_count', 'phone_unsuccessful_count',
+                     'phone_voicemail_count','Events Attended Count']
+scaler.fit(df_encoded[numerical_columns])
 
 ## Support Functions
 def camel_to_title_case(camel_case_str):
@@ -172,6 +183,7 @@ def get_prediction(data):
     df_input = pd.read_csv(data)
     studentIDs_column = df_input.pop('studentIDs')
     df_output = one_hot_encode_df(df_input)
+    df_output[numerical_columns] = scaler.transform(df_output[numerical_columns])
     global results_json
     results_json = df_output.to_json()
     df_output = predict(df_output)
