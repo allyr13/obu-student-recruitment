@@ -92,6 +92,7 @@ def get_table_data():
 
     return jsonify({"data": table_data, "status": 200})
 
+
 @app.route('/api/test', methods=['GET'])
 def test():
     df = get_prediction('default_batch.csv')

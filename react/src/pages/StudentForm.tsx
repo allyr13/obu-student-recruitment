@@ -3,7 +3,6 @@ import '../css/StudentForm.css';
 import { useNavigate } from 'react-router-dom';
 
 
-
 interface FormData {
   state: string;
   country: string;
