@@ -1,80 +1,151 @@
 import React, { useState, useEffect } from 'react';
-import '../css/InformUser.css'; 
+import '../css/InformUser.css';
 
-interface Data {
-  [key: string]: string | number;
+interface TransformedData {
+  [studentId: string]: { [key: string]: string | number };
 }
 
 const InformUser: React.FC = () => {
-  const [data, setData] = useState<Data>({});
+  const [data, setData] = useState<TransformedData>({});
   const [loading, setLoading] = useState<boolean>(true);
-  const [predictionMessage, setPredictionMessage] = useState<string>(''); 
+  const [expandedRows, setExpandedRows] = useState<{ [studentId: string]: boolean }>({});
+  const [defaultDisplayColumns, setDefaultDisplayColumns] = useState<string[]>([]);
+  const primary_key_string = 'studentIDs';
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // TODO: Remove this route call when batch input is connected to 'upload_form'
+        const responseT = await fetch('/api/test');
+        const resultT = await responseT.json();
+
+        const storedData = localStorage.getItem('tableData');
+        const tableData = storedData ? JSON.parse(storedData) : {};
+
         const response = await fetch('/api/get_table_data');
         const result = await response.json();
+        tableData['Prediction'] = result.data['Prediction'];
 
-        if (result.status === 200 && result.data) {
-          const filteredData: Data = {};
+        if (result.status === 200) {
+          const transformedData: TransformedData = {};
 
-          for (const [key, value] of Object.entries(result.data)) {
-            const valueObj = value as { [key: number]: string | number };
-            const firstValue = valueObj[0];
+          const studentIds = tableData[primary_key_string] || {};
 
-            if (firstValue !== 0 && firstValue !== null && firstValue !== undefined) {
-              filteredData[key] = firstValue;
-            }
-          }
+          Object.entries(studentIds as Record<string, string>).forEach(([index, studentId]) => {
+              if (!transformedData[studentId]) {
+                  transformedData[studentId] = {};
+              }
 
-          setData(filteredData);
+              for (const [key, values] of Object.entries(tableData as Record<string, Record<string, string | number>>)) {
+                if (key !== primary_key_string && values[index] !== undefined) {
+                    transformedData[studentId][key] = values[index];
+                }
+              }
+          });
 
-          if (result.data['Prediction'] !== undefined) {
-            const predictionValue = result.data['Prediction'][0]; 
-            if (predictionValue === 1) {
-              setPredictionMessage('Prediction is Yes');
-            } else if (predictionValue === 0) {
-              setPredictionMessage('Prediction is No');
-            }
-          }
+          setData(transformedData);
         } else {
           console.error('Error: Invalid data format or status');
         }
       } catch (err) {
         console.error('Error fetching data:', err);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
-  // Render a loading state until data is fetched
+  // Fetch config to set default display columns
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await fetch('/config.json');
+        const config = await response.json();
+        setDefaultDisplayColumns(config.additional_default_columns || []);
+      } catch (err) {
+        console.error('Error fetching config:', err);
+      }
+    };
+
+    fetchConfig();
+  }, []);
+
+  const toggleRow = (studentId: string) => {
+    setExpandedRows((prev) => ({ ...prev, [studentId]: !prev[studentId] }));
+  };
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
 
   return (
-    <div>
+    <div id="tableContainer">
       <h3>Student Prediction Data</h3>
-      <h4>{predictionMessage}</h4>
-
-      <table>
+      <table id="mainTable">
         <thead>
           <tr>
-            <th>Attribute</th>
-            <th>Value</th>
+            <th>Student ID</th>
+            <th>Prediction</th>
+            {/* Display other columns from config's default_display */}
+            {defaultDisplayColumns.map((col) => (
+              <th key={col}>{col}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {Object.entries(data).map(([key, value], index) => (
-            <tr key={index}>
-              <td>{key}</td>
-              <td>{value}</td>
-            </tr>
-          ))}
+          {Object.entries(data).map(([studentId, details]) => {
+            const prediction = details["Prediction"] ?? "N/A";
+            // Get the other data to show in the expanded rows
+            const otherData = Object.entries(details).filter(
+              ([key]) => key !== "Prediction" && !defaultDisplayColumns.includes(key)
+            );
+
+            return (
+              <React.Fragment key={studentId}>
+                <tr 
+                  id="mainRow" 
+                  onClick={() => toggleRow(studentId)} 
+                  style={{
+                    cursor: 'pointer', 
+                    backgroundColor: expandedRows[studentId] ? 'rgba(48, 139, 51, 0.482)' : 'transparent',
+                    boxShadow: expandedRows[studentId]
+                    ? 'inset 0 2px 5px rgba(0, 0, 0, 0.5), inset 0 -2px 5px rgba(0, 0, 0, 0.5)'
+                    : 'none',
+                  }}
+                >
+                  <td>{(expandedRows[studentId] ? '▼' : '▶') + " " + studentId}</td>
+                  <td>{prediction}</td>
+                  {/* Render values for the columns in the additional_default_columns */}
+                  {defaultDisplayColumns.map((col) => (
+                    <td key={`${studentId}-${col}`}>{details[col]}</td>
+                  ))}
+                </tr>
+
+
+                {/* Render the expanded data */}
+                {expandedRows[studentId] && (
+                <>
+                  {/* New row at the top of expanded rows */}
+                  <tr id="subHeader" key={`${studentId}-header`} className="expanded-row-header">
+                    <td>Category</td>
+                    <td colSpan={defaultDisplayColumns.length + 1}>Value</td>
+                  </tr>
+
+                  {/* Existing expanded rows */}
+                  {otherData.map(([key, value]) => (
+                    <tr id="subRows" key={`${studentId}-${key}`} className="expanded-row">
+                      <td>{key}</td>
+                      <td colSpan={defaultDisplayColumns.length + 1}>{value}</td>
+                    </tr>
+                  ))}
+                </>
+              )}
+
+              </React.Fragment>
+            );
+          })}
         </tbody>
       </table>
     </div>

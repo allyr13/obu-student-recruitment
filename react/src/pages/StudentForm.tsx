@@ -87,19 +87,18 @@ const StudentForm: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // Handle input change
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
 
     if (type === 'number') {
       setFormData({
         ...formData,
-        [name]: parseInt(value), // If it's a number, parse it to an integer
+        [name]: parseInt(value),
       });
     } else {
       setFormData({
         ...formData,
-        [name]: value, // For other fields, just use the value
+        [name]: value,
       });
     }
   };
@@ -108,53 +107,43 @@ const StudentForm: React.FC = () => {
     e.preventDefault();
 
     try {
-        const csvHeader = Object.keys(formData).join(',');
-        const csvRow = Object.values(formData).join(',');
-        const csvData = `${csvHeader}\n${csvRow}`;
+      const csvHeader = Object.keys(formData);
+      const csvRow = Object.values(formData);
 
-        const csvBlob = new Blob([csvData], { type: 'text/csv' });
-        const formDataToSend = new FormData();
-        formDataToSend.append('file', csvBlob, 'student_data.csv');
+      const jsonData: Record<string, Record<number, string | number>> = {};
 
-        const response = await fetch('/api/upload_form', {
-            method: 'POST',
-            body: formDataToSend,
-        });
+      csvHeader.forEach((key, colIndex) => {
+          jsonData[key] = { "0": csvRow[colIndex] }; // "0" represents the first row (more rows would be added dynamically)
+      });
 
-        const result = await response.json();
-        console.log("FULL RESULT: " + result)
+      localStorage.setItem('tableData', JSON.stringify(jsonData));
 
-        if (!response.ok) {
-            console.error(result.error);
-            alert(`Error: ${result.error}`);
-            return;
-        }
+      console.log('Stored JSON:', jsonData);
 
-        const json_data = JSON.parse(result.data_results);
-        console.log('results:', JSON.stringify(json_data));
+      const csvDataHeader = Object.keys(formData).join(',');
+      const csvDataRow = Object.values(formData).join(',');
+      const csvData = `${csvDataHeader}\n${csvDataRow}`;
 
-        if (result.status === 200) {
-            console.log('Success:', result.status);
-            
-            const predictionResponse = await fetch('/api/set_table_data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json', 
-                },
-                body: JSON.stringify(json_data),
-            });
+      const csvBlob = new Blob([csvData], { type: 'text/csv' });
+      const formDataToSend = new FormData();
+      formDataToSend.append('file', csvBlob, 'student_data.csv');
 
-            console.log('Sending prediction:', predictionResponse.status);
+      const formJson: Record<string, string> = {};
+      formDataToSend.forEach((value, key) => {
+          formJson[key] = value as string;
+      });
+      
+      const response = await fetch('/api/upload_form', {
+        method: 'POST',
+        body: formDataToSend,
+      });
 
-            if (!predictionResponse.ok) {
-                const predictionResult = await predictionResponse.json();
-                console.error('Prediction error:', predictionResult.error);
-                alert(`Error sending prediction: ${predictionResult.error}`);
-            } else {
-                alert('File uploaded and prediction sent successfully!');
-            }
-            navigate('/table');
-        }
+      if (response.status === 200) {
+        navigate('/table');
+      } else {
+        console.error('Error uploading form data');
+      }
+      
 
     } catch (error) {
         console.error('Error:', error);
