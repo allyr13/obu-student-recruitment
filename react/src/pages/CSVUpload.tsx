@@ -130,8 +130,16 @@ const FileUpload: React.FC = () => {
             
             UploadService.upload(currentFile, (event: any) => {
             }).then((response) => {
-                setMessage(response.data.message);
-                navigate('/table');
+                try {
+                    // Has to be 'data.data' because of route call method using 'UploadService.upload'
+                    const predictionsObj = response.data.data.Prediction;
+
+                    setMessage(response.data.message);
+                    navigate('/table', {state: {data: transformedData, prediction: predictionsObj}});
+
+                } catch (error) {
+                    console.error('Error parsing the response:', error);
+                }
             }).catch((err) => {
                 console.log(err);
 

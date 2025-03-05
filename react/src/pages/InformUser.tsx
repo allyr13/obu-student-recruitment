@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import '../css/InformUser.css';
 
 interface TransformedData {
@@ -8,36 +9,24 @@ interface TransformedData {
 const InformUser: React.FC = () => {
   const [data, setData] = useState<TransformedData>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [predictionMessage, setPredictionMessage] = useState<string>('');
   const [expandedRows, setExpandedRows] = useState<{ [studentId: string]: boolean }>({});
   const [defaultDisplayColumns, setDefaultDisplayColumns] = useState<string[]>([]);
   const primary_key_string = 'studentIDs';
 
+  const location = useLocation();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // TODO: Remove this route call when batch input is connected to 'upload_form'
-        const responseT = await fetch('/api/test');
-        const resultT = await responseT.json();
+        const tableData = location.state.data;
+        const predictions = location.state.prediction;
 
-        const storedData = localStorage.getItem('tableData');
-        const tableData = storedData ? JSON.parse(storedData) : {};
-
-        /*
-        for (const [key, keyObject] of Object.entries(location.state.data)) {
-
-          if (keyObject !== 0 && keyObject !== null && keyObject !== undefined) {
-              const value = Object.values(keyObject);
-              filteredData[key] = String(value[0]);
-              console.log(value[0])
-          }
+        if (predictions === undefined) {
+          setPredictionMessage('Prediction(s) not recieved');
+        } else {
+          tableData['Prediction'] = predictions;
         }
-        */
 
-        const response = await fetch('/api/get_table_data');
-        const result = await response.json();
-        tableData['Prediction'] = result.data['Prediction'];
-
-        if (result.status === 200) {
           const transformedData: TransformedData = {};
 
           const studentIds = tableData[primary_key_string] || {};
@@ -55,9 +44,7 @@ const InformUser: React.FC = () => {
           });
 
           setData(transformedData);
-        } else {
-          console.error('Error: Invalid data format or status');
-        }
+
       } catch (err) {
         console.error('Error fetching data:', err);
       } finally {
@@ -94,6 +81,7 @@ const InformUser: React.FC = () => {
   return (
     <div id="tableContainer">
       <h3>Student Prediction Data</h3>
+      <h4 id='prediction-err-message'>{predictionMessage}</h4>
       <table id="mainTable">
         <thead>
           <tr>

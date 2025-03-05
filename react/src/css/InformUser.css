@@ -87,3 +87,7 @@ tr:hover {
 #subRows > td, #subHeader > td {
     border: 1px solid #787878;
 }
+
+#prediction-err-message {
+    color: red
+}
