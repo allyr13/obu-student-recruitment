@@ -52,8 +52,8 @@ const InformUser: React.FC = () => {
       }
     };
 
-        fillForm();
-    }, []);
+    fetchData();
+  }, []);
 
   // Fetch config to set default display columns
   useEffect(() => {
@@ -96,22 +96,22 @@ const InformUser: React.FC = () => {
         <tbody>
           {Object.entries(data).map(([studentId, details]) => {
             const prediction = details["Prediction"] ?? "N/A";
-            // Get the other data to show in the expanded rows
             const otherData = Object.entries(details).filter(
-              ([key]) => key !== "Prediction" && !defaultDisplayColumns.includes(key)
+              /* 
+              This is chosen to make the option to copy data include all relevent data.
+              Otherwise, add the extra condition to NOT show default cols on dropdown.
+              */
+              ([key]) => key !== "Prediction" // && !defaultDisplayColumns.includes(key)
             );
 
             return (
               <React.Fragment key={studentId}>
                 <tr 
-                  id="mainRow" 
+                  id="mainRow"
                   onClick={() => toggleRow(studentId)} 
                   style={{
                     cursor: 'pointer', 
-                    backgroundColor: expandedRows[studentId] ? 'rgba(48, 139, 51, 0.482)' : 'transparent',
-                    boxShadow: expandedRows[studentId]
-                    ? 'inset 0 2px 5px rgba(0, 0, 0, 0.5), inset 0 -2px 5px rgba(0, 0, 0, 0.5)'
-                    : 'none',
+                    backgroundColor: expandedRows[studentId] ? 'rgba(48, 139, 51, 0.482)' : 'transparent'
                   }}
                 >
                   <td>{(expandedRows[studentId] ? '▼' : '▶') + " " + studentId}</td>
