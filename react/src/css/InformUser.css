@@ -1,12 +1,15 @@
 
 table tr:nth-child(even) {
-    background-color: #00751215 !important;
+    background-color: #00751215;
+}
+
+.expanded-row-origin {
+    background-color: rgba(48, 139, 51, 0.482) !important;
 }
   
 table tr:hover {
     background-color: #ddd !important;
 }
-  
 
 h3 {
     font-size: 32px;
@@ -29,7 +32,6 @@ h4 {
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
-    background-color: #ffffff; 
     border-radius: 8px;
     overflow: hidden; 
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);

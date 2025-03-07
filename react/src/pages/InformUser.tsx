@@ -108,11 +108,8 @@ const InformUser: React.FC = () => {
               <React.Fragment key={studentId}>
                 <tr 
                   id="mainRow"
-                  onClick={() => toggleRow(studentId)} 
-                  style={{
-                    cursor: 'pointer', 
-                    backgroundColor: expandedRows[studentId] ? 'rgba(48, 139, 51, 0.482)' : 'transparent'
-                  }}
+                  onClick={() => toggleRow(studentId)}
+                  className={expandedRows[studentId] ? 'expanded-row-origin' : ''}
                 >
                   <td>{(expandedRows[studentId] ? '▼' : '▶') + " " + studentId}</td>
                   <td>{prediction}</td>
