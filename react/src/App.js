@@ -4,6 +4,7 @@ import Header from './pages/Header.tsx';
 import StudentForm from './pages/StudentForm.tsx';  
 import CSVUpload from './pages/CSVUpload.tsx'; 
 import InformUser from './pages/InformUser.tsx';  
+import S3 from './pages/S3.tsx';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             } 
           />
           <Route path="/table" element={<InformUser />} />
+          <Route path="/S3" element={<S3 />} />
         </Routes>
       </div>
     </Router>
