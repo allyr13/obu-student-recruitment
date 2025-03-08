@@ -5,7 +5,7 @@ const upload = (file: File, onUploadProgress: any): Promise<any> => {
 
     formData.append("file", file);
 
-    return http.post("/api/batch_job", formData, {
+    return http.post("/api/upload_form", formData, {
         headers: {
             "Content-Type": "multipart/form-data",
         },
