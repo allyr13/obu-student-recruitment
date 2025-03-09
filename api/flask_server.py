@@ -10,7 +10,18 @@ from flask import render_template
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
-table_data = []
+class tableSave:
+    table_data = None
+
+    def getData(self):
+        print("Getting table data")
+        return self.table_data
+
+    def setData(self, data):
+        print("Setting table data")
+        self.table_data = data
+
+TableClass = tableSave()
 
 @app.route('/')
 def home():
@@ -40,10 +51,9 @@ def upload_csv_file():
     try:
         df = get_prediction(file)
 
-        global table_data
-        table_data = json.loads(get_table_data_results())
+        TableClass.setData(json.loads(get_table_data_results()))
 
-        return jsonify({"data_results": get_table_data_results(), "message": "CSV file received and saved successfully", "status": 200})
+        return jsonify({"data": TableClass.getData(), "message": "CSV file received and saved successfully", "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
@@ -69,11 +79,22 @@ def test_batch_job():
 
 @app.route('/api/get_table_data', methods=['GET'])
 def get_table_data():
+    table_data = TableClass.getData()
 
-    if not table_data:
+    if table_data == None:
         return jsonify({"error": "No data available", "status": 404})
 
     return jsonify({"data": table_data, "status": 200})
+
+
+@app.route('/api/test', methods=['GET'])
+def test():
+    df = get_prediction('default_batch.csv')
+    
+    TableClass.setData(json.loads(get_table_data_results()))
+
+    return jsonify({"status": 200})
+
 
 if __name__ == '__main__':
     host = get_config("host")

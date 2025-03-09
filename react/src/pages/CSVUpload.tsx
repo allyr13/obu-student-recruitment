@@ -4,8 +4,39 @@ import UploadService from "../services/FileUploadService.ts";
 import React from "react";
 import Papa from "papaparse";
 import reference_dict from "../validation_reference.json";
+import { useNavigate } from 'react-router-dom';
+
+const processCSV = async (file: File) => {
+    const text = await file.text();
+  
+    const parsedData = Papa.parse(text, {
+      header: true,
+      skipEmptyLines: true,
+      dynamicTyping: true,
+    });
+  
+    if (parsedData.errors.length > 0) {
+      console.error("Error parsing CSV:", parsedData.errors);
+      return;
+    }
+  
+    const transformedData: { [key: string]: { [index: string]: any } } = {};
+  
+    parsedData.data.forEach((row, index) => {
+      Object.keys(row).forEach((key) => {
+        if (!transformedData[key]) {
+          transformedData[key] = {};
+        }
+        transformedData[key][index] = row[key];
+      });
+    });
+  
+    console.log("Transformed Data:", transformedData);
+    return transformedData;
+  };
 
 const FileUpload: React.FC = () => {
+    const navigate = useNavigate();
 
     const [currentFile, setCurrentFile] = useState<File>();
     const [message, setMessage] = useState<string>("");
@@ -33,13 +64,13 @@ const FileUpload: React.FC = () => {
                 header: true, // Ensure the first row is treated as headers
                 complete: (result) => {
                     const { data, errors } = result;
-                    if (errors.length > 0) {
+                    if (errors.length - 1 > 0) {
                         setMessage("Error parsing CSV file.");
                         reject(false);
                     }
                     
                     const requiredColumns = Object.keys(reference_dict);
-                    const headers = Object.keys(data[0]); // Get the headers from the first row
+                    const headers = Object.keys(data[0]);
                     console.log("Headers:", headers);
 
                     if (!Array.isArray(headers)) {
@@ -57,7 +88,7 @@ const FileUpload: React.FC = () => {
                     }
 
                     let idx = 0;
-                    for(const row of data) {
+                    for (const row of data.slice(0, -1)) {
                         idx++;
                         for (const [key, value] of Object.entries(row)) {
                             if (reference_dict[key] && !reference_dict[key].includes(value)) {
@@ -93,9 +124,22 @@ const FileUpload: React.FC = () => {
             const isValidCSV = await validateCSVContent(currentFile);
             if (!isValidCSV) return;
             console.log("CSV Validation Successful", isValidCSV)
+
+            const transformedData = await processCSV(currentFile);
+            localStorage.setItem('tableData', JSON.stringify(transformedData));
+            
             UploadService.upload(currentFile, (event: any) => {
             }).then((response) => {
-                setMessage(response.data.message);
+                try {
+                    // Has to be 'data.data' because of route call method using 'UploadService.upload'
+                    const predictionsObj = response.data.data.Prediction;
+
+                    setMessage(response.data.message);
+                    navigate('/table', {state: {data: transformedData, prediction: predictionsObj}});
+
+                } catch (error) {
+                    console.error('Error parsing the response:', error);
+                }
             }).catch((err) => {
                 console.log(err);
 

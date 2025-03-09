@@ -118,8 +118,8 @@ const StudentForm: React.FC = () => {
                 method: 'POST',
                 body: formDataToSend,
             });
-
             const result = await response.json();
+            const predictionsObj = result.data.Prediction
 
             if (!response.ok) {
                 console.error(result.error);
@@ -127,11 +127,20 @@ const StudentForm: React.FC = () => {
                 return;
             }
 
-            const json_data = JSON.parse(result.data_results);
-            console.log('results:', JSON.stringify(json_data));
-
+            const jsonData = () => {
+              const headers = Object.keys(formData);
+              const rows = Object.values(formData);
+            
+              const jsonData: Record<string, Record<number, string | number>> = {};
+            
+              headers.forEach((key, colIndex) => {
+                  jsonData[key] = { "0": rows[colIndex] }; // "0" represents the first row (more rows would be added dynamically)
+              });
+              return jsonData
+            }
+            
             if (result.status === 200) {
-                navigate('/table', {state: {data: formData, prediction: json_data.Prediction}});
+                navigate('/table', {state: {data: jsonData(), prediction: predictionsObj}});
             }
 
         } catch (error) {
