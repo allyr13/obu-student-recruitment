@@ -1,9 +1,14 @@
 import pickle
 import pandas as pd
 import numpy as np
-import flask_server
 
-match flask_server.chosen_model:
+chosen_model = int(input("Select a prediction model to use (enter the associated number):\n"
+              "1: AdaBoost Model\n"
+              "2: Decision Tree Model\n"
+              "3: Logistic Regression Model\n"
+              "4: XGBoost Model\n"))
+
+match chosen_model:
     case 1:
         model_path = "../models/adaboost_model.pkl"
     case 2:
