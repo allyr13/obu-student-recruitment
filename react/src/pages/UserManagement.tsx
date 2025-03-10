@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../css/UserManagement.css";
+import '../css/AWS-S3.css';
 import { FaTrash } from "react-icons/fa";
+import LoginForm from "../components/AdminLoginForm.tsx"; 
 
 interface TableItem {
   User_ID: string;
@@ -10,10 +11,10 @@ interface TableItem {
 }
 
 const UserManagement = () => {
-  const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState("");
   const [tableData, setTableData] = useState<TableItem[]>([]);
+  const [message, setMessage] = useState('');
   const [newUser, setNewUser] = useState<TableItem>({ User_ID: "", User_Prefix: "", User_Password: "" });
 
   useEffect(() => {
@@ -24,18 +25,16 @@ const UserManagement = () => {
     }
   }, []);
 
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handlePasswordSubmit = async (password: string) => {
     try {
       const response = await axios.post("/api/verify_password", { password });
-      if (response.data['status'] === 200) {
+      if (response.data.status === 200) {
         setIsAuthenticated(true);
         localStorage.setItem("isAuthenticated", "true");
         fetchTableData();
-        setError('');
+        setError("");
       } else {
-        setError('Invalid admin password');
+        setError("Invalid admin password");
       }
     } catch (err) {
       setError("Invalid password");
@@ -67,6 +66,7 @@ const UserManagement = () => {
       if (response.status === 200) {
         setNewUser({ User_ID: "", User_Prefix: "", User_Password: "" });
         fetchTableData();
+        setMessage('Successfully added a user.');
         setError("");
       } else {
         setError("Error adding user");
@@ -85,6 +85,8 @@ const UserManagement = () => {
         });
         if (response.status === 200) {
           fetchTableData();
+          setMessage('Successfully deleted a user.');
+          setError("");
         }
       } catch (err) {
         setError("Error deleting user");
@@ -104,12 +106,12 @@ const UserManagement = () => {
   const renderTableRows = () => {
     return tableData.map((item, index) => (
       <tr key={index} className={`user-management-tr ${index % 2 === 0 ? "even-row" : ""}`}>
-        {Object.keys(item).map((key, idx) => (
+        {Object.keys(item).map((key) => (
           <td key={key} className="user-management-td">{item[key]}</td>
         ))}
         <td className="user-management-delete-icon">
           <FaTrash
-            className="user-management-icon-button"
+            className="icon-button"
             onClick={() => handleDeleteUser(item.User_ID, item.User_Prefix)}
           />
         </td>
@@ -120,24 +122,12 @@ const UserManagement = () => {
   return (
     <div className="user-management-container">
       {!isAuthenticated ? (
-        <div className="login-container">
-          <h2 className="Sign-In">Enter Admin Password to Continue</h2>
-          <form className="user-management-form" onSubmit={handlePasswordSubmit}>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              className="user-management-password-input"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button type="submit" className="user-management-submit-btn">Submit</button>
-          </form>
-          {error && <p className="user-management-error">{error}</p>}
-        </div>
+        <LoginForm onSubmit={handlePasswordSubmit} error={error} />
       ) : (
         <div>
           <h2 className="user-management-main-title">Manage User Access Credentials</h2>
           <button className="logout-button" onClick={handleLogout}>Sign Out</button>
+          {message && <p className="message">{message}</p>}
           <table className="user-management-table">
             <thead>
               <tr className="user-management-thead">
@@ -172,10 +162,10 @@ const UserManagement = () => {
                 className="user-management-field-input"
                 onChange={(e) => setNewUser({ ...newUser, User_Password: e.target.value })}
               />
-              <button type="submit" className="user-management-submit-btn">Add User</button>
+              <button type="submit" className="action-button">Add User</button>
             </form>
           </div>
-          {error && <p className="user-management-error">{error}</p>}
+          {error && <p className="error-message">{error}</p>}
         </div>
       )}
     </div>

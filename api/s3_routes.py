@@ -89,6 +89,8 @@ def authenticate_user():
 
         if user['User_Password'] != password:
             return jsonify({"error": "Invalid credentials", "status": 401})
+        
+        print(user['User_Prefix'])
 
         return jsonify({
             "message": "Authentication successful",
