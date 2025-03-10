@@ -10,6 +10,12 @@ from flask import render_template
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
+chosen_model = input("Select a prediction model to use (enter the associated number):\n"
+              "1: AdaBoost Model\n"
+              "2: Decision Tree Model\n"
+              "3: Logistic Regression Model\n"
+              "4: XGBoost Model\n")
+
 class tableSave:
     table_data = None
 
