@@ -88,8 +88,11 @@ const InformUser: React.FC = () => {
 
     // Convert to CSV format
     const csvContent =
-    "data:text/csv;charset=utf-8," +
-    [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+    "data:text/csv;charset=utf-8,\ufeff" + 
+        [headers.join(","),
+        ...rows.map(row => 
+            row.map(field => `"${(field ?? "").toString().replace(/"/g, '""')}"`).join(","))
+        ].join("\n");
 
     // Create a download link
     const encodedUri = encodeURI(csvContent);
