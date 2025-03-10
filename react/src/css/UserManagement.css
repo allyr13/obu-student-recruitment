@@ -1,0 +1,158 @@
+.user-management-main-title {
+    text-align: center;
+    color: #333;
+}
+
+.Sign-In {
+    font-size: 1.6rem;
+    color: #555;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.user-management-error {
+    color: #e57373;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    text-align: center;
+    max-width: 600px;
+}
+
+.user-management-container {
+    width: 100%;
+    max-width: 900px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    margin-top: 3rem;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.user-management-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.user-management-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.user-management-password-input {
+    padding: 1rem;
+    min-width: 100%;
+    max-width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.user-management-password-input:focus {
+    border-color: #5c6bc0;
+    box-shadow: 0 0 5px rgba(92, 107, 192, 0.5);
+    outline: none;
+}
+
+.user-management-submit-btn {
+    background-color: #5c6bc0;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.user-management-submit-btn:hover {
+    background-color: #3f51b5;
+    transform: scale(1.05);
+}
+
+.user-management-table {
+    width: 100%;
+    margin-top: 2rem;
+    border-collapse: collapse;
+    font-size: 1rem;
+    text-align: left;
+    padding: 10px;
+}
+
+.user-management-th,
+.user-management-td {
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.user-management-th {
+    color: white;
+    background-color: #5c6bc0;
+    font-size: 1.1rem;
+}
+
+.user-management-tr:hover {
+    background-color: #f5f5f5;
+}
+
+.user-management-table tr:nth-child(even) {
+    background-color: #b4bffb1d ;
+}
+
+.user-management-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.user-management-field-input {
+    margin: 5px !important;
+}
+
+.user-management-icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    max-width: fit-content;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.user-management-icon-button:hover {
+    color: #3f51b5;
+    background-color: lightgray;
+    transform: scale(1.05);
+}
+
+.user-management-icon-button:focus {
+    outline: none;
+}
+
+.user-management-icon-button svg {
+    font-size: 1.5rem;
+    color: #5c6bc0;
+}
+
+.user-management-icon-button:hover svg {
+    color: #3f51b5;
+}
+
+.user-management-add-form {
+    border: 1px solid #5c6bc0;
+    background-color: #b4bffb1d;
+}
+
+.user-management-add-title {
+    color: black
+}

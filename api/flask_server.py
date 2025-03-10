@@ -5,26 +5,12 @@ from processing.data_processing import get_prediction, get_results_json, get_tab
 import pandas as pd
 import json
 from flask import render_template
-from s3_routes import upload_to_s3, list_s3_files, download_from_s3, delete_from_s3
+from s3_routes import s3_bp
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
-@app.route('/api/upload_to_s3', methods=['POST'])
-def upload_file_to_s3():
-    return upload_to_s3()
-
-@app.route('/api/list_s3_files', methods=['GET'])
-def list_files_in_s3():
-    return list_s3_files()
-
-@app.route('/api/download_from_s3', methods=['GET'])
-def download_file_from_s3():
-    return download_from_s3()
-
-@app.route('/api/delete_from_s3', methods=['DELETE'])
-def delete_file_from_s3():
-    return delete_from_s3()
+app.register_blueprint(s3_bp)
 
 class tableSave:
     table_data = None
