@@ -33,6 +33,9 @@ const UserManagement = () => {
         setIsAuthenticated(true);
         localStorage.setItem("isAuthenticated", "true");
         fetchTableData();
+        setError('');
+      } else {
+        setError('Invalid admin password');
       }
     } catch (err) {
       setError("Invalid password");

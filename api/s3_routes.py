@@ -9,8 +9,8 @@ S3_BUCKET_NAME = "stu-rec-bucket"
 S3_REGION = "us-east-2"
 s3_client = boto3.client("s3", region_name=S3_REGION)
 
-dynamodb = boto3.resource('dynamodb', region_name="us-east-2")
-table = dynamodb.Table(get_config("table_name"))
+DYNAMO_DB = boto3.resource('dynamodb', region_name="us-east-2")
+table = DYNAMO_DB.Table(get_config("table_name"))
 
 @s3_bp.route('/api/add_user', methods=['POST'])
 def add_user():
@@ -81,7 +81,7 @@ def authenticate_user():
 
     try:
         table_name = get_config("table_name")
-        table = dynamodb.Table(table_name)
+        table = DYNAMO_DB.Table(table_name)
         
         response = table.scan()
         items = response.get('Items', [])
@@ -103,7 +103,7 @@ def authenticate_user():
 def get_table_data():
     try:
         table_name = get_config("table_name")
-        table = dynamodb.Table(table_name)
+        table = DYNAMO_DB.Table(table_name)
         
         response = table.scan()
         items = response.get('Items', [])

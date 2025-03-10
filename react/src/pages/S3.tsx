@@ -39,6 +39,8 @@ const S3FileManager = () => {
         setUserPrefix(response.data.User_Prefix);
         setIsAuthenticated(true);
         setMessage('Login successful');
+      } else {
+        setMessage('Invalid User ID or password');
       }
     } catch (error) {
       setMessage('Invalid User ID or password');
