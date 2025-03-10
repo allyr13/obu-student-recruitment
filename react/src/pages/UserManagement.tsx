@@ -67,6 +67,9 @@ const UserManagement = () => {
       if (response.status === 200) {
         setNewUser({ User_ID: "", User_Prefix: "", User_Password: "" });
         fetchTableData();
+        setError("");
+      } else {
+        setError("Error adding user");
       }
     } catch (err) {
       setError("Error adding user");
