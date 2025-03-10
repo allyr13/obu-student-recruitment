@@ -1,22 +1,18 @@
 import pickle
 import pandas as pd
 import numpy as np
-import sys
+import flask_server
 
-def delay_import():
-    from flask_server import chosen_model
-    match chosen_model:
-        case 1:
-            model_path = "../models/adaboost_model.pkl"
-        case 2:
-            model_path = "../models/dtree_model.pkl"
-        case 3:
-            model_path = "../models/logreg_model.pkl"
-        case 4:
-            model_path = "../models/xgb_model.pkl"
-    return model_path
+match flask_server.chosen_model:
+    case 1:
+        model_path = "../models/adaboost_model.pkl"
+    case 2:
+        model_path = "../models/dtree_model.pkl"
+    case 3:
+        model_path = "../models/logreg_model.pkl"
+    case 4:
+        model_path = "../models/xgb_model.pkl"
 
-model_path = delay_import()
 
 f = open(model_path, "rb") #TODO: load different models as needed/specified
 model = pickle.load(f)
