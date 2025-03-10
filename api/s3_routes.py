@@ -124,6 +124,8 @@ def upload_to_s3():
 
     file = request.files['file']
     prefix = request.form.get('prefix', '')
+    global_upload = request.form.get('global', 'None')
+    print(global_upload)
 
     if file.filename == '':
         return jsonify({"error": "No selected file", "status": 500})
@@ -135,15 +137,17 @@ def upload_to_s3():
             prefix = prefix + "/"
 
     try:
-        s3_client.upload_fileobj(file, S3_BUCKET_NAME, f"{get_config("root_dir")}/{prefix}{file.filename}")
+        if (global_upload == "True"):
+            s3_client.upload_fileobj(file, S3_BUCKET_NAME, f"{get_config("root_dir")}/global/{file.filename}")
+        else:
+            s3_client.upload_fileobj(file, S3_BUCKET_NAME, f"{get_config("root_dir")}/{prefix}{file.filename}")
+
         return jsonify({"message": "File uploaded successfully", "filename": file.filename, "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
 
-
-
-
+    
 @s3_bp.route('/api/list_s3_files', methods=['GET'])
 def list_s3_files():
     try:
@@ -153,13 +157,19 @@ def list_s3_files():
             if user_prefix != '':
                 user_prefix = "/root/" + user_prefix
 
-        print(user_prefix)
-        response = s3_client.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=user_prefix)
-        files = [obj["Key"] for obj in response.get("Contents", [])]
-        return jsonify({"files": files, "status": 200})
+        response_user_prefix = s3_client.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=user_prefix)
+        files_user_prefix = [obj["Key"] for obj in response_user_prefix.get("Contents", [])]
+
+        response_other = s3_client.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=f"{get_config("root_dir")}/global")
+        files_other = [obj["Key"] for obj in response_other.get("Contents", [])]
+
+        combined_files = list(set(files_user_prefix + files_other))
+
+        return jsonify({"files": combined_files, "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
+
 
 
 

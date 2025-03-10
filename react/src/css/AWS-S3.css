@@ -137,7 +137,11 @@ p {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
-.action-button {
+.upload-div {
+    display: flex;
+}
+
+.action-button, .global-upload {
     background-color: var(--primary-color);
     color: #fff;
     border: none;
@@ -149,9 +153,14 @@ p {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.action-button:hover {
+.action-button:hover, .global-upload:hover {
     background-color: var(--primary-hover-color);
     transform: scale(1.05);
+}
+
+.global-upload {
+    max-width: fit-content;
+    margin-left: 5px;
 }
 
 input[type="file"],

@@ -38,10 +38,17 @@ const S3FileManager = () => {
     setIsAuthenticated(false);
     setUserID('');
     setUserPrefix('');
-    setMessage('Logged out successfully.');
   };
+
+  const handlePrefixUpload = () => {
+    uploadFileToS3('False');
+    };
+
+  const handleGlobalUpload = () => {
+        uploadFileToS3('True');
+    };
   
-  const uploadFileToS3 = async () => {
+  const uploadFileToS3 = async (globalFlag: string) => {
     if (!file) {
       setMessage("Please select a file to upload.");
       return;
@@ -50,6 +57,8 @@ const S3FileManager = () => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('prefix', userPrefix);
+    formData.append('global', globalFlag);
+    console.log("Uploading file to S3 Bucket. Is global upload: ", globalFlag)
 
     try {
       const response = await axios.post('/api/upload_to_s3', formData, {
@@ -125,7 +134,10 @@ const S3FileManager = () => {
           <div>
             <h2>Upload File</h2>
             <input type="file" onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)} />
-            <button className="action-button" onClick={uploadFileToS3}>Upload</button>
+            <div className='upload-div'>
+                <button className="action-button" onClick={handlePrefixUpload}>Upload</button>
+                <button className="global-upload" onClick={handleGlobalUpload}>Global Upload</button>
+            </div>
           </div>
 
           <div>
