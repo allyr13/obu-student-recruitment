@@ -1,3 +1,61 @@
+:root {
+    --root-color: #005826;
+    --root-focus-color: rgba(97, 192, 92, 0.5);
+
+    --primary-hover-color: rgb(40, 120, 42);
+    --primary-color: var(--root-color);
+    --input-focus-border-color: var(--root-color);
+    --table-header-bg-color: var(--root-color);
+    --form-input-border-color: var(--root-color);
+    --form-input-focus-border-color: var(--root-color);
+    --message-info-border-color: #239711;
+    --message-info-text-color: #239711;
+    --message-info-bg-color: #e5fde3;
+    --form-input-focus-shadow-color: var(--root-focus-color);
+    --input-focus-shadow-color: var(--root-focus-color);
+    --secondary-color: #444;
+    --secondary-light-color: #555;
+    --background-color: #ffffff;
+    --input-border-color: #ccc;
+    --message-error-bg-color: #fbe9e7;
+    --message-error-border-color: #ffccbc;
+    --message-error-text-color: #e57373;
+    --file-item-deleted-bg-color: #f8d7da;
+    --file-item-deleted-text-color: #721c24;
+    --table-header-text-color: #fff;
+    --table-row-hover-bg-color: #f5f5f5;
+    --form-bg-color: #b4bffb1d;
+}
+
+.old-color-scheme {
+    --root-color: #5c6bc0;
+    --root-focus-color: rgba(92, 107, 192, 0.5);
+
+    --primary-hover-color: #3f51b5;
+    --primary-color: var(--root-color);
+    --input-focus-border-color: var(--root-color);
+    --table-header-bg-color: var(--root-color);
+    --form-input-border-color: var(--root-color);
+    --form-input-focus-border-color: var(--root-color);
+    --message-info-border-color: #90caf9;
+    --message-info-text-color: #1e88e5;
+    --message-info-bg-color: #e3f2fd;
+    --form-input-focus-shadow-color: var(--root-focus-color);
+    --input-focus-shadow-color: var(--root-focus-color);
+    --secondary-color: #444;
+    --secondary-light-color: #555;
+    --background-color: #ffffff;
+    --input-border-color: #ccc;
+    --message-error-bg-color: #fbe9e7;
+    --message-error-border-color: #ffccbc;
+    --message-error-text-color: #e57373;
+    --file-item-deleted-bg-color: #f8d7da;
+    --file-item-deleted-text-color: #721c24;
+    --table-header-text-color: #fff;
+    --table-row-hover-bg-color: #f5f5f5;
+    --form-bg-color: #b4bffb1d;
+}
+
 body {
     flex-direction: column;
     align-items: center;
@@ -13,7 +71,7 @@ body {
 
 h1 {
     font-size: 2.8rem;
-    color: #444;
+    color: var(--secondary-color);
     margin-bottom: 1.5rem;
 }
 
@@ -29,7 +87,7 @@ header, .header {
     max-height: fit-content;
     font-size: smaller;
     max-width: 100px;
-    background-color: #5c6bc0;
+    background-color: var(--primary-color);
     color: #fff;
     border: none;
     font-weight: 600;
@@ -39,13 +97,13 @@ header, .header {
 }
 
 .logout-button:hover {
-    background-color: #3f51b5;
+    background-color: var(--primary-hover-color);
     transform: scale(1.05);
 }
 
 h2 {
     font-size: 1.6rem;
-    color: #555;
+    color: var(--secondary-light-color);
     margin-bottom: 1rem;
 }
 
@@ -54,7 +112,7 @@ h2 {
 }
 
 p {
-    color: #555;
+    color: var(--secondary-light-color);
     font-size: 1.2rem;
     margin-top: 1rem;
     text-align: center;
@@ -64,7 +122,7 @@ p {
 .s3-file-manager {
     width: 100%;
     max-width: 900px;
-    background-color: #ffffff;
+    background-color: var(--background-color);
     border-radius: 8px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     padding: 2.5rem;
@@ -80,7 +138,7 @@ p {
 }
 
 .action-button {
-    background-color: #5c6bc0;
+    background-color: var(--primary-color);
     color: #fff;
     border: none;
     padding: 1rem 2rem;
@@ -92,7 +150,7 @@ p {
 }
 
 .action-button:hover {
-    background-color: #3f51b5;
+    background-color: var(--primary-hover-color);
     transform: scale(1.05);
 }
 
@@ -101,7 +159,7 @@ input[type="text"] {
     width: 100%;
     padding: 1rem;
     margin-top: 1rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border-color);
     border-radius: 5px;
     font-size: 1rem;
     color: #333;
@@ -110,8 +168,8 @@ input[type="text"] {
 
 input[type="file"]:focus,
 input[type="text"]:focus {
-    border-color: #5c6bc0;
-    box-shadow: 0 0 5px rgba(92, 107, 192, 0.5);
+    border-color: var(--input-focus-border-color);
+    box-shadow: 0 0 5px var(--input-focus-shadow-color);
     outline: none;
 }
 
@@ -119,19 +177,19 @@ input[type="text"]:focus {
     margin-top: 1.5rem;
     padding: 1.2rem;
     border-radius: 5px;
-    background-color: #e3f2fd;
-    border: 1px solid #90caf9;
+    background-color: var(--message-info-bg-color);
+    border: 1px solid var(--message-info-border-color);
     font-size: 1rem;
     text-align: center;
-    color: #1e88e5;
+    color: var(--message-info-text-color);
     margin-left: auto;
     margin-right: auto;
 }
 
 .message.error {
-    background-color: #fbe9e7;
-    border-color: #ffccbc;
-    color: #e57373;
+    background-color: var(--message-error-bg-color);
+    border-color: var(--message-error-border-color);
+    color: var(--message-error-text-color);
 }
 
 ul {
@@ -147,7 +205,7 @@ li {
     padding: 0.8rem 0;
     border-bottom: 1px solid #f0f0f0;
     font-size: 1rem;
-    color: #555;
+    color: var(--secondary-light-color);
     transition: background-color 0.3s ease;
 }
 
@@ -178,7 +236,7 @@ li:hover {
 }
 
 .icon-button:hover {
-    color: #3f51b5;
+    color: var(--primary-hover-color);
     background-color: lightgray;
     transform: scale(1.05);
 }
@@ -187,13 +245,13 @@ li:hover {
     outline: none;
 }
 
-.icon-button svg{
+.icon-button svg {
     font-size: 1.5rem;
-    color: #5c6bc0;
+    color: var(--primary-color);
 }
 
 .icon-button:hover svg {
-    color: #3f51b5;
+    color: var(--primary-hover-color);
 }
 
 @media (max-width: 768px) {
@@ -221,39 +279,39 @@ li:hover {
 }
 
 .file-item.deleted {
-    background-color: #f8d7da;
-    color: #721c24;
+    background-color: var(--file-item-deleted-bg-color);
+    color: var(--file-item-deleted-text-color);
     text-decoration: line-through;
-  }
-  
+}
+
 .file-item.deleted .icon-button {
     cursor: not-allowed;
     opacity: 0.5;
 }
 
 .login-container form { 
-    background-color: #b4bffb1d ;
+    background-color: var(--form-bg-color);
     color: black;
 }
 
 .login-container form label { 
     color: black;
 }
-  
+
 .login-input {
-    border: 0.5px solid #5c6bc0 !important;
+    border: 0.5px solid var(--form-input-border-color) !important;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .login-input:focus {
-    border-color: #5c6bc0;
-    box-shadow: 0 0 5px rgba(92, 107, 192, 0.5);
+    border-color: var(--form-input-focus-border-color);
+    box-shadow: 0 0 5px var(--form-input-focus-shadow-color);
     outline: none;
 }
 
 .Sign-In {
     font-size: 1.6rem;
-    color: #555;
+    color: var(--secondary-light-color);
     margin-bottom: 1rem;
     text-align: center;
 }
@@ -266,7 +324,7 @@ li:hover {
 .user-management-container {
     width: 100%;
     max-width: 900px;
-    background-color: #ffffff;
+    background-color: var(--background-color);
     border-radius: 8px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     padding: 2.5rem;
@@ -297,17 +355,17 @@ li:hover {
 }
 
 .user-management-th {
-    color: white;
-    background-color: #5c6bc0;
+    color: var(--table-header-text-color);
+    background-color: var(--table-header-bg-color);
     font-size: 1.1rem;
 }
 
 .user-management-tr:hover {
-    background-color: #f5f5f5;
+    background-color: var(--table-row-hover-bg-color);
 }
 
 .user-management-table tr:nth-child(even) {
-    background-color: #b4bffb1d ;
+    background-color: var(--form-bg-color);
 }
 
 .user-management-controls {
@@ -320,25 +378,24 @@ li:hover {
 
 .user-management-field-input {
     margin: 5px !important;
-    border: 0.5px solid #5c6bc0 !important;
+    border: 0.5px solid var(--form-input-border-color) !important;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .user-management-field-input:focus {
-    border-color: #5c6bc0;
-    box-shadow: 0 0 5px rgba(92, 107, 192, 0.5);
+    border-color: var(--form-input-focus-border-color);
+    box-shadow: 0 0 5px var(--form-input-focus-shadow-color);
     outline: none;
 }
 
 .user-management-add-form {
-    border: 1px solid #5c6bc0;
-    background-color: #b4bffb1d;
+    border: 1px solid var(--form-input-border-color);
+    background-color: var(--form-bg-color);
 }
 
 .user-management-add-title {
-    color: black
+    color: black;
 }
-
 
 .error-message {
     color: red;

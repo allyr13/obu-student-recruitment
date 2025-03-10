@@ -129,7 +129,10 @@ def upload_to_s3():
         return jsonify({"error": "No selected file", "status": 500})
 
     if prefix != '':
-        prefix = prefix + "/"
+        if prefix == "/root":
+            prefix = '' # Avoid double referencing root prefix
+        else:
+            prefix = prefix + "/"
 
     try:
         s3_client.upload_fileobj(file, S3_BUCKET_NAME, f"{get_config("root_dir")}/{prefix}{file.filename}")

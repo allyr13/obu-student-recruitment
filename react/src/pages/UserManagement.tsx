@@ -120,6 +120,7 @@ const UserManagement = () => {
   };
 
   return (
+    <div /* className="old-color-scheme" */>
     <div className="user-management-container">
       {!isAuthenticated ? (
         <LoginForm onSubmit={handlePasswordSubmit} error={error} />
@@ -168,6 +169,7 @@ const UserManagement = () => {
           {error && <p className="error-message">{error}</p>}
         </div>
       )}
+    </div>
     </div>
   );
 };

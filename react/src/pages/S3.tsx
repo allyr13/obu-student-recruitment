@@ -106,6 +106,7 @@ const S3FileManager = () => {
   };
 
   return (
+    <div /* className="old-color-scheme" */>
     <div className="s3-file-manager">
       {!isAuthenticated ? (
         <AuthForm onLoginSuccess={handleLoginSuccess} />
@@ -153,6 +154,7 @@ const S3FileManager = () => {
           </div>
         </>
       )}
+    </div>
     </div>
   );
 };
