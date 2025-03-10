@@ -1,25 +1,24 @@
 import pickle
 import pandas as pd
 import numpy as np
+import os
+from dotenv import load_dotenv
 
-chosen_model = int(input("Select a prediction model to use (enter the associated number):\n"
-              "1: AdaBoost Model\n"
-              "2: Decision Tree Model\n"
-              "3: Logistic Regression Model\n"
-              "4: XGBoost Model\n"))
+load_dotenv()
+chosen_model = os.getenv("PREDICTION_MODEL")
 
 match chosen_model:
-    case 1:
+    case "AdaBoost":
         model_path = "../models/adaboost_model.pkl"
-    case 2:
+    case "Decision_Tree":
         model_path = "../models/dtree_model.pkl"
-    case 3:
+    case "Logistic_Regression":
         model_path = "../models/logreg_model.pkl"
-    case 4:
+    case "XGBoost":
         model_path = "../models/xgb_model.pkl"
 
 
-f = open(model_path, "rb") #TODO: load different models as needed/specified
+f = open(model_path, "rb")
 model = pickle.load(f)
 
 ## Input: A one-hot encoded Pandas dataframe
