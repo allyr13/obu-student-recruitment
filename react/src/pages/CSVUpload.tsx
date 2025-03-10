@@ -130,7 +130,6 @@ const FileUpload: React.FC = () => {
             UploadService.upload(currentFile, (event: any) => {
             }).then((response) => {
                 try {
-                    // Has to be 'data.data' because of route call method using 'UploadService.upload'
                     const predictionsObj = response.data.data;
 
                     setMessage(response.data.message);
