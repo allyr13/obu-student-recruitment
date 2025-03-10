@@ -119,7 +119,7 @@ const StudentForm: React.FC = () => {
                 body: formDataToSend,
             });
             const result = await response.json();
-            const predictionsObj = result.data.Prediction
+            const predictionsObj = result.data;
 
             if (!response.ok) {
                 console.error(result.error);
