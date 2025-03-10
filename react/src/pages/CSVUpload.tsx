@@ -71,7 +71,6 @@ const FileUpload: React.FC = () => {
                     
                     const requiredColumns = Object.keys(reference_dict);
                     const headers = Object.keys(data[0]);
-                    console.log("Headers:", headers);
 
                     if (!Array.isArray(headers)) {
                         setMessage("Invalid CSV format.");
@@ -131,8 +130,7 @@ const FileUpload: React.FC = () => {
             UploadService.upload(currentFile, (event: any) => {
             }).then((response) => {
                 try {
-                    // Has to be 'data.data' because of route call method using 'UploadService.upload'
-                    const predictionsObj = response.data.data.Prediction;
+                    const predictionsObj = response.data.data;
 
                     setMessage(response.data.message);
                     navigate('/table', {state: {data: transformedData, prediction: predictionsObj}});
