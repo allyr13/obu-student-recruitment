@@ -74,6 +74,36 @@ const InformUser: React.FC = () => {
     setExpandedRows((prev) => ({ ...prev, [studentId]: !prev[studentId] }));
   };
 
+  const downloadCSV = () => {
+    if (!data || Object.keys(data).length === 0) return;
+
+    // Get Headers from first row
+    const headers = ["Student ID", ...Object.keys(data[Object.keys(data)[0]])];
+    
+    // Convert data to rows
+    const rows = Object.entries(data).map(([studentId, details]) => [
+      studentId,
+      ...Object.values(details),
+    ]);
+
+    // Convert to CSV format
+    const csvContent =
+    "data:text/csv;charset=utf-8,\ufeff" + 
+        [headers.join(","),
+        ...rows.map(row => 
+            row.map(field => `"${(field ?? "").toString().replace(/"/g, '""')}"`).join(","))
+        ].join("\n");
+
+    // Create a download link
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "student_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
@@ -147,6 +177,7 @@ const InformUser: React.FC = () => {
           })}
         </tbody>
       </table>
+      <button onClick={downloadCSV}>Download CSV</button>
     </div>
   );
 };
