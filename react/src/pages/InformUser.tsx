@@ -110,16 +110,16 @@ const InformUser: React.FC = () => {
 
   return (
     <div id="tableContainer">
-      <h3>Student Prediction Data</h3>
+      <h3 className='main-title'>Student Prediction Data</h3>
       <h4 id='prediction-err-message'>{predictionMessage}</h4>
       <table id="mainTable">
         <thead>
           <tr>
-            <th>Student ID</th>
-            <th>Prediction</th>
+            <th className="user-management-th">Student ID</th>
+            <th className="user-management-th">Prediction</th>
             {/* Display other columns from config's default_display */}
             {defaultDisplayColumns.map((col) => (
-              <th key={col}>{col}</th>
+              <th className="user-management-th"key={col}>{col}</th>
             ))}
           </tr>
         </thead>
@@ -177,7 +177,9 @@ const InformUser: React.FC = () => {
           })}
         </tbody>
       </table>
-      <button onClick={downloadCSV}>Download CSV</button>
+      <div className='download-csv-button-div'>
+        <button className='action-button' onClick={downloadCSV}>Download CSV</button>
+      </div>
     </div>
   );
 };

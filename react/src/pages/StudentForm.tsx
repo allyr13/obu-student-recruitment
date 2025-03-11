@@ -151,7 +151,8 @@ const StudentForm: React.FC = () => {
 
 
     return (
-        <form onSubmit={handleSubmit}>
+        <div>
+        <form className="form" onSubmit={handleSubmit}>
             {/* State */}
             <label>State:</label>
             <select
@@ -1123,8 +1124,9 @@ const StudentForm: React.FC = () => {
             <br />
 
             {/* Submit Button */}
-            <button type="submit">Submit</button>
+            <button className='action-button' type="submit">Submit</button>
         </form>
+        </div>
     );
 };
 
