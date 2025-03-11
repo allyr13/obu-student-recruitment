@@ -135,6 +135,8 @@ def upload_to_s3():
             prefix = '' # Avoid double referencing root prefix
         else:
             prefix = prefix + "/"
+            # TODO: Once react sets a specific folder (if there is one), 
+            # make sure to add that specific folder path after the user's prefix
 
     try:
         if (global_upload == "True"):

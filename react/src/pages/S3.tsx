@@ -40,6 +40,11 @@ const S3FileManager = () => {
     setUserPrefix('');
   };
 
+  const handleFolderUpload = () => {
+    // TODO: Decide how to specify what folder to upload to
+    uploadFileToS3('False');
+    };
+
   const handlePrefixUpload = () => {
     uploadFileToS3('False');
     };
@@ -82,18 +87,24 @@ const S3FileManager = () => {
 
   const downloadFileFromS3 = async (fileName: string) => {
     try {
-      const response = await axios.get(`/api/download_from_s3?filename=${fileName}`, { responseType: 'blob' });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-      setMessage(`File downloaded successfully: ${fileName}`);
+      const response = await axios.get(`/api/download_from_s3?filename=${fileName}`);
+      
+      if (response.data?.url) {
+        const link = document.createElement('a');
+        link.href = response.data.url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        setMessage(`File downloaded successfully: ${fileName}`);
+      } else {
+        throw new Error("Failed to get download URL");
+      }
     } catch (error) {
       setMessage('Error downloading file: ' + error.message);
     }
-  };
+    };
 
   const deleteFileFromS3 = async (fileName: string) => {
     const confirmed = window.confirm(`Are you sure you want to delete the file: ${fileName}?`);
@@ -134,9 +145,16 @@ const S3FileManager = () => {
           <div>
             <h2>Upload File</h2>
             <input type="file" onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)} />
+            <div className='upload-folder'>
+                {/* TODO: These folders should be gotten dynamically depending on what folders exist */}
+                <button className="small-upload" onClick={handleFolderUpload}>Base Dir</button>
+                <button className="small-upload" onClick={handleFolderUpload}>Folder1</button>
+                <button className="small-upload" onClick={handleFolderUpload}>Folder2</button>
+                <button className="global-upload" onClick={handleGlobalUpload}>Global Upload</button>
+                {/* TODO: Add an option to create and delete folders */}
+            </div>
             <div className='upload-div'>
                 <button className="action-button" onClick={handlePrefixUpload}>Upload</button>
-                <button className="global-upload" onClick={handleGlobalUpload}>Global Upload</button>
             </div>
           </div>
 

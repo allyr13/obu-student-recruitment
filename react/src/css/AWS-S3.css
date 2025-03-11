@@ -141,7 +141,7 @@ p {
     display: flex;
 }
 
-.action-button, .global-upload {
+.action-button, .global-upload, .small-upload {
     background-color: var(--primary-color);
     color: #fff;
     border: none;
@@ -153,7 +153,7 @@ p {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.action-button:hover, .global-upload:hover {
+.action-button:hover, .global-upload:hover, .small-upload:hover {
     background-color: var(--primary-hover-color);
     transform: scale(1.05);
 }
@@ -161,6 +161,21 @@ p {
 .global-upload {
     max-width: fit-content;
     margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.upload-folder {
+    display: flex;
+    justify-content: center;
+}
+
+.small-upload {
+    padding: 15px;
+    max-width: fit-content;
+    max-height: fit-content;
+    margin-bottom: 5px;
+    margin-left: 2.5px;
+    margin-right: 2.5px;
 }
 
 input[type="file"],

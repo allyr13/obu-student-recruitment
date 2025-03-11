@@ -1,4 +1,33 @@
 # Data Flow and System Interaction
+## Note: 
+We may need to add 
+```json
+"AWS": "arn:aws:iam::YOUR_ACCOUNT_ID:role/s3-user"
+```
+To the S3 bucket's `Bucket policy` under `Permissions` for the bucket, then have Dr. Darr create an `s3-user` role for us. 
+
+Possible IAM role
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::your-bucket-name",
+                "arn:aws:s3:::your-bucket-name/*"
+            ]
+        }
+    ]
+}
+
+```
 
 ## Overview
 This system consists of three main components: the **S3 Bucket**, the **User Management Table in DynamoDB**, and the **User Interface** that allows file upload/download actions based on the user's prefix. Below is a conceptual breakdown of how these components interact with each other:
