@@ -5,10 +5,12 @@ from processing.data_processing import get_prediction, get_results_json, get_tab
 import pandas as pd
 import json
 from flask import render_template
-
+from s3_routes import s3_bp
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
+app.register_blueprint(s3_bp)
 
 class tableSave:
     table_data = None
