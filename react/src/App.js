@@ -12,18 +12,8 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route 
-            path="/" 
-            element={
-              <>
-                <Header /> 
-                <StudentForm /> 
-                <CSVUpload /> 
-              </>
-            } 
-          />
+          <Route path="/" element={<S3/>} />
           <Route path="/table" element={<InformUser />} />
-          <Route path="/s3" element={<S3 />} />
           <Route path="/user-management" element={<UserManagement />} />
         </Routes>
       </div>
