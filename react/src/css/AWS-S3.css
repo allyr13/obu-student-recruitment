@@ -141,6 +141,12 @@ p {
     display: flex;
 }
 
+.download-csv-button-div {
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+}
+
 .action-button, .global-upload, .small-upload {
     background-color: var(--primary-color);
     color: #fff;
@@ -340,7 +346,7 @@ li:hover {
     text-align: center;
 }
 
-.user-management-main-title {
+.main-title {
     text-align: center;
     color: #333;
 }
