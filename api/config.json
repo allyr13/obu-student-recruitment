@@ -3,5 +3,6 @@
     "port": 5555,
     "admin_password": "obuAdmin",
     "table_name": "stu-rec-user-access-table",
-    "root_dir": "/root"
+    "root_dir": "/root",
+    "predict_model": "XGBoost"
 }

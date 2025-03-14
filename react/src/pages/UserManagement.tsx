@@ -126,7 +126,7 @@ const UserManagement = () => {
         <LoginForm onSubmit={handlePasswordSubmit} error={error} />
       ) : (
         <div>
-          <h2 className="user-management-main-title">Manage User Access Credentials</h2>
+          <h2 className="main-title">Manage User Access Credentials</h2>
           <button className="logout-button" onClick={handleLogout}>Sign Out</button>
           {message && <p className="message">{message}</p>}
           <table className="user-management-table">

@@ -34,6 +34,13 @@ There are four models as follows:
 - eXtreme Gradient Boosting
 
 ### Running The Model
+
+To use a specific prediction model, replace the `predict_model` value in [config.json](api/config.json) to EXACTLY one of the following options:
+- AdaBoost
+- Logarithmic_Regression
+- Decision_Tree
+- XGBoost
+
 To run a model prediction you must first unpickle the model using the following code:
 ```python
 with open("FILENAME", "rb") as f:
