@@ -15,6 +15,9 @@ function App() {
           <Route path="/" element={<S3/>} />
           <Route path="/table" element={<InformUser />} />
           <Route path="/user-management" element={<UserManagement />} />
+          
+          <Route path="/csv-upload" element={<CSVUpload />
+          } /> {/* This url is for development purposes at this time*/}
         </Routes>
       </div>
     </Router>

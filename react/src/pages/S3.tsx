@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../css/AWS-S3.css';
 import { FaClipboard, FaDownload, FaTrash } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
+import CSVUpload from './CSVUpload.tsx'; 
 
 const S3FileManager = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -77,8 +78,19 @@ const S3FileManager = () => {
 
   const listS3Files = async () => {
     try {
+      console.log("Fecthing files from S3 bucket . . . ")
+      const fileList: string[] = [];
       const response = await axios.get(`/api/list_s3_files?prefix=${userPrefix}`);
-      setFilesList(response.data.files);
+      for (let file of response.data.files) {
+        let file_names = file.split('/');
+        file = file_names[file_names.length - 1]
+        if (file_names[file_names.length - 2] == 'global') {
+          file = "(global) " + file_names[file_names.length - 1]
+        }
+        fileList.push(file);
+        console.log(file);
+      }
+      setFilesList(fileList);
       setMessage('Files fetched successfully.');
     } catch (error) {
       setMessage('Error fetching files: ' + error.message);
