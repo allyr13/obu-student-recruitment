@@ -55,6 +55,30 @@ def add_folder():
 
     except ClientError as e:
         return jsonify({'message': str(e), 'status': 'error'}), 500
+    
+
+@s3_bp.route('/api/get_users_folders', methods=['GET'])
+def get_users_folders():
+    try:
+        # TODO: These have tpo be gotten dynamically through the userID and userPrefix elements set in react upon login.
+        user_id = 'Simon'
+        user_prefix = 'simon'
+
+        table_name = get_config("table_name")
+        table = DYNAMO_DB.Table(table_name)
+
+        response = table.get_item(Key={'User_ID': user_id, 'User_Prefix': user_prefix})
+
+        if 'Item' not in response:
+            return jsonify({"error": "User not found", "status": 404})
+
+        folders = response['Item'].get('Folders', [])
+
+        return jsonify({"folders": folders, "status": 200})
+
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
+
 
 
 @s3_bp.route('/api/delete_user', methods=['DELETE'])
