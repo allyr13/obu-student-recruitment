@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/AWS-S3.css';
-import { FaClipboard, FaDownload, FaTrash } from 'react-icons/fa';
+import { FaClipboard, FaDownload, FaTrash, FaTable } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
+import { useNavigate } from 'react-router-dom';
 
 const S3FileManager = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -118,7 +119,121 @@ const S3FileManager = () => {
       }
     }
   };
+  
+  const navigate = useNavigate();
 
+  const showTable = async (fileName: string): Promise<File | null> => {
+  try {
+    // Fetch the file from the server (S3)
+    const response = await axios.get(`/api/get_file?filename=${fileName}`, {
+      responseType: 'json',  // Ensure the response is in JSON format
+    });
+
+    // Log the response to verify the structure
+    console.log('File fetched successfully:', response);
+
+    // Ensure that the file field contains CSV data
+    if (!response.data || !response.data.file) {
+      console.error('No CSV data returned from the API');
+      return null;
+    }
+
+    // Extract CSV data from the JSON response
+    const csvContent = response.data.file;
+    console.log('Extracted CSV content:', csvContent);  // Log CSV content
+
+    // const jsonObject = csv_to_json(csvContent)
+    processDataAndSendFile(csvContent);
+
+    // Return the CSV content as a Blob to process it
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const file = new File([blob], fileName, { type: 'text/csv' });
+
+    return file;
+  } catch (error) {
+    console.error('Error fetching file from S3:', error);
+    return null; // Return null if something goes wrong
+  }
+};
+
+const processDataAndSendFile = async (tableData: string) => {
+    const jsonData = csv_to_json(tableData);
+    const csvBlob = new Blob([tableData], { type: 'text/csv' });
+    const formData = new FormData();
+    formData.append('file', csvBlob, 'data.csv');  // 'file' is the expected field name for the backend
+
+    console.log('table data: ' + tableData)
+    console.log('formData:' + formData)
+
+    // Send the file to the backend using 'fetch'
+    const response = await fetch('/api/load_data', {
+      method: 'POST',
+      body: formData,  // Send as FormData (multipart/form-data)
+    });
+
+    const result = await response.json();
+    console.log('results:' + JSON.stringify(result))
+    const predictionsObj = result.data; // Assuming the backend sends predictions
+
+    if (!response.ok) {
+      console.error('Error:', result.error);
+      alert(`Error: ${result.error}`);
+      return;
+    }
+
+    console.log('Predictions:', predictionsObj);
+    navigate('/table', { state: { data: jsonData, prediction: predictionsObj } });
+
+}
+
+const csv_to_json = (csvString: string): object[] => {
+  // Split the CSV string into lines
+  const lines = csvString.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
+  if (lines.length === 0) {
+    throw new Error('CSV content is empty');
+  }
+
+  // The first line contains headers
+  const headers = lines[0].split(',').map(header => header.trim());
+
+  // Regex to handle quoted values with commas inside them
+  const regex = new RegExp(
+    `"([^"]*)"|([^",]+)`, // Match quoted values or unquoted values
+    'g'
+  );
+
+  // Convert each line (after the first header line) into a JSON object
+  const jsonResult = lines.slice(1).map(line => {
+    const values: string[] = [];
+    let match;
+
+    // Use regex to match values, handling commas inside quotes
+    while ((match = regex.exec(line)) !== null) {
+      // If the value is quoted, use the first capture group; otherwise, use the second
+      values.push(match[1] || match[2]);
+    }
+
+    // Check if the number of values matches the headers length
+    if (values.length !== headers.length) {
+      console.warn('Row has different number of columns than the header:', line);
+    }
+
+    // Create a JSON object for this row
+    const jsonObject: { [key: string]: string } = {};
+
+    // Map the values to their respective headers
+    headers.forEach((header, index) => {
+      jsonObject[header] = values[index] || ''; // Use empty string for missing values
+    });
+
+    return jsonObject;
+  });
+
+  return jsonResult;
+};
+
+  
   const copyToClipboard = (fileName: string) => {
     navigator.clipboard.writeText(fileName)
       .then(() => setMessage(`File name "${fileName}" copied to clipboard!`))
@@ -166,6 +281,9 @@ const S3FileManager = () => {
                 filesList.map((file, index) => (
                   <li key={index} className={`file-item ${deletedFiles.includes(file) ? 'deleted' : ''}`}>
                     <span className="file-name">{file}</span>
+                    <button className="icon-button" onClick={() => showTable(file)} disabled={deletedFiles.includes(file)}>
+                      <FaTable />
+                    </button>
                     <button className="icon-button" onClick={() => copyToClipboard(file)} disabled={deletedFiles.includes(file)}>
                       <FaClipboard />
                     </button>

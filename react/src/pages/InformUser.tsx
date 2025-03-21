@@ -16,44 +16,100 @@ const InformUser: React.FC = () => {
 
   const location = useLocation();
   useEffect(() => {
-    const fetchData = async () => {
-      try {
+    const tableData = location.state.data;
+    if (Array.isArray(tableData)) {
+        arrayDataFetch();
+    }
+    else{
+        jsonDataFetch();
+    }
+  }, []);
+
+  const jsonDataFetch = async () => {
+        try {
+          const tableData = location.state.data;
+          const predictions = location.state.prediction;
+  
+          if (predictions === undefined) {
+            setPredictionMessage('Prediction(s) not recieved');
+          } else {
+            tableData['Prediction'] = predictions;
+          }
+  
+            const transformedData: TransformedData = {};
+  
+            const studentIds = tableData[primary_key_string] || {};
+  
+            Object.entries(studentIds as Record<string, string>).forEach(([index, studentId]) => {
+                if (!transformedData[studentId]) {
+                    transformedData[studentId] = {};
+                }
+  
+                for (const [key, values] of Object.entries(tableData as Record<string, Record<string, string | number>>)) {
+                  if (key !== primary_key_string && values[index] !== undefined) {
+                      transformedData[studentId][key] = values[index];
+                  }
+                }
+            });
+  
+            setData(transformedData);
+  
+        } catch (err) {
+          console.error('Error fetching data:', err);
+        } finally {
+          setLoading(false);
+        }
+  }
+
+  const arrayDataFetch  = async () => {
+    try {
         const tableData = location.state.data;
         const predictions = location.state.prediction;
-
-        if (predictions === undefined) {
-          setPredictionMessage('Prediction(s) not recieved');
+    
+        console.log('table data in inform user: ' + JSON.stringify(tableData));
+        console.log('prediction in inform user: ' + JSON.stringify(predictions));
+    
+        if (predictions === undefined || Object.keys(predictions).length === 0) {
+          setPredictionMessage('Prediction(s) not received');
         } else {
-          tableData['Prediction'] = predictions;
-        }
-
-          const transformedData: TransformedData = {};
-
-          const studentIds = tableData[primary_key_string] || {};
-
-          Object.entries(studentIds as Record<string, string>).forEach(([index, studentId]) => {
-              if (!transformedData[studentId]) {
-                  transformedData[studentId] = {};
-              }
-
-              for (const [key, values] of Object.entries(tableData as Record<string, Record<string, string | number>>)) {
-                if (key !== primary_key_string && values[index] !== undefined) {
-                    transformedData[studentId][key] = values[index];
-                }
-              }
+          // Assign predictions to each student in the tableData
+          tableData.forEach((studentData, index) => {
+            const studentId = studentData.studentIDs;  // Assuming studentId is unique per student
+            if (predictions[index] !== undefined) {
+              studentData['Prediction'] = predictions[index];  // Assign prediction
+            }
           });
-
-          setData(transformedData);
-
-      } catch (err) {
-        console.error('Error fetching data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+        }
+    
+        // Initialize transformedData object
+        const transformedData: TransformedData = {};
+    
+        // Iterate over each student in tableData
+        tableData.forEach((student) => {
+          const studentId = student.studentIDs;  // Get student ID
+          if (studentId) {
+            transformedData[studentId] = {};
+    
+            // Iterate over each key-value pair in the student object and add it to transformedData
+            Object.entries(student).forEach(([key, value]) => {
+              if (key !== "studentIDs") {  // Avoid studentIDs in transformed data
+                transformedData[studentId][key] = value as string | number;  // Ensure the value is either string or number
+              }
+            });
+          }
+        });
+    
+        console.log('transformed data: ' + JSON.stringify(transformedData));
+        setData(transformedData);
+    
+      
+    
+    } catch (err) {
+      console.error('Error fetching data:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   // Fetch config to set default display columns
   useEffect(() => {
