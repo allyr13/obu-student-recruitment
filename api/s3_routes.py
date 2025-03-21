@@ -219,3 +219,19 @@ def use_pre_signed_url(action_type, file_name, exp_time=3600):
         ExpiresIn=exp_time  # Default 1 hour expiration
     )
     return presigned_url
+
+@s3_bp.route('/api/create_folder_in_s3', methods=['POST'])
+def create_folder_in_s3():
+    try:
+        data = request.get_json()
+        folder_key = "/root"
+        folder_key += data.get('folderKey')
+        if not folder_key:
+            return jsonify({"error": "folderKey not provided", "status": 500})
+        if not folder_key.endswith('/'):
+            folder_key += '/'
+        s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=folder_key, Body=b'')
+        print(folder_key)
+        return jsonify({"message": f"Folder '{folder_key}' created successfully.", "status": 200})
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})

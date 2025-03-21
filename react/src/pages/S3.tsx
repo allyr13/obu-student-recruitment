@@ -14,6 +14,7 @@ const S3FileManager = () => {
   const [userID, setUserID] = useState('');
   const [folderList, setFolderList] = useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string>("");
+  const [newFolderName, setNewFolderName] = useState<string>("");
   
   useEffect(() => {
     const storedAuth = localStorage.getItem("isAuthenticated");
@@ -150,7 +151,6 @@ const S3FileManager = () => {
       axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
         .then((response) => {
           const files: string[] = response.data.files;
-          // Extract unique folders from the S3 keys.
           const folders = Array.from(new Set(
             files
               .map(key => {
@@ -159,7 +159,6 @@ const S3FileManager = () => {
                   cleanKey = cleanKey.replace("/root/", "");
                 }
                 const parts = cleanKey.split("/");
-                // Return folder path if file is within a folder.
                 return parts.length > 1 ? parts.slice(0, parts.length - 1).join("/") : "";
               })
               .filter(folder => folder !== "")
@@ -174,6 +173,51 @@ const S3FileManager = () => {
         });
     }
   }, [userPrefix, selectedFolder]);
+
+  const createFolderInS3 = async () => {
+    if (!newFolderName.trim()) {
+      setMessage("Folder name cannot be empty.");
+      return;
+    }
+    let prefix = userPrefix;
+    if (selectedFolder) {
+      prefix = `/${selectedFolder}`;
+    }
+    const folderKey = `${prefix}/${newFolderName}/`;
+    console.log("Creating folder with key:", folderKey);
+    try {
+      const response = await axios.post(
+        '/api/create_folder_in_s3',
+        { folderKey },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      setMessage(`Folder "${newFolderName}" created successfully.`);
+      setNewFolderName('');
+      // Refresh the folder list after creation.
+      axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
+        .then((response) => {
+          const files: string[] = response.data.files;
+          const folders = Array.from(new Set(
+            files
+              .map(key => {
+                let cleanKey = key;
+                if (cleanKey.startsWith("/root/")) {
+                  cleanKey = cleanKey.replace("/root/", "");
+                }
+                const parts = cleanKey.split("/");
+                return parts.length > 1 ? parts.slice(0, parts.length - 1).join("/") : "";
+              })
+              .filter(folder => folder !== "")
+          ));
+          setFolderList(folders);
+        })
+        .catch((error) => {
+          setMessage("Error refreshing folders: " + error.message);
+        });
+    } catch (error: any) {
+      setMessage('Error creating folder: ' + error.message);
+    }
+  };
 
   return (
     <div /* className="old-color-scheme" */>
@@ -206,6 +250,17 @@ const S3FileManager = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div style={{ marginTop: "1rem" }}>
+                <h3>Create New Folder</h3>
+                <input
+                  type="text"
+                  placeholder="Enter folder name"
+                  value={newFolderName}
+                  onChange={(e) => setNewFolderName(e.target.value)}
+                />
+                <button onClick={createFolderInS3}>Create Folder</button>
               </div>
               
               <input
