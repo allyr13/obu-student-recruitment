@@ -12,6 +12,7 @@ const S3FileManager = () => {
   const [userPrefix, setUserPrefix] = useState('');
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
   const [userID, setUserID] = useState('');
+  const [folderName, setFolderName] = useState("");
   
   useEffect(() => {
     const storedAuth = localStorage.getItem("isAuthenticated");
@@ -119,6 +120,37 @@ const S3FileManager = () => {
     }
   };
 
+
+    const uploadFolder = async () => {
+        if (!folderName.trim()) {
+            alert("Please enter a folder name.");
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/add_folder", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    User_ID: userID,
+                    User_Prefix: userPrefix,
+                    New_Folder: folderName
+                }),
+            });
+
+            const data = await response.json();
+            if (data.status === "success") {
+                alert("Folder added successfully!");
+                setFolderName("");
+            } else {
+                alert("Error: " + data.message);
+            }
+        } catch (error) {
+            console.error("Error adding folder:", error);
+            alert("An error occurred while adding the folder.");
+        }
+    };
+
   const copyToClipboard = (fileName: string) => {
     navigator.clipboard.writeText(fileName)
       .then(() => setMessage(`File name "${fileName}" copied to clipboard!`))
@@ -147,10 +179,18 @@ const S3FileManager = () => {
             <input type="file" onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)} />
             <div className='upload-folder'>
                 {/* TODO: These folders should be gotten dynamically depending on what folders exist */}
-                <button className="small-upload" onClick={handleFolderUpload}>Base Dir</button>
-                <button className="small-upload" onClick={handleFolderUpload}>Folder1</button>
-                <button className="small-upload" onClick={handleFolderUpload}>Folder2</button>
-                <button className="global-upload" onClick={handleGlobalUpload}>Global Upload</button>
+                <button className="small-upload" onClick={handleGlobalUpload}>Global Upload</button>
+                <div>
+                    <input
+                    type="text"
+                    value={folderName}
+                    onChange={(e) => setFolderName(e.target.value)}
+                    placeholder="Enter folder name"
+                />
+                <button className="small-upload" onClick={uploadFolder}>
+                    Make New Folder
+                </button>
+                </div>
                 {/* TODO: Add an option to create and delete folders */}
             </div>
             <div className='upload-div'>

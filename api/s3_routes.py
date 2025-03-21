@@ -32,6 +32,29 @@ def add_user():
 
     except ClientError as e:
         return jsonify({'message': str(e), 'status': 'error'}), 500
+    
+@s3_bp.route('/api/add_folder', methods=['POST'])
+def add_folder():
+    try:
+        data = request.json
+        user_id = data['User_ID']
+        user_prefix = data['User_Prefix']
+        new_folder = data['New_Folder']
+
+        response = table.update_item(
+            Key={'User_ID': user_id, 'User_Prefix': user_prefix},
+            UpdateExpression="SET Folders = list_append(if_not_exists(Folders, :empty_list), :new_folder)",
+            ExpressionAttributeValues={
+                ':new_folder': [new_folder],
+                ':empty_list': []
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+
+        return jsonify({'message': 'Folder added successfully', 'status': 'success', 'updated_folders': response.get('Attributes', {}).get('Folders', [])}), 200
+
+    except ClientError as e:
+        return jsonify({'message': str(e), 'status': 'error'}), 500
 
 
 @s3_bp.route('/api/delete_user', methods=['DELETE'])
