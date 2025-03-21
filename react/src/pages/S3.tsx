@@ -43,6 +43,12 @@ const S3FileManager = () => {
     setUserPrefix('');
   };
 
+  const handleFolderSelect = (e) => {
+    const folder = e.target.value;
+    setSelectedFolder(folder)
+    setMessage(`folder selected ${folder}`)
+  }
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const triggerFileSelect = (globalFlag: string) => {
@@ -237,12 +243,16 @@ const S3FileManager = () => {
           {message && <p className="message">{message}</p>}
 
           <div>
-              <div>
-                <label htmlFor="folderSelect">Choose target folder:</label>
+            <div className="folder-select-container">
+            <div className="folder-select">
+              <div className="folder-select-form"> 
+              <h3 className="header">Choose Target Folder</h3>
                 <select
                   id="folderSelect"
                   value={selectedFolder}
-                  onChange={(e) => setSelectedFolder(e.target.value)}
+                  onChange={handleFolderSelect}
+                  size={5}
+                  className='folderSelect'
                 >
                   {folderList.map((folder) => (
                     <option key={folder} value={folder}>
@@ -252,15 +262,17 @@ const S3FileManager = () => {
                 </select>
               </div>
 
-              <div style={{ marginTop: "1rem" }}>
-                <h3>Create New Folder</h3>
+              <div className="folder-select-form" style={{ marginTop: "1rem" }}>
+                <h3 className="header">Create New Folder</h3>
                 <input
                   type="text"
                   placeholder="Enter folder name"
                   value={newFolderName}
                   onChange={(e) => setNewFolderName(e.target.value)}
                 />
-                <button onClick={createFolderInS3}>Create Folder</button>
+                <button className="action-button" onClick={createFolderInS3}>Create Folder</button>
+              </div>
+              </div>
               </div>
               
               <input
@@ -271,10 +283,9 @@ const S3FileManager = () => {
                 style={{ display: "none" }}
                 onChange={handleFileUpload}
               />
-              <button onClick={() => triggerFileSelect("False")}>
-                Upload Folder/File
+              <button className="action-button" onClick={() => triggerFileSelect("False")}>
+                Upload File
               </button>
-              <div>{message}</div>
             </div>
 
           <div>

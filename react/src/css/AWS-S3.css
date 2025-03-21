@@ -433,3 +433,27 @@ li:hover {
     margin-left: auto;
     margin-right: auto;
 }
+
+.folder-select-container {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.folder-select {
+    align-items: center;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.folder-select-form {
+    padding: 10px;
+}
+
+.folderSelect {
+    scroll-behavior: smooth;
+    overflow-y: auto !important;
+    overflow: scroll !important;
+}
