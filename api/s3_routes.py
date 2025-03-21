@@ -60,7 +60,9 @@ def add_folder():
 @s3_bp.route('/api/get_users_folders', methods=['GET'])
 def get_users_folders():
     try:
-        # TODO: These have tpo be gotten dynamically through the userID and userPrefix elements set in react upon login.
+        # TODO: These have tpo be gotten dynamically through the userID and userPrefix 
+        # elements set in react upon login.
+        # Change route to POST when these are dynamically passed to the route
         user_id = 'Simon'
         user_prefix = 'simon'
 
