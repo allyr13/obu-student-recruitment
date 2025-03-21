@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../css/AWS-S3.css';
 import { FaClipboard, FaDownload, FaTrash } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
+import { useNavigate } from 'react-router-dom';
 
 const S3FileManager = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -40,6 +41,8 @@ const S3FileManager = () => {
     setUserPrefix('');
   };
 
+  const navigate = useNavigate();
+
   const handleFolderUpload = () => {
     // TODO: Decide how to specify what folder to upload to
     uploadFileToS3('False');
@@ -52,6 +55,10 @@ const S3FileManager = () => {
   const handleGlobalUpload = () => {
         uploadFileToS3('True');
     };
+
+  const uploadFormData = () => {
+    navigate('/upload-form')
+  }
   
   const uploadFileToS3 = async (globalFlag: string) => {
     if (!file) {
@@ -155,6 +162,13 @@ const S3FileManager = () => {
             </div>
             <div className='upload-div'>
                 <button className="action-button" onClick={handlePrefixUpload}>Upload</button>
+            </div>
+          </div>
+
+          <div>
+            <h2>Submit Form Data</h2>
+            <div className='upload-div'>
+                <button className="action-button" onClick={uploadFormData}>Submit Form Data</button>
             </div>
           </div>
 
