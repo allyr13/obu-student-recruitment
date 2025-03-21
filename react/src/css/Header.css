@@ -12,6 +12,8 @@
   
   .header p {
     font-size: 1.2em;
+    margin-left: auto;
+    margin-right: auto;
     color: #4caf50; /* Medium green for subheading */
   }
   

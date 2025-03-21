@@ -6,6 +6,12 @@ import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  /* TODO: Remove these "<React.StrictMode>" tags to stop extra renders & runs.  
+   This prevents issues like double console logging.  
+   This link provides more info about Strict Mode:  
+   https://react.dev/reference/react/StrictMode  
+   Strict Mode is meant for developers; remove it for production. */
+
   <React.StrictMode>
     <App />
   </React.StrictMode>

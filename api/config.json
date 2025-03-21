@@ -1,4 +1,7 @@
 {
     "host": "127.0.0.1",
-    "port": 5555
+    "port": 5555,
+    "admin_password": "obuAdmin",
+    "table_name": "stu-rec-user-access-table",
+    "root_dir": "/root"
 }

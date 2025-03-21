@@ -5,12 +5,25 @@ from processing.data_processing import get_prediction, get_results_json, get_tab
 import pandas as pd
 import json
 from flask import render_template
-
+from s3_routes import s3_bp
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
-table_data = []
+app.register_blueprint(s3_bp)
+
+class tableSave:
+    table_data = None
+
+    def getData(self):
+        print("Getting table data")
+        return self.table_data
+
+    def setData(self, data):
+        print("Setting table data")
+        self.table_data = data
+
+TableClass = tableSave()
 
 @app.route('/')
 def home():
@@ -38,12 +51,11 @@ def upload_csv_file():
         return jsonify({"error": "Invalid File Format", "status": 500})
     
     try:
-        get_prediction(file)
+        df = get_prediction(file)
 
-        global table_data
-        table_data = json.loads(get_table_data_results())
+        TableClass.setData(json.loads(get_table_data_results()))
 
-        return jsonify({"data_results": get_results_json(), "message": "CSV file received and saved successfully", "status": 200})
+        return jsonify({"data": TableClass.getData()["Prediction"], "message": "CSV file received and saved successfully", "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
@@ -51,36 +63,40 @@ def upload_csv_file():
 @app.route('/api/test_model', methods=['GET'])
 def upload_default_form():
     try:
-        get_prediction('default_copy.csv')
+        df = get_prediction('default_copy.csv')
 
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
 
-      
 @app.route('/api/test_batch', methods=['GET'])
 def test_batch_job():
     try:
-        get_prediction('default_batch.csv')
+        df = get_prediction('default_batch.csv')
         
         return jsonify({"message": "Data was successfully one-hot-encoded", "status": 200})
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
 
 
-@app.route('/api/set_table_data', methods=['POST'])
-def set_table_data():
-    return jsonify({"message": "Data was successfully sent to table", "status": 200})
-
-
 @app.route('/api/get_table_data', methods=['GET'])
 def get_table_data():
-    print(table_data)
+    table_data = TableClass.getData()
 
-    if not table_data:
+    if table_data == None:
         return jsonify({"error": "No data available", "status": 404})
 
     return jsonify({"data": table_data, "status": 200})
+
+
+@app.route('/api/test', methods=['GET'])
+def test():
+    df = get_prediction('default_batch.csv')
+    
+    TableClass.setData(json.loads(get_table_data_results()))
+
+    return jsonify({"status": 200})
+
 
 if __name__ == '__main__':
     host = get_config("host")
