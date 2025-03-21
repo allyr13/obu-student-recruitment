@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/AWS-S3.css';
 import { FaClipboard, FaDownload, FaTrash } from 'react-icons/fa';
@@ -40,30 +40,40 @@ const S3FileManager = () => {
     setUserPrefix('');
   };
 
-  const handleFolderUpload = () => {
-    // TODO: Decide how to specify what folder to upload to
-    uploadFileToS3('False');
-    };
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handlePrefixUpload = () => {
-    uploadFileToS3('False');
-    };
-
-  const handleGlobalUpload = () => {
-        uploadFileToS3('True');
-    };
+  const triggerFileSelect = (globalFlag: string) => {
+    if (fileInputRef.current) {
+      fileInputRef.current.dataset.globalFlag = globalFlag;
+      fileInputRef.current.click();
+    }
+  };
   
-  const uploadFileToS3 = async (globalFlag: string) => {
-    if (!file) {
-      setMessage("Please select a file to upload.");
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const globalFlag = e.target.dataset.globalFlag || "False";
+      uploadFilesToS3(e.target.files, globalFlag);
+    }
+  };
+  
+  const uploadFilesToS3 = async (files: FileList, globalFlag: string) => {
+    if (!files || files.length === 0) {
+      setMessage("Please select files to upload.");
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', file);
+
+    //Get folder structure and file
+    Array.from(files).forEach((file) => {
+      const relativePath = (file as any).webkitRelativePath || file.name;
+      formData.append("file", file);
+      formData.append(`path_${file.name}`, relativePath);
+    });
+
     formData.append('prefix', userPrefix);
     formData.append('global', globalFlag);
-    console.log("Uploading file to S3 Bucket. Is global upload: ", globalFlag)
+    console.log("Uploading files to S3 Bucket. Is global upload: ", globalFlag)
 
     try {
       const response = await axios.post('/api/upload_to_s3', formData, {
@@ -143,19 +153,22 @@ const S3FileManager = () => {
           {message && <p className="message">{message}</p>}
 
           <div>
-            <h2>Upload File</h2>
-            <input type="file" onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)} />
-            <div className='upload-folder'>
-                {/* TODO: These folders should be gotten dynamically depending on what folders exist */}
-                <button className="small-upload" onClick={handleFolderUpload}>Base Dir</button>
-                <button className="small-upload" onClick={handleFolderUpload}>Folder1</button>
-                <button className="small-upload" onClick={handleFolderUpload}>Folder2</button>
-                <button className="global-upload" onClick={handleGlobalUpload}>Global Upload</button>
-                {/* TODO: Add an option to create and delete folders */}
-            </div>
-            <div className='upload-div'>
-                <button className="action-button" onClick={handlePrefixUpload}>Upload</button>
-            </div>
+            <input
+              type="file"
+              multiple
+              // Allow folder uploads. We use a type assertion for webkitdirectory.
+              {...({ webkitdirectory: "true" } as any)}
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleFileUpload}
+            />
+            <button onClick={() => triggerFileSelect("False")}>
+              Upload Folder/File to User Folder
+            </button>
+            <button onClick={() => triggerFileSelect("True")}>
+              Upload Folder/File to Global Folder
+            </button>
+            <div>{message}</div>
           </div>
 
           <div>
