@@ -3,7 +3,6 @@ import axios from 'axios';
 import '../css/AWS-S3.css';
 import { FaClipboard, FaDownload, FaTrash } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
-import CSVUpload from './CSVUpload.tsx'; 
 
 const S3FileManager = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
