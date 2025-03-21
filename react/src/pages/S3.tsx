@@ -12,6 +12,8 @@ const S3FileManager = () => {
   const [userPrefix, setUserPrefix] = useState('');
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
   const [userID, setUserID] = useState('');
+  const [folderList, setFolderList] = useState<string[]>([]);
+  const [selectedFolder, setSelectedFolder] = useState<string>("");
   
   useEffect(() => {
     const storedAuth = localStorage.getItem("isAuthenticated");
@@ -71,6 +73,14 @@ const S3FileManager = () => {
       formData.append(`path_${file.name}`, relativePath);
     });
 
+    let prefix = userPrefix;
+    if (selectedFolder) {
+      prefix += `/${selectedFolder}`;
+    }
+    if (selectedFolder == "global") {
+      prefix = "/global";
+      globalFlag = "True";
+    }
     formData.append('prefix', userPrefix);
     formData.append('global', globalFlag);
     console.log("Uploading files to S3 Bucket. Is global upload: ", globalFlag)
@@ -135,6 +145,36 @@ const S3FileManager = () => {
       .catch((error) => setMessage('Error copying to clipboard: ' + error.message));
   };
 
+  useEffect(() => {
+    if (userPrefix) {
+      axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
+        .then((response) => {
+          const files: string[] = response.data.files;
+          // Extract unique folders from the S3 keys.
+          const folders = Array.from(new Set(
+            files
+              .map(key => {
+                let cleanKey = key;
+                if (cleanKey.startsWith("/root/")) {
+                  cleanKey = cleanKey.replace("/root/", "");
+                }
+                const parts = cleanKey.split("/");
+                // Return folder path if file is within a folder.
+                return parts.length > 1 ? parts.slice(0, parts.length - 1).join("/") : "";
+              })
+              .filter(folder => folder !== "")
+          ));
+          setFolderList(folders);
+          if (folders.length > 0 && !selectedFolder) {
+            setSelectedFolder(folders[0]);
+          }
+        })
+        .catch((error) => {
+          setMessage("Error fetching folders: " + error.message);
+        });
+    }
+  }, [userPrefix, selectedFolder]);
+
   return (
     <div /* className="old-color-scheme" */>
     <div className="s3-file-manager">
@@ -153,23 +193,34 @@ const S3FileManager = () => {
           {message && <p className="message">{message}</p>}
 
           <div>
-            <input
-              type="file"
-              multiple
-              // Allow folder uploads. We use a type assertion for webkitdirectory.
-              {...({ webkitdirectory: "true" } as any)}
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              onChange={handleFileUpload}
-            />
-            <button onClick={() => triggerFileSelect("False")}>
-              Upload Folder/File to User Folder
-            </button>
-            <button onClick={() => triggerFileSelect("True")}>
-              Upload Folder/File to Global Folder
-            </button>
-            <div>{message}</div>
-          </div>
+              <div>
+                <label htmlFor="folderSelect">Choose target folder:</label>
+                <select
+                  id="folderSelect"
+                  value={selectedFolder}
+                  onChange={(e) => setSelectedFolder(e.target.value)}
+                >
+                  {folderList.map((folder) => (
+                    <option key={folder} value={folder}>
+                      {folder}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <input
+                type="file"
+                multiple
+                {...({ webkitdirectory: "true" } as any)}
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileUpload}
+              />
+              <button onClick={() => triggerFileSelect("False")}>
+                Upload Folder/File
+              </button>
+              <div>{message}</div>
+            </div>
 
           <div>
             <h2 className="list-header">List Files in S3</h2>
