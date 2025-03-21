@@ -5,7 +5,7 @@ import { FaClipboard, FaDownload, FaTrash } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
 
 const S3FileManager = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState('');
   const [filesList, setFilesList] = useState<string[]>([]);
