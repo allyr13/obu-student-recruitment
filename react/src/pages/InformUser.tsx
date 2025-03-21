@@ -24,6 +24,14 @@ const InformUser: React.FC = () => {
         if (predictions === undefined) {
           setPredictionMessage('Prediction(s) not recieved');
         } else {
+          const v1 = JSON.stringify(predictions);
+          const theValue = v1.charAt(5);
+          const intVal = Number.parseInt(theValue);
+          if (intVal == 0){
+            predictions["0"] = "No";
+          }else{
+            predictions["0"] = "Yes";
+          }
           tableData['Prediction'] = predictions;
         }
 
