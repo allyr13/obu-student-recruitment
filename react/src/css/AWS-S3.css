@@ -307,6 +307,10 @@ li:hover {
     }
 }
 
+.file-item:hover {
+    background-color: var(--table-row-hover-bg-color);
+}
+
 .file-item.deleted {
     background-color: var(--file-item-deleted-bg-color);
     color: var(--file-item-deleted-text-color);
@@ -434,3 +438,11 @@ li:hover {
     margin-left: auto;
     margin-right: auto;
 }
+
+
+.loading-text {
+    font-size: 1.2em;
+    color: var(--message-info-text-color);
+    animation: loadingDots 1.5s infinite;
+  }
+  

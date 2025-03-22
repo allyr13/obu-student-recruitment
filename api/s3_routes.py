@@ -194,6 +194,7 @@ def get_download_url():
 @s3_bp.route('/api/delete_from_s3', methods=['DELETE'])
 def delete_from_s3():
     file_name = request.args.get('filename')
+    print(f"Deleting: {file_name}")
 
     if not file_name:
         return jsonify({"error": "Filename is required", "status": 500})
