@@ -123,12 +123,12 @@ def upload_to_s3():
     if 'file' not in request.files:
         return jsonify({"error": "No file part", "status": 500})
 
-    file = request.files['file']
+    files = request.files.getlist('file')
     prefix = request.form.get('prefix', '')
     global_upload = request.form.get('global', 'None')
     print(global_upload)
 
-    if file.filename == '':
+    if not files:
         return jsonify({"error": "No selected file", "status": 500})
 
     if prefix != '':
@@ -136,16 +136,22 @@ def upload_to_s3():
             prefix = '' # Avoid double referencing root prefix
         else:
             prefix = prefix + "/"
-            # TODO: Once react sets a specific folder (if there is one), 
-            # make sure to add that specific folder path after the user's prefix
+
+    uploaded_files = []
 
     try:
-        if (global_upload == "True"):
-            s3_client.upload_fileobj(file, S3_BUCKET_NAME, f"{get_config("root_dir")}/global/{file.filename}")
-        else:
-            s3_client.upload_fileobj(file, S3_BUCKET_NAME, f"{get_config("root_dir")}/{prefix}{file.filename}")
+        for file in files:
+            if file.filename =='':
+                continue
+            relative_path = request.form.get(f'path_{file.filename}', file.filename)
+            s3_key = f"{get_config('root_dir')}/{prefix}{relative_path}"
+            if (global_upload == "True"):
+                s3_key = f"{get_config('root_dir')}/global/{relative_path}"
 
-        return jsonify({"message": "File uploaded successfully", "filename": file.filename, "status": 200})
+            s3_client.upload_fileobj(file, S3_BUCKET_NAME, s3_key)
+            uploaded_files.append(s3_key)
+
+            return jsonify({"message": "File uploaded successfully", "filename": uploaded_files, "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
@@ -241,3 +247,19 @@ def use_pre_signed_url(action_type, file_name, exp_time=3600):
         ExpiresIn=exp_time  # Default 1 hour expiration
     )
     return presigned_url
+
+@s3_bp.route('/api/create_folder_in_s3', methods=['POST'])
+def create_folder_in_s3():
+    try:
+        data = request.get_json()
+        folder_key = "/root"
+        folder_key += data.get('folderKey')
+        if not folder_key:
+            return jsonify({"error": "folderKey not provided", "status": 500})
+        if not folder_key.endswith('/'):
+            folder_key += '/'
+        s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=folder_key, Body=b'')
+        print(folder_key)
+        return jsonify({"message": f"Folder '{folder_key}' created successfully.", "status": 200})
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})

@@ -186,7 +186,6 @@ p {
 
 input[type="file"],
 input[type="text"] {
-    width: 100%;
     padding: 1rem;
     margin-top: 1rem;
     border: 1px solid var(--input-border-color);
@@ -407,7 +406,8 @@ li:hover {
 }
 
 .user-management-field-input {
-    margin: 5px !important;
+    margin-left: 40px !important;
+    max-width: 90%;
     border: 0.5px solid var(--form-input-border-color) !important;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -421,6 +421,7 @@ li:hover {
 .user-management-add-form {
     border: 1px solid var(--form-input-border-color);
     background-color: var(--form-bg-color);
+    min-width: 100%;
 }
 
 .user-management-add-title {
@@ -432,4 +433,28 @@ li:hover {
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+}
+
+.folder-select-container {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.folder-select {
+    align-items: center;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.folder-select-form {
+    padding: 10px;
+}
+
+.folderSelect {
+    scroll-behavior: smooth;
+    overflow-y: auto !important;
+    overflow: scroll !important;
 }
