@@ -46,10 +46,10 @@ const S3FileManager = () => {
 
   const navigate = useNavigate();
 
-  const handleFolderUpload = () => {
-    // TODO: Decide how to specify what folder to upload to
-    uploadFileToS3('False');
-    };
+  // const handleFolderUpload = () => {
+  //   // TODO: Decide how to specify what folder to upload to
+  //   uploadFileToS3('False');
+  //   };
   const handleFolderSelect = (e) => {
     const folder = e.target.value;
     setSelectedFolder(folder)
@@ -58,9 +58,9 @@ const S3FileManager = () => {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleGlobalUpload = () => {
-        uploadFileToS3('True');
-    };
+  // const handleGlobalUpload = () => {
+  //       uploadFileToS3('True');
+  //   };
 
   const uploadFormData = () => {
     navigate('/upload-form')
