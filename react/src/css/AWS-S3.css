@@ -412,6 +412,8 @@ li:hover {
 .user-management-field-input {
     margin-left: 40px !important;
     max-width: 90%;
+    margin-left: 40px !important;
+    max-width: 90%;
     border: 0.5px solid var(--form-input-border-color) !important;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -425,6 +427,7 @@ li:hover {
 .user-management-add-form {
     border: 1px solid var(--form-input-border-color);
     background-color: var(--form-bg-color);
+    min-width: 100%;
     min-width: 100%;
 }
 
@@ -444,5 +447,23 @@ li:hover {
     font-size: 1.2em;
     color: var(--message-info-text-color);
     animation: loadingDots 1.5s infinite;
-  }
-  
+}
+
+.folder-select {
+    align-items: center;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.folder-select-form {
+    padding: 10px;
+}
+
+.folderSelect {
+    scroll-behavior: smooth;
+    overflow-y: auto !important;
+    overflow: scroll !important;
+}

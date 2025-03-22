@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/AWS-S3.css';
 import { FaClipboard, FaDownload, FaTrash } from 'react-icons/fa';
@@ -14,7 +14,10 @@ const S3FileManager = () => {
   const [userID, setUserID] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-
+  const [folderList, setFolderList] = useState<string[]>([]);
+  const [selectedFolder, setSelectedFolder] = useState<string>("");
+  const [newFolderName, setNewFolderName] = useState<string>("");
+  
   useEffect(() => {
     const storedAuth = localStorage.getItem("isAuthenticated");
     const storedPrefix = localStorage.getItem("User_Prefix");
@@ -42,26 +45,51 @@ const S3FileManager = () => {
     setUserPrefix('');
   };
 
-  const handleFolderUpload = () => {
-    uploadFileToS3('False');
-  };
+  const handleFolderSelect = (e) => {
+    const folder = e.target.value;
+    setSelectedFolder(folder)
+    setMessage(`folder selected ${folder}`)
+  }
 
-  const handlePrefixUpload = () => {
-    uploadFileToS3('False');
-  };
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleGlobalUpload = () => {
-    uploadFileToS3('True');
+  const triggerFileSelect = (globalFlag: string) => {
+    if (fileInputRef.current) {
+      fileInputRef.current.dataset.globalFlag = globalFlag;
+      fileInputRef.current.click();
+    }
   };
-
-  const uploadFileToS3 = async (globalFlag: string) => {
-    if (!file) {
-      setMessage("Please select a file to upload.");
+  
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const globalFlag = e.target.dataset.globalFlag || "False";
+      uploadFilesToS3(e.target.files, globalFlag);
+    }
+  };
+  
+  const uploadFilesToS3 = async (files: FileList, globalFlag: string) => {
+    if (!files || files.length === 0) {
+      setMessage("Please select files to upload.");
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', file);
+
+    //Get folder structure and file
+    Array.from(files).forEach((file) => {
+      const relativePath = (file as any).webkitRelativePath || file.name;
+      formData.append("file", file);
+      formData.append(`path_${file.name}`, relativePath);
+    });
+
+    let prefix = userPrefix;
+    if (selectedFolder) {
+      prefix += `/${selectedFolder}`;
+    }
+    if (selectedFolder == "global") {
+      prefix = "/global";
+      globalFlag = "True";
+    }
     formData.append('prefix', userPrefix);
     formData.append('global', globalFlag);
     console.log("Uploading file to S3 Bucket. Is global upload: ", globalFlag);
@@ -89,6 +117,7 @@ const S3FileManager = () => {
 
       for (let file of response.data.files) {
         let file_names = file.split('/');
+        console.log(file_names)
         let actualFileName = file_names[file_names.length - 1];
         let displayName = actualFileName;
 
@@ -98,6 +127,7 @@ const S3FileManager = () => {
             global_list.push({ displayName: globalFile, rawFileName: file });
           } else {
             displayName = file_names.slice(3).join("/");
+            console.log(displayName)
             fileList.push({ displayName, rawFileName: file });
           }
         }
@@ -109,7 +139,6 @@ const S3FileManager = () => {
       for (let global_file of global_list) {
         fileList.push(global_file);
       }
-
       setFilesList(fileList);
       setMessage('Files fetched successfully.');
     } catch (error) {
@@ -173,6 +202,79 @@ const S3FileManager = () => {
     return loadingText;
   };
 
+  useEffect(() => {
+    if (userPrefix) {
+      axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
+        .then((response) => {
+          const files: string[] = response.data.files;
+          const folders = Array.from(new Set(
+            files
+              .map(key => {
+                let cleanKey = key;
+                if (cleanKey.startsWith("/root/")) {
+                  cleanKey = cleanKey.replace("/root/", "");
+                }
+                const parts = cleanKey.split("/");
+                return parts.length > 1 ? parts.slice(0, parts.length - 1).join("/") : "";
+              })
+              .filter(folder => folder !== "")
+          ));
+          setFolderList(folders);
+          if (folders.length > 0 && !selectedFolder) {
+            setSelectedFolder(folders[0]);
+          }
+        })
+        .catch((error) => {
+          setMessage("Error fetching folders: " + error.message);
+        });
+    }
+  }, [userPrefix, selectedFolder]);
+
+  const createFolderInS3 = async () => {
+    if (!newFolderName.trim()) {
+      setMessage("Folder name cannot be empty.");
+      return;
+    }
+    let prefix = userPrefix;
+    if (selectedFolder) {
+      prefix = `/${selectedFolder}`;
+    }
+    const folderKey = `${prefix}/${newFolderName}/`;
+    console.log("Creating folder with key:", folderKey);
+    try {
+      const response = await axios.post(
+        '/api/create_folder_in_s3',
+        { folderKey },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      setMessage(`Folder "${newFolderName}" created successfully.`);
+      setNewFolderName('');
+      // Refresh the folder list after creation.
+      axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
+        .then((response) => {
+          const files: string[] = response.data.files;
+          const folders = Array.from(new Set(
+            files
+              .map(key => {
+                let cleanKey = key;
+                if (cleanKey.startsWith("/root/")) {
+                  cleanKey = cleanKey.replace("/root/", "");
+                }
+                const parts = cleanKey.split("/");
+                return parts.length > 1 ? parts.slice(0, parts.length - 1).join("/") : "";
+              })
+              .filter(folder => folder !== "")
+          ));
+          setFolderList(folders);
+        })
+        .catch((error) => {
+          setMessage("Error refreshing folders: " + error.message);
+        });
+    } catch (error: any) {
+      setMessage('Error creating folder: ' + error.message);
+    }
+  }
+
   return (
     <div className="s3-file-manager">
       {!isAuthenticated ? (
@@ -190,15 +292,50 @@ const S3FileManager = () => {
           {message && <p className="message">{message}</p>}
 
           <div>
-            <h2>Upload File</h2>
-            <input type="file" onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)} />
-            <div className='upload-folder'>
-                <button className="small-upload" onClick={handleFolderUpload}>Base Dir</button>
-                <button className="small-upload" onClick={handleFolderUpload}>Folder1</button>
-                <button className="small-upload" onClick={handleFolderUpload}>Folder2</button>
-                <button className="global-upload" onClick={handleGlobalUpload}>Global Upload</button>
+            <div className="folder-select-container">
+            <div className="folder-select">
+              <div className="folder-select-form"> 
+              <h3 className="header">Choose Target Folder</h3>
+                <select
+                  id="folderSelect"
+                  value={selectedFolder}
+                  onChange={handleFolderSelect}
+                  size={5}
+                  className='folderSelect'
+                >
+                  {folderList.map((folder) => (
+                    <option key={folder} value={folder}>
+                      {folder}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="folder-select-form" style={{ marginTop: "1rem" }}>
+                <h3 className="header">Create New Folder</h3>
+                <input
+                  type="text"
+                  placeholder="Enter folder name"
+                  value={newFolderName}
+                  onChange={(e) => setNewFolderName(e.target.value)}
+                />
+                <button className="action-button" onClick={createFolderInS3}>Create Folder</button>
+              </div>
+              </div>
+              </div>
+              
+              <input
+                type="file"
+                multiple
+                {...({ webkitdirectory: "true" } as any)}
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileUpload}
+              />
+              <button className="action-button" onClick={() => triggerFileSelect("False")}>
+                Upload File
+              </button>
             </div>
-          </div>
 
           <div>
             <h2 className="list-header">List Files in S3</h2>
