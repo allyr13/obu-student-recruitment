@@ -406,7 +406,6 @@ li:hover {
 }
 
 .user-management-field-input {
-    /* margin: 5px !important; */
     margin-left: 40px !important;
     max-width: 90%;
     border: 0.5px solid var(--form-input-border-color) !important;

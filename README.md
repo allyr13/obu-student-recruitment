@@ -61,7 +61,7 @@ The app will open in your browser.
 ---
 
 # Client-Side Information
-## Managing Users
+## Managing Users Page
 As an admin, log into the [User Management](react/src/pages/UserManagement.tsx) page at `/user-management` using the admin password. This page displays a table of user credentials.
 
 ### Admin Functions
@@ -71,13 +71,17 @@ As an admin, log into the [User Management](react/src/pages/UserManagement.tsx) 
 
 ![Add New User Form](add-new-user-form.png)
 
-## S3 Bucket
+## S3 Bucket Page
 Users can log into the [S3 bucket](react/src/pages/S3.tsx) page with their credentials. This grants access to files and folders under their specific prefix (e.g., `/user1`).
 
 ### Available Actions
 - **Upload Files**
 - **Download Files**
+- **Create New Folders**
 - **List Files**
+- **Run Predictions**
+- **Delete Files**
+- **Input Single Student Form**
 - **Access Global Storage:** Users can also upload and retrieve files under the `/global` prefix.
 
 ---
