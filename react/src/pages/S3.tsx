@@ -5,6 +5,7 @@ import { FaClipboard, FaDownload, FaTrash, FaTable } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
 import { useNavigate } from 'react-router-dom';
 
+
 const S3FileManager = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -16,6 +17,8 @@ const S3FileManager = () => {
   const [folderList, setFolderList] = useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string>("");
   const [newFolderName, setNewFolderName] = useState<string>("");
+  const navigate = useNavigate();
+
   
   useEffect(() => {
     const storedAuth = localStorage.getItem("isAuthenticated");
@@ -44,12 +47,6 @@ const S3FileManager = () => {
     setUserPrefix('');
   };
 
-  const navigate = useNavigate();
-
-  // const handleFolderUpload = () => {
-  //   // TODO: Decide how to specify what folder to upload to
-  //   uploadFileToS3('False');
-  //   };
   const handleFolderSelect = (e) => {
     const folder = e.target.value;
     setSelectedFolder(folder)
@@ -57,10 +54,6 @@ const S3FileManager = () => {
   }
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  // const handleGlobalUpload = () => {
-  //       uploadFileToS3('True');
-  //   };
 
   const uploadFormData = () => {
     navigate('/upload-form')
@@ -89,7 +82,6 @@ const S3FileManager = () => {
 
     const formData = new FormData();
 
-    //Get folder structure and file
     Array.from(files).forEach((file) => {
       const relativePath = (file as any).webkitRelativePath || file.name;
       formData.append("file", file);
@@ -172,40 +164,33 @@ const S3FileManager = () => {
       }
     }
   };
-  
-  const navigate = useNavigate();
 
   const showTable = async (fileName: string): Promise<File | null> => {
   try {
-    // Fetch the file from the server (S3)
     const response = await axios.get(`/api/get_file?filename=${fileName}`, {
-      responseType: 'json',  // Ensure the response is in JSON format
+      responseType: 'json',  
     });
 
-    // Log the response to verify the structure
     console.log('File fetched successfully:', response);
 
-    // Ensure that the file field contains CSV data
     if (!response.data || !response.data.file) {
       console.error('No CSV data returned from the API');
+      setMessage('No CSV data returned from the API');
       return null;
     }
 
-    // Extract CSV data from the JSON response
     const csvContent = response.data.file;
-    console.log('Extracted CSV content:', csvContent);  // Log CSV content
+    console.log('Extracted CSV content:', csvContent); 
 
-    // const jsonObject = csv_to_json(csvContent)
     processDataAndSendFile(csvContent);
 
-    // Return the CSV content as a Blob to process it
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const file = new File([blob], fileName, { type: 'text/csv' });
 
     return file;
   } catch (error) {
     console.error('Error fetching file from S3:', error);
-    return null; // Return null if something goes wrong
+    return null; 
   }
 };
 
@@ -213,20 +198,16 @@ const processDataAndSendFile = async (tableData: string) => {
     const jsonData = csv_to_json(tableData);
     const csvBlob = new Blob([tableData], { type: 'text/csv' });
     const formData = new FormData();
-    formData.append('file', csvBlob, 'data.csv');  // 'file' is the expected field name for the backend
+    formData.append('file', csvBlob, 'data.csv');  
 
-    console.log('table data: ' + tableData)
-    console.log('formData:' + formData)
-
-    // Send the file to the backend using 'fetch'
     const response = await fetch('/api/load_data', {
       method: 'POST',
-      body: formData,  // Send as FormData (multipart/form-data)
+      body: formData,  
     });
 
     const result = await response.json();
-    console.log('results:' + JSON.stringify(result))
-    const predictionsObj = result.data; // Assuming the backend sends predictions
+    console.log('Data fetch status:', result.status)
+    const predictionsObj = result.data; 
 
     if (!response.ok) {
       console.error('Error:', result.error);
@@ -239,51 +220,47 @@ const processDataAndSendFile = async (tableData: string) => {
 
 }
 
-const csv_to_json = (csvString: string): object[] => {
-  // Split the CSV string into lines
-  const lines = csvString.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+const csv_to_json = (csvString: string): object[] | null => {
+  try{
+    const lines = csvString.split('\n').map(line => line.trim()).filter(line => line.length > 0);
 
-  if (lines.length === 0) {
-    throw new Error('CSV content is empty');
-  }
-
-  // The first line contains headers
-  const headers = lines[0].split(',').map(header => header.trim());
-
-  // Regex to handle quoted values with commas inside them
-  const regex = new RegExp(
-    `"([^"]*)"|([^",]+)`, // Match quoted values or unquoted values
-    'g'
-  );
-
-  // Convert each line (after the first header line) into a JSON object
-  const jsonResult = lines.slice(1).map(line => {
-    const values: string[] = [];
-    let match;
-
-    // Use regex to match values, handling commas inside quotes
-    while ((match = regex.exec(line)) !== null) {
-      // If the value is quoted, use the first capture group; otherwise, use the second
-      values.push(match[1] || match[2]);
+    if (lines.length === 0) {
+      throw new Error('CSV content is empty');
     }
 
-    // Check if the number of values matches the headers length
-    if (values.length !== headers.length) {
-      console.warn('Row has different number of columns than the header:', line);
-    }
+    const headers = lines[0].split(',').map(header => header.trim());
 
-    // Create a JSON object for this row
-    const jsonObject: { [key: string]: string } = {};
+    const regex = new RegExp(
+      `"([^"]*)"|([^",]+)`, 
+      'g'
+    );
 
-    // Map the values to their respective headers
-    headers.forEach((header, index) => {
-      jsonObject[header] = values[index] || ''; // Use empty string for missing values
+    const jsonResult = lines.slice(1).map(line => {
+      const values: string[] = [];
+      let match;
+
+      while ((match = regex.exec(line)) !== null) {
+        values.push(match[1] || match[2]);
+      }
+
+      if (values.length !== headers.length) {
+        console.warn('Row has different number of columns than the header:', line);
+      }
+
+      const jsonObject: { [key: string]: string } = {};
+
+      headers.forEach((header, index) => {
+        jsonObject[header] = values[index] || ''; 
+      });
+
+      return jsonObject;
     });
 
-    return jsonObject;
-  });
-
-  return jsonResult;
+    return jsonResult;
+  } catch (error) {
+    setMessage('Error parsing csv: ' + error.message);
+    return null;
+  }
 };
 
   
@@ -340,7 +317,6 @@ const csv_to_json = (csvString: string): object[] => {
       );
       setMessage(`Folder "${newFolderName}" created successfully.`);
       setNewFolderName('');
-      // Refresh the folder list after creation.
       axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
         .then((response) => {
           const files: string[] = response.data.files;
@@ -367,7 +343,7 @@ const csv_to_json = (csvString: string): object[] => {
   };
 
   return (
-    <div /* className="old-color-scheme" */>
+    <div>
     <div className="s3-file-manager">
       {!isAuthenticated ? (
         <AuthForm onLoginSuccess={handleLoginSuccess} />

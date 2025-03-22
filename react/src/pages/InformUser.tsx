@@ -65,41 +65,33 @@ const InformUser: React.FC = () => {
     try {
         const tableData = location.state.data;
         const predictions = location.state.prediction;
-    
-        console.log('table data in inform user: ' + JSON.stringify(tableData));
-        console.log('prediction in inform user: ' + JSON.stringify(predictions));
-    
+        
         if (predictions === undefined || Object.keys(predictions).length === 0) {
           setPredictionMessage('Prediction(s) not received');
         } else {
-          // Assign predictions to each student in the tableData
           tableData.forEach((studentData, index) => {
-            const studentId = studentData.studentIDs;  // Assuming studentId is unique per student
+            const studentId = studentData.studentIDs;  
             if (predictions[index] !== undefined) {
-              studentData['Prediction'] = predictions[index];  // Assign prediction
+              studentData['Prediction'] = predictions[index];  
             }
           });
         }
     
-        // Initialize transformedData object
         const transformedData: TransformedData = {};
     
-        // Iterate over each student in tableData
         tableData.forEach((student) => {
-          const studentId = student.studentIDs;  // Get student ID
+          const studentId = student.studentIDs;  
           if (studentId) {
             transformedData[studentId] = {};
     
-            // Iterate over each key-value pair in the student object and add it to transformedData
             Object.entries(student).forEach(([key, value]) => {
-              if (key !== "studentIDs") {  // Avoid studentIDs in transformed data
-                transformedData[studentId][key] = value as string | number;  // Ensure the value is either string or number
+              if (key !== "studentIDs") {  
+                transformedData[studentId][key] = value as string | number;  
               }
             });
           }
         });
     
-        console.log('transformed data: ' + JSON.stringify(transformedData));
         setData(transformedData);
     
       
@@ -111,7 +103,6 @@ const InformUser: React.FC = () => {
     }
   }
 
-  // Fetch config to set default display columns
   useEffect(() => {
     const fetchConfig = async () => {
       try {
@@ -133,16 +124,13 @@ const InformUser: React.FC = () => {
   const downloadCSV = () => {
     if (!data || Object.keys(data).length === 0) return;
 
-    // Get Headers from first row
     const headers = ["Student ID", ...Object.keys(data[Object.keys(data)[0]])];
     
-    // Convert data to rows
     const rows = Object.entries(data).map(([studentId, details]) => [
       studentId,
       ...Object.values(details),
     ]);
 
-    // Convert to CSV format
     const csvContent =
     "data:text/csv;charset=utf-8,\ufeff" + 
         [headers.join(","),
@@ -150,7 +138,6 @@ const InformUser: React.FC = () => {
             row.map(field => `"${(field ?? "").toString().replace(/"/g, '""')}"`).join(","))
         ].join("\n");
 
-    // Create a download link
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -173,7 +160,6 @@ const InformUser: React.FC = () => {
           <tr>
             <th className="user-management-th">Student ID</th>
             <th className="user-management-th">Prediction</th>
-            {/* Display other columns from config's default_display */}
             {defaultDisplayColumns.map((col) => (
               <th className="user-management-th"key={col}>{col}</th>
             ))}
@@ -183,11 +169,7 @@ const InformUser: React.FC = () => {
           {Object.entries(data).map(([studentId, details]) => {
             const prediction = details["Prediction"] ?? "N/A";
             const otherData = Object.entries(details).filter(
-              /* 
-              This is chosen to make the option to copy data include all relevent data.
-              Otherwise, add the extra condition to NOT show default cols on dropdown.
-              */
-              ([key]) => key !== "Prediction" // && !defaultDisplayColumns.includes(key)
+              ([key]) => key !== "Prediction" 
             );
 
             return (
@@ -199,17 +181,14 @@ const InformUser: React.FC = () => {
                 >
                   <td>{(expandedRows[studentId] ? '▼' : '▶') + " " + studentId}</td>
                   <td>{prediction}</td>
-                  {/* Render values for the columns in the additional_default_columns */}
                   {defaultDisplayColumns.map((col) => (
                     <td key={`${studentId}-${col}`}>{details[col]}</td>
                   ))}
                 </tr>
 
 
-                {/* Render the expanded data */}
                 {expandedRows[studentId] && (
                 <>
-                  {/* New row at the top of expanded rows */}
                   <tr>
                     <td id="bufferRow" colSpan={defaultDisplayColumns.length + 2}></td>
                   </tr>
@@ -218,7 +197,6 @@ const InformUser: React.FC = () => {
                     <td colSpan={defaultDisplayColumns.length + 1}>Value</td>
                   </tr>
 
-                  {/* Existing expanded rows */}
                   {otherData.map(([key, value]) => (
                     <tr id="subRows" key={`${studentId}-${key}`} className="expanded-row">
                       <td>{key}</td>
