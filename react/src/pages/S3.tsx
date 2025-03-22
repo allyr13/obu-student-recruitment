@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../css/AWS-S3.css';
 import { FaClipboard, FaDownload, FaTrash } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
+import { useNavigate } from 'react-router-dom';
 
 const S3FileManager = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -43,6 +44,12 @@ const S3FileManager = () => {
     setUserPrefix('');
   };
 
+  const navigate = useNavigate();
+
+  const handleFolderUpload = () => {
+    // TODO: Decide how to specify what folder to upload to
+    uploadFileToS3('False');
+    };
   const handleFolderSelect = (e) => {
     const folder = e.target.value;
     setSelectedFolder(folder)
@@ -51,12 +58,21 @@ const S3FileManager = () => {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const handleGlobalUpload = () => {
+        uploadFileToS3('True');
+    };
+
+  const uploadFormData = () => {
+    navigate('/upload-form')
+  }
+
   const triggerFileSelect = (globalFlag: string) => {
     if (fileInputRef.current) {
       fileInputRef.current.dataset.globalFlag = globalFlag;
       fileInputRef.current.click();
     }
   };
+
   
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -298,6 +314,13 @@ const S3FileManager = () => {
                 Upload File
               </button>
             </div>
+
+          <div>
+            <h2>Submit Form Data</h2>
+            <div className='upload-div'>
+                <button className="action-button" onClick={uploadFormData}>Submit Form Data</button>
+            </div>
+          </div>
 
           <div>
             <h2 className="list-header">List Files in S3</h2>

@@ -7,6 +7,15 @@ import InformUser from './pages/InformUser.tsx';
 import UserManagement from './pages/UserManagement.tsx';  
 import S3 from './pages/S3.tsx';
 
+const UploadFormPage = () => {
+  return (
+    <div>
+      <Header />
+      <StudentForm /> 
+    </div>
+  );
+};
+
 function App() {
   return (
     <Router>
@@ -15,9 +24,7 @@ function App() {
           <Route path="/" element={<S3/>} />
           <Route path="/table" element={<InformUser />} />
           <Route path="/user-management" element={<UserManagement />} />
-          
-          <Route path="/csv-upload" element={<CSVUpload />
-          } /> {/* This url is for development purposes at this time*/}
+          <Route path="/upload-form" element={<UploadFormPage />}/>
         </Routes>
       </div>
     </Router>
