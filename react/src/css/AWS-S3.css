@@ -412,8 +412,6 @@ li:hover {
 .user-management-field-input {
     margin-left: 40px !important;
     max-width: 90%;
-    margin-left: 40px !important;
-    max-width: 90%;
     border: 0.5px solid var(--form-input-border-color) !important;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -428,7 +426,6 @@ li:hover {
     border: 1px solid var(--form-input-border-color);
     background-color: var(--form-bg-color);
     min-width: 100%;
-    min-width: 100%;
 }
 
 .user-management-add-title {
@@ -442,11 +439,15 @@ li:hover {
     margin-right: auto;
 }
 
-
 .loading-text {
     font-size: 1.2em;
     color: var(--message-info-text-color);
     animation: loadingDots 1.5s infinite;
+}
+
+.folder-select-container {
+    display: flex;
+    margin-bottom: 15px;
 }
 
 .folder-select {

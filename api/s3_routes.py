@@ -122,7 +122,6 @@ def upload_to_s3():
     if 'file' not in request.files:
         return jsonify({"error": "No file part", "status": 500})
 
-
     files = request.files.getlist('file')
     print(f"FILES: {files}")
     prefix = request.form.get('prefix', '')
