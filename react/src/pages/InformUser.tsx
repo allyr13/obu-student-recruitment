@@ -14,7 +14,10 @@ interface TransformedData {
     [studentId: string]: { [key: string]: string | number };
 }
 
-
+type Option = {
+    label: string;
+    value: string;
+};
 
 const TableCell = ({ getValue, row, column, table }) => {
     const initialValue = getValue()
@@ -38,7 +41,7 @@ const TableCell = ({ getValue, row, column, table }) => {
     if (tableMeta?.editedRows[row.id]) {
         return columnMeta?.type === "select" ? (
             <select onChange={onSelectChange} value={initialValue}>
-                {columnMeta?.options?.map((option) => (
+                {columnMeta?.options?.map((option: Option) => (
                     <option key={option.value} value={option.value}>
                         {option.label}
                     </option>
@@ -95,7 +98,6 @@ const columnHelper = createColumnHelper<rowVals>();
 const columns = [
     columnHelper.accessor("category", {
         header: "Category",
-        cell: TableCell,
     }),
     columnHelper.accessor("value", {
         header: "Value",
@@ -112,6 +114,7 @@ const columns = [
 
 const InformUser: React.FC = () => {
     const [data, setData] = useState<TransformedData>({});
+    const [newFormatData, setFormatData] = useState<Object>([]);
     const [originalData, setOriginalData] = useState<TransformedData>({});
     const [editedRows, setEditedRows] = useState({});
     const [loading, setLoading] = useState<boolean>(true);
@@ -134,6 +137,8 @@ const InformUser: React.FC = () => {
                 }
 
                 const transformedData: TransformedData = {};
+                const newDataFormat: Object[] = [];
+                let tempObject = {};
 
                 const studentIds = tableData[primary_key_string] || {};
 
@@ -141,17 +146,27 @@ const InformUser: React.FC = () => {
                     if (!transformedData[studentId]) {
                         transformedData[studentId] = {};
                     }
+                    tempObject["studentId"] = studentId;
 
                     for (const [key, values] of Object.entries(tableData as Record<string, Record<string, string | number>>)) {
                         if (key !== primary_key_string && values[index] !== undefined) {
                             transformedData[studentId][key] = values[index];
+                            tempObject[key] = values[index];
                         }
                     }
+                    newDataFormat.push(tempObject);
+                    tempObject = {};
                 });
 
-                console.log(transformedData);
-
                 setData(transformedData);
+                setFormatData(newDataFormat);
+                setOriginalData(transformedData);
+
+                const rows = Object.entries(transformedData).map(([studentId, details]) => [
+                    studentId,
+                    ...Object.values(details),
+                ]);
+                console.log(rows);
 
             } catch (err) {
                 console.error('Error fetching data:', err);
@@ -212,10 +227,10 @@ const InformUser: React.FC = () => {
         document.body.removeChild(link);
     }
 
-    const Table = () => {
+    const Table = (studentID: string) => {
 
         const table = useReactTable({
-            data,
+            newFormatData,
             columns,
             getCoreRowModel: getCoreRowModel(),
             meta: {
