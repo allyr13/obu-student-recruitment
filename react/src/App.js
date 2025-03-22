@@ -8,18 +8,20 @@ import UserManagement from './pages/UserManagement.tsx';
 import S3 from './pages/S3.tsx';
 
 function App() {
-    return (
-        <Router>
-            <div className="App">
-                <Routes>
-                    <Route path="/" element={<S3 />} />
-                    <Route path="/prediction_upload" element={<CSVUpload />} />
-                    <Route path="/table" element={<InformUser />} />
-                    <Route path="/user-management" element={<UserManagement />} />
-                </Routes>
-            </div>
-        </Router>
-    );
+  return (
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<S3/>} />
+          <Route path="/table" element={<InformUser />} />
+          <Route path="/user-management" element={<UserManagement />} />
+          
+          <Route path="/csv-upload" element={<CSVUpload />
+          } /> {/* This url is for development purposes at this time*/}
+        </Routes>
+      </div>
+    </Router>
+  );
 }
 
 export default App;
