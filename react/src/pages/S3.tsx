@@ -73,6 +73,8 @@ const S3FileManager = () => {
       return;
     }
 
+    console.log(files)
+
     const formData = new FormData();
 
     //Get folder structure and file
@@ -80,6 +82,7 @@ const S3FileManager = () => {
       const relativePath = (file as any).webkitRelativePath || file.name;
       formData.append("file", file);
       formData.append(`path_${file.name}`, relativePath);
+      formData.append(`folder`, selectedFolder);
     });
 
     let prefix = userPrefix;

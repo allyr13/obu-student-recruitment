@@ -28,6 +28,8 @@ def add_user():
             }
         )
 
+        s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=f"/root/{user_prefix}/", Body=b'')
+
         return jsonify({'message': 'User added successfully', 'status': 'success'}), 200
 
     except ClientError as e:
@@ -122,7 +124,6 @@ def upload_to_s3():
     if 'file' not in request.files:
         return jsonify({"error": "No file part", "status": 500})
 
-
     files = request.files.getlist('file')
     print(f"FILES: {files}")
     prefix = request.form.get('prefix', '')
@@ -134,7 +135,7 @@ def upload_to_s3():
 
     if prefix != '':
         if prefix == "/root":
-            prefix = '' # Avoid double referencing root prefix
+            prefix = '' 
         else:
             prefix = prefix + "/"
 
@@ -142,21 +143,29 @@ def upload_to_s3():
 
     try:
         for file in files:
-            if file.filename =='':
+            if file.filename == '':
                 continue
             relative_path = request.form.get(f'path_{file.filename}', file.filename)
-            s3_key = f"{get_config('root_dir')}/{prefix}{relative_path}"
-            if (global_upload == "True"):
+            selected_folder = request.form.get(f'folder')
+            print(f"relative_path: {relative_path}")
+            if selected_folder != "":
+                s3_key = f"{get_config('root_dir')}/{selected_folder}/{relative_path}"
+            else: 
+                s3_key = f"{get_config('root_dir')}/{prefix}/{relative_path}"
+
+            if global_upload == "True":
                 s3_key = f"{get_config('root_dir')}/global/{relative_path}"
 
-            print(f"Uploading: {file}")
+            print(f"Uploading: {s3_key}")
             s3_client.upload_fileobj(file, S3_BUCKET_NAME, s3_key)
             uploaded_files.append(s3_key)
 
-            return jsonify({"message": "File uploaded successfully", "filename": uploaded_files, "status": 200})
+        # Return after all files have been uploaded
+        return jsonify({"message": "Files uploaded successfully", "filenames": uploaded_files, "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
+
 
     
 @s3_bp.route('/api/list_s3_files', methods=['GET'])
