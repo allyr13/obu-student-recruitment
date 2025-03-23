@@ -1,18 +1,16 @@
 import pickle
 import pandas as pd
 import numpy as np
-import os
-from dotenv import load_dotenv
+from json_loader import get_config
 
-load_dotenv()
-chosen_model = os.getenv("PREDICTION_MODEL")
+chosen_model = get_config("predict_model")
 
 match chosen_model:
     case "AdaBoost":
         model_path = "../models/adaboost_model.pkl"
     case "Decision_Tree":
         model_path = "../models/dtree_model.pkl"
-    case "Logistic_Regression":
+    case "Logarithmic_Regression":
         model_path = "../models/logreg_model.pkl"
     case "XGBoost":
         model_path = "../models/xgb_model.pkl"
