@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 import boto3
 from json_loader import get_config
 from botocore.exceptions import ClientError
+import json
 
 s3_bp = Blueprint("s3", __name__)
 
@@ -27,6 +28,8 @@ def add_user():
                 'User_Password': user_password
             }
         )
+
+        s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=f"/root/{user_prefix}/", Body=b'')
 
         return jsonify({'message': 'User added successfully', 'status': 'success'}), 200
 
@@ -123,6 +126,7 @@ def upload_to_s3():
         return jsonify({"error": "No file part", "status": 500})
 
     files = request.files.getlist('file')
+    print(f"FILES: {files}")
     prefix = request.form.get('prefix', '')
     global_upload = request.form.get('global', 'None')
     print(global_upload)
@@ -132,7 +136,7 @@ def upload_to_s3():
 
     if prefix != '':
         if prefix == "/root":
-            prefix = '' # Avoid double referencing root prefix
+            prefix = '' 
         else:
             prefix = prefix + "/"
 
@@ -140,20 +144,29 @@ def upload_to_s3():
 
     try:
         for file in files:
-            if file.filename =='':
+            if file.filename == '':
                 continue
             relative_path = request.form.get(f'path_{file.filename}', file.filename)
-            s3_key = f"{get_config('root_dir')}/{prefix}{relative_path}"
-            if (global_upload == "True"):
+            selected_folder = request.form.get(f'folder')
+            print(f"relative_path: {relative_path}")
+            if selected_folder != "":
+                s3_key = f"{get_config('root_dir')}/{selected_folder}/{relative_path}"
+            else: 
+                s3_key = f"{get_config('root_dir')}/{prefix}/{relative_path}"
+
+            if global_upload == "True":
                 s3_key = f"{get_config('root_dir')}/global/{relative_path}"
 
+            print(f"Uploading: {s3_key}")
             s3_client.upload_fileobj(file, S3_BUCKET_NAME, s3_key)
             uploaded_files.append(s3_key)
 
-            return jsonify({"message": "File uploaded successfully", "filename": uploaded_files, "status": 200})
+        # Return after all files have been uploaded
+        return jsonify({"message": "Files uploaded successfully", "filenames": uploaded_files, "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
+
 
     
 @s3_bp.route('/api/list_s3_files', methods=['GET'])
@@ -184,7 +197,6 @@ def list_s3_files():
 @s3_bp.route('/api/download_from_s3', methods=['GET'])
 def get_download_url():
     file_name = request.args.get('filename')
-
     if not file_name:
         return jsonify({"error": "Filename is required", "status": 500})
 
@@ -194,12 +206,41 @@ def get_download_url():
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
+    
+@s3_bp.route('/api/get_file', methods=['GET'])
+def get_file():
+    # Get the filename from the query parameters
+    file_name = request.args.get('filename')
+    print('file name', file_name)
+
+    if not file_name:
+        return jsonify({"error": "Filename is required", "status": 400})
+
+    try:
+        # Fetch the file from S3
+        response = s3_client.get_object(Bucket=S3_BUCKET_NAME, Key=file_name)
+
+        # The file content is inside 'Body' of the response
+        file_content = response['Body'].read().decode('utf-8')
+
+        # If it's a text-based file like JSON, CSV, etc., you can return the content
+        try:
+            # Try to parse the content as JSON (if applicable)
+            parsed_content = json.loads(file_content)
+            return jsonify({"file": parsed_content, "status": 200})
+        except json.JSONDecodeError:
+            # If it's not JSON, just return it as plain text
+            return jsonify({"file": file_content, "status": 200})
+
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
 
 
 
 @s3_bp.route('/api/delete_from_s3', methods=['DELETE'])
 def delete_from_s3():
     file_name = request.args.get('filename')
+    print(f"Deleting: {file_name}")
 
     if not file_name:
         return jsonify({"error": "Filename is required", "status": 500})
