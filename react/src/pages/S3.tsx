@@ -1,14 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/AWS-S3.css';
-import { FaClipboard, FaDownload, FaTrash } from 'react-icons/fa';
+import { FaClipboard, FaDownload, FaTrash, FaTable } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
 import { useNavigate } from 'react-router-dom';
+
 
 const S3FileManager = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [filesList, setFilesList] = useState<{ displayName: string, rawFileName: string }[]>([]);
   const [userPrefix, setUserPrefix] = useState('');
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
@@ -18,6 +20,8 @@ const S3FileManager = () => {
   const [folderList, setFolderList] = useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string>("");
   const [newFolderName, setNewFolderName] = useState<string>("");
+  const navigate = useNavigate();
+
   
   useEffect(() => {
     const storedAuth = localStorage.getItem("isAuthenticated");
@@ -46,12 +50,6 @@ const S3FileManager = () => {
     setUserPrefix('');
   };
 
-  const navigate = useNavigate();
-
-  // const handleFolderUpload = () => {
-  //   // TODO: Decide how to specify what folder to upload to
-  //   uploadFileToS3('False');
-  //   };
   const handleFolderSelect = (e) => {
     const folder = e.target.value;
     setSelectedFolder(folder)
@@ -59,10 +57,6 @@ const S3FileManager = () => {
   }
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  // const handleGlobalUpload = () => {
-  //       uploadFileToS3('True');
-  //   };
 
   const uploadFormData = () => {
     navigate('/upload-form')
@@ -93,7 +87,6 @@ const S3FileManager = () => {
 
     const formData = new FormData();
 
-    //Get folder structure and file
     Array.from(files).forEach((file) => {
       const relativePath = (file as any).webkitRelativePath || file.name;
       formData.append("file", file);
@@ -208,6 +201,114 @@ const S3FileManager = () => {
     }
   };
 
+  const showTable = async (fileName: string): Promise<File | null> => {
+  try {
+
+    const type = fileName.split('.')[1]
+    if (type != "csv") {
+      setErrorMessage('Error: File type must be csv');
+      return null;
+    }
+    setErrorMessage('');
+
+    console.log(type);
+    const response = await axios.get(`/api/get_file?filename=${fileName}`, {
+      responseType: 'json',  
+    });
+
+    console.log('File fetched successfully:', response);
+
+    if (!response.data || !response.data.file) {
+      console.error('No CSV data returned from the API');
+      setMessage('No CSV data returned from the API');
+      return null;
+    }
+
+    const csvContent = response.data.file;
+    console.log('Extracted CSV content:', csvContent); 
+
+    processDataAndSendFile(csvContent);
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const file = new File([blob], fileName, { type: 'text/csv' });
+
+    return file;
+  } catch (error) {
+    console.error('Error fetching file from S3:', error);
+    return null; 
+  }
+};
+
+const processDataAndSendFile = async (tableData: string) => {
+    const jsonData = csv_to_json(tableData);
+    const csvBlob = new Blob([tableData], { type: 'text/csv' });
+    const formData = new FormData();
+    formData.append('file', csvBlob, 'data.csv');  
+
+    const response = await fetch('/api/load_data', {
+      method: 'POST',
+      body: formData,  
+    });
+
+    const result = await response.json();
+    console.log('Data fetch status:', result.status)
+    const predictionsObj = result.data; 
+
+    if (!response.ok) {
+      console.error('Error:', result.error);
+      alert(`Error: ${result.error}`);
+      return;
+    }
+
+    console.log('Predictions:', predictionsObj);
+    navigate('/table', { state: { data: jsonData, prediction: predictionsObj } });
+
+}
+
+const csv_to_json = (csvString: string): object[] | null => {
+  try{
+    const lines = csvString.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
+    if (lines.length === 0) {
+      throw new Error('CSV content is empty');
+    }
+
+    const headers = lines[0].split(',').map(header => header.trim());
+
+    const regex = new RegExp(
+      `"([^"]*)"|([^",]+)`, 
+      'g'
+    );
+
+    const jsonResult = lines.slice(1).map(line => {
+      const values: string[] = [];
+      let match;
+
+      while ((match = regex.exec(line)) !== null) {
+        values.push(match[1] || match[2]);
+      }
+
+      if (values.length !== headers.length) {
+        console.warn('Row has different number of columns than the header:', line);
+      }
+
+      const jsonObject: { [key: string]: string } = {};
+
+      headers.forEach((header, index) => {
+        jsonObject[header] = values[index] || ''; 
+      });
+
+      return jsonObject;
+    });
+
+    return jsonResult;
+  } catch (error) {
+    setMessage('Error parsing csv: ' + error.message);
+    return null;
+  }
+};
+
+  
   const copyToClipboard = (fileName: string) => {
     navigator.clipboard.writeText(fileName)
       .then(() => setMessage(`File name "${fileName}" copied to clipboard!`))
@@ -268,7 +369,6 @@ const S3FileManager = () => {
       );
       setMessage(`Folder "${newFolderName}" created successfully.`);
       setNewFolderName('');
-      // Refresh the folder list after creation.
       axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
         .then((response) => {
           const files: string[] = response.data.files;
@@ -366,6 +466,8 @@ const S3FileManager = () => {
           <div>
             <h2 className="list-header">List Files in S3</h2>
             <button className="action-button" onClick={listS3Files}>List Files</button>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
+
             {isLoading ? (
               <p className="loading-text">
                 {generateLoadingBar(progress)}
@@ -376,6 +478,9 @@ const S3FileManager = () => {
                   filesList.map((file, index) => (
                     <li key={index} className={`file-item ${deletedFiles.includes(file.rawFileName) ? 'deleted' : ''}`}>
                       <span className="file-name">{file.displayName}</span>
+                      <button className="icon-button" onClick={() => showTable(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                        <FaTable />
+                      </button>
                       <button className="icon-button" onClick={() => copyToClipboard(file.displayName)} disabled={deletedFiles.includes(file.rawFileName)}>
                         <FaClipboard />
                       </button>

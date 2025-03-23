@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 import boto3
 from json_loader import get_config
 from botocore.exceptions import ClientError
+import json
 
 s3_bp = Blueprint("s3", __name__)
 
@@ -196,13 +197,40 @@ def list_s3_files():
 @s3_bp.route('/api/download_from_s3', methods=['GET'])
 def get_download_url():
     file_name = request.args.get('filename')
-
     if not file_name:
         return jsonify({"error": "Filename is required", "status": 500})
 
     try:
         presigned_url = use_pre_signed_url('get_object', file_name)
         return jsonify({"url": presigned_url, "status": 200})
+
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
+    
+@s3_bp.route('/api/get_file', methods=['GET'])
+def get_file():
+    # Get the filename from the query parameters
+    file_name = request.args.get('filename')
+    print('file name', file_name)
+
+    if not file_name:
+        return jsonify({"error": "Filename is required", "status": 400})
+
+    try:
+        # Fetch the file from S3
+        response = s3_client.get_object(Bucket=S3_BUCKET_NAME, Key=file_name)
+
+        # The file content is inside 'Body' of the response
+        file_content = response['Body'].read().decode('utf-8')
+
+        # If it's a text-based file like JSON, CSV, etc., you can return the content
+        try:
+            # Try to parse the content as JSON (if applicable)
+            parsed_content = json.loads(file_content)
+            return jsonify({"file": parsed_content, "status": 200})
+        except json.JSONDecodeError:
+            # If it's not JSON, just return it as plain text
+            return jsonify({"file": file_content, "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
