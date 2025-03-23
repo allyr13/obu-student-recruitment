@@ -9,10 +9,12 @@ const S3FileManager = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState('');
-  const [filesList, setFilesList] = useState<string[]>([]);
+  const [filesList, setFilesList] = useState<{ displayName: string, rawFileName: string }[]>([]);
   const [userPrefix, setUserPrefix] = useState('');
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
   const [userID, setUserID] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [folderList, setFolderList] = useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string>("");
   const [newFolderName, setNewFolderName] = useState<string>("");
@@ -28,13 +30,13 @@ const S3FileManager = () => {
       setUserID(storedUserID);
     }
   }, []);
-  
+
   const handleLoginSuccess = (userID: string, userPrefix: string) => {
     setIsAuthenticated(true);
     setUserID(userID);
     setUserPrefix(userPrefix);
   };
-  
+
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("User_ID");
@@ -87,6 +89,8 @@ const S3FileManager = () => {
       return;
     }
 
+    console.log(files)
+
     const formData = new FormData();
 
     //Get folder structure and file
@@ -94,6 +98,7 @@ const S3FileManager = () => {
       const relativePath = (file as any).webkitRelativePath || file.name;
       formData.append("file", file);
       formData.append(`path_${file.name}`, relativePath);
+      formData.append(`folder`, selectedFolder);
     });
 
     let prefix = userPrefix;
@@ -106,7 +111,7 @@ const S3FileManager = () => {
     }
     formData.append('prefix', userPrefix);
     formData.append('global', globalFlag);
-    console.log("Uploading files to S3 Bucket. Is global upload: ", globalFlag)
+    console.log("Uploading file to S3 Bucket. Is global upload: ", globalFlag);
 
     try {
       const response = await axios.post('/api/upload_to_s3', formData, {
@@ -119,25 +124,48 @@ const S3FileManager = () => {
   };
 
   const listS3Files = async () => {
+    setIsLoading(true);
+    setProgress(0);
     try {
-      console.log("Fecthing files from S3 bucket . . . ")
-      const fileList: string[] = [];
+      const global_list: { displayName: string, rawFileName: string }[] = [];
+      const fileList: { displayName: string, rawFileName: string }[] = [];
       const response = await axios.get(`/api/list_s3_files?prefix=${userPrefix}`);
+
+      const totalFiles = response.data.files.length;
+      let filesProcessed = 0;
+
       for (let file of response.data.files) {
         let file_names = file.split('/');
-        file = file_names[file_names.length - 1]
-        if (file_names[file_names.length - 2] == 'global') {
-          file = "(global) " + file_names[file_names.length - 1]
+        console.log(file_names)
+        let actualFileName = file_names[file_names.length - 1];
+        let displayName = actualFileName;
+
+        if (actualFileName !== "") {
+          if (file_names[2] == 'global') {
+            let globalFile = "(Global) " + file_names.slice(3).join("/");
+            global_list.push({ displayName: globalFile, rawFileName: file });
+          } else {
+            displayName = file_names.slice(3).join("/");
+            console.log(displayName)
+            fileList.push({ displayName, rawFileName: file });
+          }
         }
-        fileList.push(file);
-        console.log(file);
+
+        filesProcessed += 1;
+        setProgress(Math.floor((filesProcessed / totalFiles) * 100));
+      }
+
+      for (let global_file of global_list) {
+        fileList.push(global_file);
       }
       setFilesList(fileList);
       setMessage('Files fetched successfully.');
     } catch (error) {
       setMessage('Error fetching files: ' + error.message);
+    } finally {
+      setIsLoading(false);
     }
-  };  
+  };
 
   const downloadFileFromS3 = async (fileName: string) => {
     try {
@@ -158,15 +186,22 @@ const S3FileManager = () => {
     } catch (error) {
       setMessage('Error downloading file: ' + error.message);
     }
-    };
+  };
 
   const deleteFileFromS3 = async (fileName: string) => {
-    const confirmed = window.confirm(`Are you sure you want to delete the file: ${fileName}?`);
+    const fileToDelete = filesList.find(file => file.rawFileName === fileName);
+    
+    if (!fileToDelete) {
+      setMessage("File not found for deletion.");
+      return;
+    }
+    
+    const confirmed = window.confirm(`Are you sure you want to delete the file: ${fileToDelete.rawFileName}?`);
     if (confirmed) {
       try {
-        await axios.delete(`/api/delete_from_s3?filename=${fileName}`);
-        setDeletedFiles((prev) => [...prev, fileName]);
-        setMessage(`File deleted successfully: ${fileName}`);
+        await axios.delete(`/api/delete_from_s3?filename=${fileToDelete.rawFileName}`);
+        setDeletedFiles((prev) => [...prev, fileToDelete.rawFileName]);
+        setMessage(`File deleted successfully: ${fileToDelete.rawFileName}`);
       } catch (error) {
         setMessage('Error deleting file: ' + error.message);
       }
@@ -177,6 +212,13 @@ const S3FileManager = () => {
     navigator.clipboard.writeText(fileName)
       .then(() => setMessage(`File name "${fileName}" copied to clipboard!`))
       .catch((error) => setMessage('Error copying to clipboard: ' + error.message));
+  };
+
+  const generateLoadingBar = (percentage: number) => {
+    const totalBars = 100;
+    const filledBars = Math.floor((percentage / 100) * totalBars);
+    const loadingText = 'Loading |' + '|'.repeat(filledBars) + '.'.repeat(totalBars - filledBars) + '|';
+    return loadingText;
   };
 
   useEffect(() => {
@@ -250,10 +292,9 @@ const S3FileManager = () => {
     } catch (error: any) {
       setMessage('Error creating folder: ' + error.message);
     }
-  };
+  }
 
   return (
-    <div /* className="old-color-scheme" */>
     <div className="s3-file-manager">
       {!isAuthenticated ? (
         <AuthForm onLoginSuccess={handleLoginSuccess} />
@@ -325,30 +366,35 @@ const S3FileManager = () => {
           <div>
             <h2 className="list-header">List Files in S3</h2>
             <button className="action-button" onClick={listS3Files}>List Files</button>
-            <ul>
-              {filesList.length > 0 ? (
-                filesList.map((file, index) => (
-                  <li key={index} className={`file-item ${deletedFiles.includes(file) ? 'deleted' : ''}`}>
-                    <span className="file-name">{file}</span>
-                    <button className="icon-button" onClick={() => copyToClipboard(file)} disabled={deletedFiles.includes(file)}>
-                      <FaClipboard />
-                    </button>
-                    <button className="icon-button" onClick={() => downloadFileFromS3(file)} disabled={deletedFiles.includes(file)}>
-                      <FaDownload />
-                    </button>
-                    <button className="icon-button" onClick={() => deleteFileFromS3(file)} disabled={deletedFiles.includes(file)}>
-                      <FaTrash />
-                    </button>
-                  </li>
-                ))
-              ) : (
-                <li>No files found. List files or add new files</li>
-              )}
-            </ul>
+            {isLoading ? (
+              <p className="loading-text">
+                {generateLoadingBar(progress)}
+              </p>
+            ) : (
+              <ul>
+                {filesList.length > 0 ? (
+                  filesList.map((file, index) => (
+                    <li key={index} className={`file-item ${deletedFiles.includes(file.rawFileName) ? 'deleted' : ''}`}>
+                      <span className="file-name">{file.displayName}</span>
+                      <button className="icon-button" onClick={() => copyToClipboard(file.displayName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                        <FaClipboard />
+                      </button>
+                      <button className="icon-button" onClick={() => downloadFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                        <FaDownload />
+                      </button>
+                      <button className="icon-button" onClick={() => deleteFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                        <FaTrash />
+                      </button>
+                    </li>
+                  ))
+                ) : (
+                  <li>No files found. List files or add new files</li>
+                )}
+              </ul>
+            )}
           </div>
         </>
       )}
-    </div>
     </div>
   );
 };
