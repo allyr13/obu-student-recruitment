@@ -1,6 +1,7 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import '../css/StudentForm.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 interface FormData {
     state: string;
@@ -83,6 +84,25 @@ const StudentForm: React.FC = () => {
         eventsAttendedCount: 1.4,
     });
 
+    const [fileName, setFileName] = useState('data.csv');
+    const [message, setMessage] = useState('');
+    const [userPrefix, setUserPrefix] = useState('');
+    const [userID, setUserID] = useState('');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [selectedFolder, setSelectedFolder] = useState<string>("");
+
+    useEffect(() => {
+        const storedAuth = localStorage.getItem("isAuthenticated");
+        const storedPrefix = localStorage.getItem("User_Prefix");
+        const storedUserID = localStorage.getItem("User_ID");
+        
+        if (storedAuth === "true" && storedPrefix && storedUserID) {
+          setIsAuthenticated(true);
+          setUserPrefix(storedPrefix);
+          setUserID(storedUserID);
+        }
+    }, []);
+
     const navigate = useNavigate();
 
     // Handle input change
@@ -102,17 +122,57 @@ const StudentForm: React.FC = () => {
         }
     };
 
+    const uploadFileToS3 = async (files: FileList, globalFlag: string) => {
+        if (!files || files.length === 0) {
+          setMessage("Please select files to upload.");
+          return;
+        }
+    
+        console.log(files)
+    
+        const fileData = new FormData();
+    
+        Array.from(files).forEach((file) => {
+          const relativePath = (file as any).webkitRelativePath || file.name;
+          fileData.append("file", file);
+          fileData.append(`path_${file.name}`, relativePath);
+        });
+        
+        let prefix = userPrefix;
+        if (selectedFolder) {
+            prefix += `/${selectedFolder}`;
+            }
+        if (selectedFolder == "global") {
+            prefix = "/global";
+            globalFlag = "True";
+            }
+
+        fileData.append('prefix', userPrefix);
+        fileData.append('global', globalFlag);
+        console.log("Uploading file to S3 Bucket. Is global upload:", globalFlag);
+    
+        try {
+          const response = await axios.post('/api/upload_to_s3', fileData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
+          setMessage(`File uploaded successfully: ${response.data.message}`);
+        } catch (error) {
+          setMessage('Error uploading file: ' + error.message);
+        }
+      };
+    
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
         try {
+
             const csvHeader = Object.keys(formData).join(',');
             const csvRow = Object.values(formData).join(',');
             const csvData = `${csvHeader}\n${csvRow}`;
 
             const csvBlob = new Blob([csvData], { type: 'text/csv' });
             const formDataToSend = new FormData();
-            formDataToSend.append('file', csvBlob, 'student_data.csv');
+            formDataToSend.append('file', csvBlob, fileName);
 
             const response = await fetch('/api/upload_form', {
                 method: 'POST',
@@ -127,6 +187,11 @@ const StudentForm: React.FC = () => {
                 return;
             }
 
+            let list = new DataTransfer();
+            let csvFile = new File([csvBlob], fileName);
+            list.items.add(csvFile);
+            let fileList = list.files;
+
             const jsonData = () => {
               const headers = Object.keys(formData);
               const rows = Object.values(formData);
@@ -140,6 +205,7 @@ const StudentForm: React.FC = () => {
             }
             
             if (result.status === 200) {
+                uploadFileToS3(fileList, "False")
                 navigate('/table', {state: {data: jsonData(), prediction: predictionsObj}});
             }
 
@@ -1119,6 +1185,18 @@ const StudentForm: React.FC = () => {
                 value={formData.eventsAttendedCount}
                 onChange={handleInputChange}
                 placeholder="0.00"
+                required
+            />
+            <br />
+
+            {/* File Name */}
+            <label>File Name:</label>
+            <input
+                type="string"
+                name="fileName"
+                value={fileName}
+                onChange={handleInputChange}
+                placeholder=""
                 required
             />
             <br />
