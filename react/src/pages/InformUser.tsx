@@ -1,10 +1,9 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../css/InformUser.css';
-import rowVals from './data';
+import rowVals, {columns} from './tableStuff';
 
 import {
-    createColumnHelper,
     flexRender,
     getCoreRowModel,
     useReactTable,
@@ -14,107 +13,10 @@ interface TransformedData {
     [studentId: string]: { [key: string]: string | number };
 }
 
-type Option = {
-    label: string;
-    value: string;
-};
-
-const TableCell = ({ getValue, row, column, table }) => {
-    const initialValue = getValue()
-    const columnMeta = column.columnDef.meta
-    const tableMeta = table.options.meta
-    const [value, setValue] = useState(initialValue)
-
-    useEffect(() => {
-        setValue(initialValue)
-    }, [initialValue])
-
-    const onBlur = () => {
-        tableMeta?.updateData(row.index, column.id, value)
-    }
-
-    const onSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        setValue(e.target.value)
-        tableMeta?.updateData(row.index, column.id, e.target.value)
-    }
-
-    if (tableMeta?.editedRows[row.id]) {
-        return columnMeta?.type === "select" ? (
-            <select onChange={onSelectChange} value={initialValue}>
-                {columnMeta?.options?.map((option: Option) => (
-                    <option key={option.value} value={option.value}>
-                        {option.label}
-                    </option>
-                ))}
-            </select>
-        ) : (
-            <input
-                value={value}
-                onChange={e => setValue(e.target.value)}
-                onBlur={onBlur}
-                type={columnMeta?.type || "text"}
-            />
-        )
-    }
-    return <span>{value}</span>
-}
-
-const EditCell = ({ row, table }) => {
-    const meta = table.options.meta;
-
-    const setEditedRows = (e) => {
-        const elName = e.currentTarget.name;
-        meta?.setEditedRows((old: []) => ({
-            ...old,
-            [row.id]: !old[row.id],
-        }));
-        if (elName !== "edit") {
-            meta?.revertData(row.index, e.currentTarget.name === "cancel");
-        }
-    };
-
-    return (
-        <div className="edit-cell-container">
-            {meta?.editedRows[row.id] ? (
-                <div className="edit-cell">
-                    <button onClick={setEditedRows} name="cancel">
-                        X
-                    </button>
-                    <button onClick={setEditedRows} name="done">
-                        ✔
-                    </button>
-                </div>
-            ) : (
-                <button onClick={setEditedRows} name="edit">
-                    ✐
-                </button>
-            )}
-        </div>
-    );
-};
-
-const columnHelper = createColumnHelper<rowVals>();
-
-const columns = [
-    columnHelper.accessor("category", {
-        header: "Category",
-    }),
-    columnHelper.accessor("value", {
-        header: "Value",
-        cell: TableCell,
-    }),
-    columnHelper.display({
-        id: "edit",
-        cell: EditCell,
-    }),
-];
-
-
-
-
 const InformUser: React.FC = () => {
     const [data, setData] = useState<TransformedData>({});
-    const [newFormatData, setFormatData] = useState<Object>([]);
+    const [newFormatData, setFormatData] = useState<rowVals[]>();
+    const [formatOriginalData, setFormatOriginalData] = useState<rowVals[]>();
     const [originalData, setOriginalData] = useState<TransformedData>({});
     const [editedRows, setEditedRows] = useState({});
     const [loading, setLoading] = useState<boolean>(true);
@@ -137,7 +39,7 @@ const InformUser: React.FC = () => {
                 }
 
                 const transformedData: TransformedData = {};
-                const newDataFormat: Object[] = [];
+                const newDataFormat: rowVals[] = [];
                 let tempObject = {};
 
                 const studentIds = tableData[primary_key_string] || {};
@@ -154,13 +56,16 @@ const InformUser: React.FC = () => {
                             tempObject[key] = values[index];
                         }
                     }
-                    newDataFormat.push(tempObject);
+                    newDataFormat.push(tempObject as rowVals);
                     tempObject = {};
                 });
 
+                console.log(newDataFormat);
+
                 setData(transformedData);
-                setFormatData(newDataFormat);
                 setOriginalData(transformedData);
+                setFormatData(newDataFormat);
+                setFormatOriginalData(newDataFormat);
 
                 const rows = Object.entries(transformedData).map(([studentId, details]) => [
                     studentId,
@@ -227,7 +132,7 @@ const InformUser: React.FC = () => {
         document.body.removeChild(link);
     }
 
-    const Table = (studentID: string) => {
+    const Table = () => {
 
         const table = useReactTable({
             newFormatData,
@@ -238,13 +143,13 @@ const InformUser: React.FC = () => {
                 setEditedRows,
                 revertData: (rowIndex: number, revert: boolean) => {
                     if (revert) {
-                        setData((old) =>
+                        setFormatData((old) =>
                             old.map((row, index) =>
-                                index === rowIndex ? originalData[rowIndex] : row
+                                index === rowIndex ? formatOriginalData[rowIndex] : row
                             )
                         );
                     } else {
-                        setOriginalData((old) =>
+                        setFormatOriginalData((old) =>
                             old.map((row, index) => (index === rowIndex ? data[rowIndex] : row))
                         );
                     }
