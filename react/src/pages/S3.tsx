@@ -467,6 +467,7 @@ const csv_to_json = (csvString: string): object[] | null => {
             <h2 className="list-header">List Files in S3</h2>
             <button className="action-button" onClick={listS3Files}>List Files</button>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
+
             {isLoading ? (
               <p className="loading-text">
                 {generateLoadingBar(progress)}
