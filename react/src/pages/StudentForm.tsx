@@ -84,7 +84,6 @@ const StudentForm: React.FC = () => {
         eventsAttendedCount: 1.4,
     });
 
-    const [fileName, setFileName] = useState('data.csv');
     const [message, setMessage] = useState('');
     const [userPrefix, setUserPrefix] = useState('');
     const [userID, setUserID] = useState('');
@@ -147,7 +146,7 @@ const StudentForm: React.FC = () => {
             globalFlag = "True";
             }
 
-        fileData.append('prefix', userPrefix);
+        fileData.append('prefix', prefix);
         fileData.append('global', globalFlag);
         console.log("Uploading file to S3 Bucket. Is global upload:", globalFlag);
     
@@ -172,7 +171,7 @@ const StudentForm: React.FC = () => {
 
             const csvBlob = new Blob([csvData], { type: 'text/csv' });
             const formDataToSend = new FormData();
-            formDataToSend.append('file', csvBlob, fileName);
+            formDataToSend.append('file', csvBlob, "student_form_data.csv");
 
             const response = await fetch('/api/upload_form', {
                 method: 'POST',
@@ -188,7 +187,7 @@ const StudentForm: React.FC = () => {
             }
 
             let list = new DataTransfer();
-            let csvFile = new File([csvBlob], fileName);
+            let csvFile = new File([csvBlob], 'student_form_data.csv');
             list.items.add(csvFile);
             let fileList = list.files;
 
@@ -1185,18 +1184,6 @@ const StudentForm: React.FC = () => {
                 value={formData.eventsAttendedCount}
                 onChange={handleInputChange}
                 placeholder="0.00"
-                required
-            />
-            <br />
-
-            {/* File Name */}
-            <label>File Name:</label>
-            <input
-                type="string"
-                name="fileName"
-                value={fileName}
-                onChange={handleInputChange}
-                placeholder=""
                 required
             />
             <br />

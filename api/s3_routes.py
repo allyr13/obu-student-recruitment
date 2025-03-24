@@ -137,8 +137,6 @@ def upload_to_s3():
     if prefix != '':
         if prefix == "/root":
             prefix = '' 
-        else:
-            prefix = prefix + "/"
 
     uploaded_files = []
 
@@ -149,7 +147,7 @@ def upload_to_s3():
             relative_path = request.form.get(f'path_{file.filename}', file.filename)
             selected_folder = request.form.get(f'folder')
             print(f"relative_path: {relative_path}")
-            if selected_folder != "":
+            if selected_folder != "" and selected_folder != None:
                 s3_key = f"{get_config('root_dir')}/{selected_folder}/{relative_path}"
             else: 
                 s3_key = f"{get_config('root_dir')}/{prefix}/{relative_path}"
