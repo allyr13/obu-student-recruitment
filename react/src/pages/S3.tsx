@@ -4,6 +4,8 @@ import '../css/AWS-S3.css';
 import { FaClipboard, FaDownload, FaTrash, FaTable } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
 import { useNavigate } from 'react-router-dom';
+import reference_dict from "../validation_reference.json";
+import Papa from "papaparse";
 
 
 const S3FileManager = () => {
@@ -70,12 +72,65 @@ const S3FileManager = () => {
   };
 
   
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const globalFlag = e.target.dataset.globalFlag || "False";
-      uploadFilesToS3(e.target.files, globalFlag);
+      const theFile = await validateCSVContent(e.target.files[0]);
+      if(theFile){
+        uploadFilesToS3(e.target.files, globalFlag);
+      }else{
+        setErrorMessage("CSV File not valid");
+      }
+      
     }
   };
+
+  const validateCSVContent = (file: File): Promise<boolean> => {
+    console.log("Entered validation");
+    return new Promise((resolve, reject) => {
+        Papa.parse(file, {
+            header: true, // Ensure the first row is treated as headers
+            complete: (result) => {
+                const { data, errors } = result;
+                if (errors.length - 1 > 0) {
+                    setMessage("Error parsing CSV file.");
+                    reject(false);
+                }
+                
+                const requiredColumns = Object.keys(reference_dict);
+                const headers = Object.keys(data[0]);
+
+                if (!Array.isArray(headers)) {
+                    setMessage("Invalid CSV format.");
+                    reject(false);
+                    return;
+                }
+
+                const hasRequiredColumns = requiredColumns.every(col => headers.includes(col));
+
+                if (!hasRequiredColumns) {
+                    setMessage("CSV file is missing required columns.");
+                    reject(false);
+                    return;
+                }
+
+                let idx = 0;
+                for (const row of data.slice(0, -1)) {
+                    idx++;
+                    for (const [key, value] of Object.entries(row)) {
+                        if (reference_dict[key] && !reference_dict[key].includes(value)) {
+                            setMessage(`Invalid value "${value}" for column "${key}" on row ${idx}.`);
+                            reject(false);
+                            return;
+                        }
+                    }
+                }
+                resolve(true);
+            }
+        });
+        console.log("Exit validation");
+    });
+};
   
   const uploadFilesToS3 = async (files: FileList, globalFlag: string) => {
     if (!files || files.length === 0) {

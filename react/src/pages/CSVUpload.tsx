@@ -58,6 +58,7 @@ const FileUpload: React.FC = () => {
     };
 
     const validateCSVContent = (file: File): Promise<boolean> => {
+        console.log("Entered validation");
         return new Promise((resolve, reject) => {
             Papa.parse(file, {
                 header: true, // Ensure the first row is treated as headers
@@ -99,6 +100,7 @@ const FileUpload: React.FC = () => {
                     resolve(true);
                 }
             });
+            console.log("Exit validation");
         });
     };
 
