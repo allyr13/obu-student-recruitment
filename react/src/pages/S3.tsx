@@ -92,6 +92,12 @@ const S3FileManager = () => {
             complete: (result) => {
                 const { data, errors } = result;
 
+                if (file.type !== "text/csv" && !file.name.endsWith(".csv")) {
+                  setCsvErrorMessage("Invalid file type. Please upload a CSV file.");
+                  resolve(false);
+                  return;
+                }
+
                 if (!Array.isArray(data) || data.length === 0) {
                     setCsvErrorMessage("Invalid CSV format.");
                     resolve(false);
