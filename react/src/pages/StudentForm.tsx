@@ -173,7 +173,7 @@ const StudentForm: React.FC = () => {
 
             const csvBlob = new Blob([csvData], { type: 'text/csv' });
             const formDataToSend = new FormData();
-            formDataToSend.append('file', csvBlob, `form/student_form_data_${dateTimeString}.csv`);
+            formDataToSend.append('file', csvBlob, `student_form_data_${dateTimeString}.csv`);
 
             const response = await fetch('/api/upload_form', {
                 method: 'POST',
@@ -189,7 +189,7 @@ const StudentForm: React.FC = () => {
             }
 
             let list = new DataTransfer();
-            let csvFile = new File([csvBlob], `form/student_form_data_${dateTimeString}.csv`);
+            let csvFile = new File([csvBlob], `student_form_data_${dateTimeString}.csv`);
             list.items.add(csvFile);
             let fileList = list.files;
 
