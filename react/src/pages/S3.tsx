@@ -84,7 +84,6 @@ const S3FileManager = () => {
   };
 
   const validateCSVContent = (file: File): Promise<boolean> => {
-    console.log("Entered validation");
 
     return new Promise((resolve) => {
         Papa.parse(file, {
@@ -135,7 +134,6 @@ const S3FileManager = () => {
                 resolve(true);
             }
         });
-        console.log("Exit validation");
     });
   };
 
