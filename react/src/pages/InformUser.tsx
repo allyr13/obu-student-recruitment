@@ -72,7 +72,12 @@ const InformUser: React.FC = () => {
           tableData.forEach((studentData, index) => {
             const studentId = studentData.studentIDs;  
             if (predictions[index] !== undefined) {
-              studentData['Prediction'] = predictions[index];  
+              const intVal = Number.parseInt(predictions[index]);
+              if (intVal == 0){
+                studentData['Prediction'] = "No";
+              }else{
+                studentData['Prediction'] = "Yes";
+              }
             }
           });
         }
