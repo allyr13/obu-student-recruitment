@@ -13,6 +13,7 @@ const S3FileManager = () => {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [csvErrorMessage, setCsvErrorMessage] = useState('');
   const [filesList, setFilesList] = useState<{ displayName: string, rawFileName: string }[]>([]);
   const [userPrefix, setUserPrefix] = useState('');
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
@@ -75,62 +76,63 @@ const S3FileManager = () => {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const globalFlag = e.target.dataset.globalFlag || "False";
-      const theFile = await validateCSVContent(e.target.files[0]);
-      if(theFile){
+      const csvIsValid = await validateCSVContent(e.target.files[0]);
+      if (csvIsValid) {
         uploadFilesToS3(e.target.files, globalFlag);
-      }else{
-        setErrorMessage("CSV File not valid");
       }
-      
     }
   };
 
   const validateCSVContent = (file: File): Promise<boolean> => {
     console.log("Entered validation");
-    return new Promise((resolve, reject) => {
+
+    return new Promise((resolve) => {
         Papa.parse(file, {
-            header: true, // Ensure the first row is treated as headers
+            header: true, 
             complete: (result) => {
                 const { data, errors } = result;
-                if (errors.length - 1 > 0) {
-                    setMessage("Error parsing CSV file.");
-                    reject(false);
-                }
-                
-                const requiredColumns = Object.keys(reference_dict);
-                const headers = Object.keys(data[0]);
 
-                if (!Array.isArray(headers)) {
-                    setMessage("Invalid CSV format.");
-                    reject(false);
+                if (!Array.isArray(data) || data.length === 0) {
+                    setCsvErrorMessage("Invalid CSV format.");
+                    resolve(false);
+                    return;
+                }
+
+                const requiredColumns = Object.keys(reference_dict);
+                const headers = Object.keys(data[0] || {});
+
+                if (!headers.length) {
+                    setCsvErrorMessage("CSV file has no headers.");
+                    resolve(false);
                     return;
                 }
 
                 const hasRequiredColumns = requiredColumns.every(col => headers.includes(col));
 
                 if (!hasRequiredColumns) {
-                    setMessage("CSV file is missing required columns.");
-                    reject(false);
+                    setCsvErrorMessage("CSV file is missing required columns.");
+                    resolve(false);
                     return;
                 }
 
-                let idx = 0;
-                for (const row of data.slice(0, -1)) {
-                    idx++;
-                    for (const [key, value] of Object.entries(row)) {
-                        if (reference_dict[key] && !reference_dict[key].includes(value)) {
-                            setMessage(`Invalid value "${value}" for column "${key}" on row ${idx}.`);
-                            reject(false);
-                            return;
-                        }
-                    }
+                // Validate row values
+                for (let idx = 1; idx < data.length - 1; idx++) { 
+                  const row = data[idx];
+                  for (const [key, value] of Object.entries(row)) {
+                      if (reference_dict[key] && !reference_dict[key].includes(value)) {
+                          setCsvErrorMessage(`Invalid value "${value}" for column "${key}" on row ${idx + 2}.`); // + 2 to offset for headers and 0 index
+                          resolve(false);
+                          return;
+                      }
+                  }
                 }
                 resolve(true);
             }
         });
         console.log("Exit validation");
     });
-};
+  };
+
   
   const uploadFilesToS3 = async (files: FileList, globalFlag: string) => {
     if (!files || files.length === 0) {
@@ -498,6 +500,7 @@ const csv_to_json = (csvString: string): object[] | null => {
               </div>
               </div>
               
+              {csvErrorMessage && <p className="error-message">{csvErrorMessage}</p>}
               <input
                 type="file"
                 multiple
