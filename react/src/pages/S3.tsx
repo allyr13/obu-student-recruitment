@@ -415,7 +415,7 @@ const csv_to_json = (csvString: string): object[] | null => {
 
   const handleDelete = async () => {
     if (selectedFolder == userPrefix) {
-      setCsvErrorMessage(`Cannot delete base "${selectedFolder}" folder.`);
+      setCsvErrorMessage(`Cannot delete base folder.`);
       console.log(`Cannot delete base folder:`, selectedFolder);
       return;
     }
