@@ -207,7 +207,6 @@ def get_download_url():
     
 @s3_bp.route('/api/get_file', methods=['GET'])
 def get_file():
-    # Get the filename from the query parameters
     file_name = request.args.get('filename')
     print('file name', file_name)
 
@@ -215,19 +214,14 @@ def get_file():
         return jsonify({"error": "Filename is required", "status": 400})
 
     try:
-        # Fetch the file from S3
         response = s3_client.get_object(Bucket=S3_BUCKET_NAME, Key=file_name)
 
-        # The file content is inside 'Body' of the response
         file_content = response['Body'].read().decode('utf-8')
 
-        # If it's a text-based file like JSON, CSV, etc., you can return the content
         try:
-            # Try to parse the content as JSON (if applicable)
             parsed_content = json.loads(file_content)
             return jsonify({"file": parsed_content, "status": 200})
         except json.JSONDecodeError:
-            # If it's not JSON, just return it as plain text
             return jsonify({"file": file_content, "status": 200})
 
     except Exception as e:
@@ -273,4 +267,33 @@ def create_folder_in_s3():
         print(folder_key)
         return jsonify({"message": f"Folder '{folder_key}' created successfully.", "status": 200})
     except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
+    
+@s3_bp.route('/api/delete_folder', methods=['POST'])
+def delete_folder():
+    try:
+        data = request.json
+        folder_key = "/root"
+        folder_key += data.get('folderKey')
+        print(f"Folder Key: {folder_key}")
+
+        if not folder_key:
+            return jsonify({"error": "Folder path is required", "status": 400})
+
+        if not folder_key.endswith('/'):
+            folder_key += '/'
+
+        response = s3_client.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=folder_key)
+        objects = response.get('Contents', [])
+
+        if not objects:
+            return jsonify({"message": "Folder is empty or does not exist", "status": 404})
+
+        # # Delete all objects under the folder
+        delete_keys = [{'Key': obj['Key']} for obj in objects]
+        s3_client.delete_objects(Bucket=S3_BUCKET_NAME, Delete={'Objects': delete_keys})
+
+        return jsonify({"message": f"Folder '{folder_key}' deleted successfully", "status": 200})
+
+    except ClientError as e:
         return jsonify({"error": str(e), "status": 500})

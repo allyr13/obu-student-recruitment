@@ -3,14 +3,15 @@ import axios from 'axios';
 import '../css/AWS-S3.css';
 import { FaClipboard, FaDownload, FaTrash, FaTable } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
+import DeleteConfirmation from "../components/DeleteConfirmation.tsx";
 import { useNavigate } from 'react-router-dom';
 import reference_dict from "../validation_reference.json";
 import Papa from "papaparse";
+import { Tooltip } from 'react-tooltip';
 
 
 const S3FileManager = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [csvErrorMessage, setCsvErrorMessage] = useState('');
@@ -23,6 +24,7 @@ const S3FileManager = () => {
   const [folderList, setFolderList] = useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string>("");
   const [newFolderName, setNewFolderName] = useState<string>("");
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   
@@ -411,6 +413,83 @@ const csv_to_json = (csvString: string): object[] | null => {
     }
   }, [userPrefix, selectedFolder]);
 
+  const handleDelete = async () => {
+    if (selectedFolder == userPrefix) {
+      setCsvErrorMessage(`Cannot delete base "${selectedFolder}" folder.`);
+      console.log(`Cannot delete base folder:`, selectedFolder);
+      return;
+    }
+
+    if (selectedFolder == 'global') {
+      setCsvErrorMessage(`Cannot delete ${selectedFolder} folder.`);
+      console.log(`Cannot delete folder:`, selectedFolder);
+      return;
+    }
+    setCsvErrorMessage('');
+    setShowModal(true);
+  }
+
+  const deleteFolderInS3 = async () => {
+    console.log(selectedFolder);
+
+    if (!selectedFolder.trim()) {
+      setErrorMessage("Folder name cannot be empty.");
+      return;
+    }
+
+    const folderKey = `/${selectedFolder}/`;
+    console.log("Deleting folder with key:", folderKey);
+    try {
+      const response = await axios.post(
+        '/api/delete_folder',
+        { folderKey },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      setNewFolderName('');
+      setShowModal(false);
+      if (response.status == 200) {
+        setErrorMessage('');
+        setMessage(`Folder "${selectedFolder}" deleted successfully.`);
+        console.log("Delete status", response.status)
+        refreshListedFiles();
+      }
+    } catch (error: any) {
+      setMessage('Error creating folder: ' + error.message);
+    }
+  }
+
+  const refreshListedFiles = async () => {
+    try {
+      axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
+      .then((response) => {
+        const files: string[] = response.data.files;
+        const folders = Array.from(new Set(
+          files
+            .map(key => {
+              let cleanKey = key;
+              if (cleanKey.startsWith("/root/")) {
+                cleanKey = cleanKey.replace("/root/", "");
+              }
+              const parts = cleanKey.split("/");
+              return parts.length > 1 ? parts.slice(0, parts.length - 1).join("/") : "";
+            })
+            .filter(folder => folder !== "")
+        ));
+        setFolderList(folders);
+      })
+      .catch((error) => {
+        setMessage("Error refreshing folders: " + error.message);
+      });
+    } catch (error: any) {
+      setMessage('Error creating folder: ' + error.message);
+    }
+  };
+
+  const cancelDeletion = () => {
+    setMessage("Deletion canceled.");
+    setShowModal(false);
+  };
+
   const createFolderInS3 = async () => {
     if (!newFolderName.trim()) {
       setMessage("Folder name cannot be empty.");
@@ -456,6 +535,7 @@ const csv_to_json = (csvString: string): object[] | null => {
   }
 
   return (
+    <div className={showModal ? "blur-background" : ""}>
     <div className="s3-file-manager">
       {!isAuthenticated ? (
         <AuthForm onLoginSuccess={handleLoginSuccess} />
@@ -489,6 +569,7 @@ const csv_to_json = (csvString: string): object[] | null => {
                     </option>
                   ))}
                 </select>
+                <button className="action-button" onClick={handleDelete}>Delete Folder</button>
               </div>
 
               <div className="folder-select-form" style={{ marginTop: "1rem" }}>
@@ -497,6 +578,7 @@ const csv_to_json = (csvString: string): object[] | null => {
                   type="text"
                   placeholder="Enter folder name"
                   value={newFolderName}
+                  className='folder-name-input'
                   onChange={(e) => setNewFolderName(e.target.value)}
                 />
                 <button className="action-button" onClick={createFolderInS3}>Create Folder</button>
@@ -539,19 +621,27 @@ const csv_to_json = (csvString: string): object[] | null => {
                 {filesList.length > 0 ? (
                   filesList.map((file, index) => (
                     <li key={index} className={`file-item ${deletedFiles.includes(file.rawFileName) ? 'deleted' : ''}`}>
-                      <span className="file-name">{file.displayName}</span>
-                      <button className="icon-button" onClick={() => showTable(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
-                        <FaTable />
-                      </button>
-                      <button className="icon-button" onClick={() => copyToClipboard(file.displayName)} disabled={deletedFiles.includes(file.rawFileName)}>
-                        <FaClipboard />
-                      </button>
-                      <button className="icon-button" onClick={() => downloadFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
-                        <FaDownload />
-                      </button>
-                      <button className="icon-button" onClick={() => deleteFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
-                        <FaTrash />
-                      </button>
+                      <span 
+                        data-tooltip-id="file-name-tooltip" 
+                        className="file-name"
+                        data-tooltip-content={file.rawFileName}
+                      >{file.displayName}</span>
+                      <Tooltip id="file-name-tooltip" />
+
+                      <div className='file-icons'>
+                        <button className="icon-button" onClick={() => showTable(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                          <FaTable />
+                        </button>
+                        <button className="icon-button" onClick={() => copyToClipboard(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                          <FaClipboard />
+                        </button>
+                        <button className="icon-button" onClick={() => downloadFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                          <FaDownload />
+                        </button>
+                        <button className="icon-button" onClick={() => deleteFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                          <FaTrash />
+                        </button>
+                      </div>
                     </li>
                   ))
                 ) : (
@@ -562,6 +652,8 @@ const csv_to_json = (csvString: string): object[] | null => {
           </div>
         </>
       )}
+    </div>
+    {showModal && <DeleteConfirmation onConfirm={deleteFolderInS3} onCancel={cancelDeletion} />}
     </div>
   );
 };
