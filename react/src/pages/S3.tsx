@@ -125,7 +125,7 @@ const S3FileManager = () => {
                   const row = data[idx];
                   for (const [key, value] of Object.entries(row)) {
                       if (reference_dict[key] && !reference_dict[key].includes(value)) {
-                          setCsvErrorMessage(`Invalid value "${value}" for column "${key}" on row ${idx + 2}.`); // + 2 to offset for headers and 0 index
+                          setCsvErrorMessage(`Invalid value "${value}" for column "${key}" on row ${idx + 2} in file ${file.name}.`); // + 2 to offset for headers and 0 index
                           resolve(false);
                           return;
                       }
@@ -462,7 +462,7 @@ const csv_to_json = (csvString: string): object[] | null => {
       ) : (
         <>
           <div>
-            <h1 className="header">S3 File Manager</h1>
+            <h1 className="header">OBU Student Recruitment Tool</h1>
             <div className='sign-out-div'>
                 <h3 className="header">Signed in as: {userID}</h3>
                 <button className="logout-button" onClick={handleLogout}>Sign Out</button>
