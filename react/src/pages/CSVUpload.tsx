@@ -1,5 +1,4 @@
 import { useState } from "react";
-import '../css/FileUpload.css';
 import UploadService from "../services/FileUploadService.ts";
 import React from "react";
 import Papa from "papaparse";
@@ -59,6 +58,7 @@ const FileUpload: React.FC = () => {
     };
 
     const validateCSVContent = (file: File): Promise<boolean> => {
+        console.log("Entered validation");
         return new Promise((resolve, reject) => {
             Papa.parse(file, {
                 header: true, // Ensure the first row is treated as headers
@@ -100,6 +100,7 @@ const FileUpload: React.FC = () => {
                     resolve(true);
                 }
             });
+            console.log("Exit validation");
         });
     };
 
@@ -157,15 +158,15 @@ const FileUpload: React.FC = () => {
     return (
         <div>
             <header className="header">
-                <p>Upload CSV file of multiple students </p>
+                <p className="main-title">Upload CSV file of multiple students </p>
             </header>
             <div className="fileUpload">
                 <div>
                     <label>
-                        <input type="file" accept=".csv" onChange={selectFile} />
+                        <input className="upload-input" type="file" accept=".csv" onChange={selectFile} />
                     </label>
 
-                    <button disabled={!currentFile} onClick={upload}>Upload</button>
+                    <button className='action-button' disabled={!currentFile} onClick={upload}>Upload</button>
                 </div>
 
                 {message && (

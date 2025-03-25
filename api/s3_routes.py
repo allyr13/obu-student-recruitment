@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 import boto3
 from json_loader import get_config
 from botocore.exceptions import ClientError
+import json
 
 s3_bp = Blueprint("s3", __name__)
 
@@ -27,6 +28,8 @@ def add_user():
                 'User_Password': user_password
             }
         )
+
+        s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=f"/root/{user_prefix}/", Body=b'')
 
         return jsonify({'message': 'User added successfully', 'status': 'success'}), 200
 
@@ -122,33 +125,47 @@ def upload_to_s3():
     if 'file' not in request.files:
         return jsonify({"error": "No file part", "status": 500})
 
-    file = request.files['file']
+    files = request.files.getlist('file')
+    print(f"FILES: {files}")
     prefix = request.form.get('prefix', '')
     global_upload = request.form.get('global', 'None')
     print(global_upload)
 
-    if file.filename == '':
+    if not files:
         return jsonify({"error": "No selected file", "status": 500})
 
     if prefix != '':
         if prefix == "/root":
-            prefix = '' # Avoid double referencing root prefix
-        else:
-            prefix = prefix + "/"
-            # TODO: Once react sets a specific folder (if there is one), 
-            # make sure to add that specific folder path after the user's prefix
+            prefix = '' 
+
+    uploaded_files = []
 
     try:
-        if (global_upload == "True"):
-            s3_client.upload_fileobj(file, S3_BUCKET_NAME, f"{get_config("root_dir")}/global/{file.filename}")
-        else:
-            s3_client.upload_fileobj(file, S3_BUCKET_NAME, f"{get_config("root_dir")}/{prefix}{file.filename}")
+        for file in files:
+            if file.filename == '':
+                continue
+            relative_path = request.form.get(f'path_{file.filename}', file.filename)
+            selected_folder = request.form.get(f'folder')
+            print(f"relative_path: {relative_path}")
+            if selected_folder != "" and selected_folder != None:
+                s3_key = f"{get_config('root_dir')}/{selected_folder}/{relative_path}"
+            else: 
+                s3_key = f"{get_config('root_dir')}/{prefix}/{relative_path}"
 
-        return jsonify({"message": "File uploaded successfully", "filename": file.filename, "status": 200})
+            if global_upload == "True":
+                s3_key = f"{get_config('root_dir')}/global/{relative_path}"
+
+            print(f"Uploading: {s3_key}")
+            s3_client.upload_fileobj(file, S3_BUCKET_NAME, s3_key)
+            uploaded_files.append(s3_key)
+
+        # Return after all files have been uploaded
+        return jsonify({"message": "Files uploaded successfully", "filenames": uploaded_files, "status": 200})
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
 
+      
     
 @s3_bp.route('/api/list_s3_files', methods=['GET'])
 def list_s3_files():
@@ -190,10 +207,41 @@ def get_download_url():
         return jsonify({"error": str(e), "status": 500})
 
 
+    
+@s3_bp.route('/api/get_file', methods=['GET'])
+def get_file():
+    # Get the filename from the query parameters
+    file_name = request.args.get('filename')
+    print('file name', file_name)
+
+    if not file_name:
+        return jsonify({"error": "Filename is required", "status": 400})
+
+    try:
+        # Fetch the file from S3
+        response = s3_client.get_object(Bucket=S3_BUCKET_NAME, Key=file_name)
+
+        # The file content is inside 'Body' of the response
+        file_content = response['Body'].read().decode('utf-8')
+
+        # If it's a text-based file like JSON, CSV, etc., you can return the content
+        try:
+            # Try to parse the content as JSON (if applicable)
+            parsed_content = json.loads(file_content)
+            return jsonify({"file": parsed_content, "status": 200})
+        except json.JSONDecodeError:
+            # If it's not JSON, just return it as plain text
+            return jsonify({"file": file_content, "status": 200})
+
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
+
+
 
 @s3_bp.route('/api/delete_from_s3', methods=['DELETE'])
 def delete_from_s3():
     file_name = request.args.get('filename')
+    print(f"Deleting: {file_name}")
 
     if not file_name:
         return jsonify({"error": "Filename is required", "status": 500})
@@ -213,3 +261,19 @@ def use_pre_signed_url(action_type, file_name, exp_time=3600):
         ExpiresIn=exp_time  # Default 1 hour expiration
     )
     return presigned_url
+
+@s3_bp.route('/api/create_folder_in_s3', methods=['POST'])
+def create_folder_in_s3():
+    try:
+        data = request.get_json()
+        folder_key = "/root"
+        folder_key += data.get('folderKey')
+        if not folder_key:
+            return jsonify({"error": "folderKey not provided", "status": 500})
+        if not folder_key.endswith('/'):
+            folder_key += '/'
+        s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=folder_key, Body=b'')
+        print(folder_key)
+        return jsonify({"message": f"Folder '{folder_key}' created successfully.", "status": 200})
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})

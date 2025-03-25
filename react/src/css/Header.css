@@ -6,7 +6,6 @@
   
   .header h1 {
     font-size: 2em;
-    color: #388e3c; /* Dark green for header */
     margin-bottom: 10px;
   }
   
@@ -14,6 +13,5 @@
     font-size: 1.2em;
     margin-left: auto;
     margin-right: auto;
-    color: #4caf50; /* Medium green for subheading */
   }
   

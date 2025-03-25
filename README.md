@@ -1,50 +1,125 @@
-# obu-student-recruitment
+# OBU Student Recruitment
+
+## Table of Contents
+1. [Getting Started](#getting-started)
+   - [Flask Back End](#flask-back-end)
+   - [React Front End](#react-front-end)
+2. [Client-Side Information](#client-side-information)
+   - [Managing Users](#managing-users)
+   - [S3 Bucket](#s3-bucket)
+3. [Predictive Model Information](#predictive-model-information)
+   - [Models](#models)
+   - [Running The Model](#running-the-model)
+   - [Model Input](#model-input)
+   - [Model Output](#model-output)
+   - [JSON](#json-format)
+
+---
 
 # Getting Started
 ## Flask Back End
-In order to run the project, Conda must first be installed. Once Conda is installed, cd to the `api/scripts` folder and run one of the following commands to create an environment and install dependencies:
-- `bash setup-env-unix.sh`
-- TODO: Create Powershell script for Powershell users
-This creates an environment named 'stu-rec' that contains all the necessary dependencies for the backend API.
 
-Once the environment is set up, it must be activated with `conda activate stu-rec`.
+### Setup
+To run the project, Conda must first be installed. Once Conda is installed, navigate to the `api/scripts` folder and run one of the following commands to create an environment and install dependencies:
+
+- **Unix/Linux/macOS:**
+  ```bash
+  bash setup-env-unix.sh
+  ```
+- **Windows (TODO):**
+  - Create a PowerShell script for setup.
+
+This creates an environment named `stu-rec` that contains all the necessary dependencies for the backend API.
 
 ### Activate The Server
-Activate the conda envirnment using:
-```bash
-conda activate stu-rec
-```
-From the api folder, run this command in the terminal to activate the flask server:
-```bash
-python flask_server.py
-```
-The flask server currently runs on host 0.0.0.0 and port 6000, but these can be changed by editing the `config.json` file. 
+1. Activate the Conda environment:
+   ```bash
+   conda activate stu-rec
+   ```
+2. Navigate to the `api` folder and start the Flask server:
+   ```bash
+   python flask_server.py
+   ```
+
+The Flask server runs on host `0.0.0.0` and port `6000` by default, but these settings can be modified in `config.json`.
 
 ### Troubleshooting Conda Environment
-If you run into problems with your conda environment reference the [TroubleShootConda.md](api/scripts/TroubleShootConda.md) for troubleshooting options
+If you encounter issues with your Conda environment, refer to [TroubleShootConda.md](api/scripts/TroubleShootConda.md) for troubleshooting options.
 
 ## React Front End
-To start the app cd into 'react'. Then run `npm start` and the app will open in your browser.
+To start the React app:
+1. Navigate to the `react` folder:
+    ```bash
+    cd react
+    ```
+2. Start the app:
+   ```bash
+   npm start
+   ```
+The app will open in your browser.
 
+---
+
+# Client-Side Information
+## Managing Users Page
+As an admin, log into the [User Management](react/src/pages/UserManagement.tsx) page at `/user-management` using the admin password. This page displays a table of user credentials.
+
+### Admin Functions
+- **Add Users:** Use the "Add New User" form.
+- **Delete Users:** Remove user credentials from the system.
+- **Update User Information:** Modify existing user details. 
+
+![Add New User Form](add-new-user-form.png)
+
+## S3 Bucket Page
+Users can log into the [S3 bucket](react/src/pages/S3.tsx) page with their credentials. This grants access to files and folders under their specific prefix (e.g., `/user1`).
+
+### Available Actions
+- **Upload Files**
+- **Download Files**
+- **Create New Folders**
+- **List Files**
+- **Run Predictions**
+- **Delete Files**
+- **Input Single Student Form**
+- **Access Global Storage:** Users can also upload and retrieve files under the `/global` prefix.
+
+---
+
+# Predictive Model Information
 ## Models
-There are four models as follows:
-- Ada Boost
-- Logarithmic Regression
-- Decision Tree
-- eXtreme Gradient Boosting
+There are four predictive models:
+- **Ada Boost**
+- **Logarithmic Regression**
+- **Decision Tree**
+- **eXtreme Gradient Boosting (XGBoost)**
 
-### Running The Model
-To run a model prediction you must first unpickle the model using the following code:
+## Running The Model
+To select a prediction model, update the `predict_model` value in [config.json](api/config.json) to one of the following:
+
+- `AdaBoost`
+- `Logarithmic_Regression`
+- `Decision_Tree`
+- `XGBoost`
+
+### Loading the Model
+Unpickle the model with:
 ```python
 with open("FILENAME", "rb") as f:
     model = pickle.load(f)
 ```
-To run a prediction, you will need to input an array of desired feature inputs into the model:
+
+### Running a Prediction
+Provide an array of feature inputs:
 ```python
-model.predict([1,1,0,... 1])
+model.predict([1,1,0,...,1])
 ```
-### Model Input
-Each model takes the same input: 551 features split between 528 Booleans, 17 Integers, and 7 Floats. The features are as follows:
+
+## Model Input
+Each model requires **551 features**, categorized as:
+- **528 Booleans**
+- **17 Integers**
+- **7 Floats**
 
 ```bash
 ['Financial Aid Offered Amount' 'incoming_text_count'
@@ -257,11 +332,12 @@ Each model takes the same input: 551 features split between 528 Booleans, 17 Int
  'Counselor_Madeleine Foster' 'Counselor_Naaman Henager'
  'Counselor_Not Declared' 'Counselor_Rueben Thompson'
  'Counselor_Sam Anquoe' 'Counselor_Wilma Schilling']
- ```
+```
 
-### Model Output
-Models returns an array of single value, 0 or 1, in the format `[0]`.
-You can demonstrate this with the following code:
+## Model Output
+The model returns an array containing a single value, either `0` or `1`, in the format `[0]`.
+
+### Example Demonstration
 ```python
 import pickle
 import os
@@ -276,8 +352,14 @@ for mod in mods:
         print(model.predict(arr))
 ```
 
-## JSON
-A JSON object is used to transfer student data within the API. This object is an array of JSON objects that represent individual student data. There can be a minimum of 1 entry per input and a maximum of 100 entries per input. Below is an example of a valid JSON input. Every JSON input must include *ALL* of the key-value pairs listed:
+## JSON Format
+Student data is transferred as a JSON object containing an array of student entries.
+
+### Constraints:
+- **Minimum Entries:** 1
+- **Maximum Entries:** 100
+
+### JSON Example (Structure):
 ```json
 [
     {
@@ -319,5 +401,8 @@ A JSON object is used to transfer student data within the API. This object is an
     }
 ]
 ```
-** See `schema_test.py` for proof of concept and validation example code.
-** The arrays in the JSON represent the one-hot encoded values for those features. They are to be arranged in the order found in Section `Model Input`.
+
+- **All key-value pairs listed must be included.**
+- **See `schema_test.py` for proof of concept and validation example.**
+- **Feature values in JSON are one-hot encoded and must be ordered as described in the [Model Input](#model-input) section.**
+

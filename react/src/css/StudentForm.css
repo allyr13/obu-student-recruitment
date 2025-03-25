@@ -1,40 +1,63 @@
 /* General form styling */
-form {
+.form, .fileUpload {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #eaf8e2; /* Light green background */
+  background-color: #00751215; /* Light green background eaf8e2*/
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 0.5px solid var(--form-input-border-color) !important;
 }
 
-/* Styling the labels */
-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-  font-size: 14px;
-  color: #2e8b57; /* Dark green for labels */
+.fileUpload {
+  margin-bottom: 25px;
 }
 
-/* Styling the input fields and select dropdowns */
-input,
-select {
+.upload-input {
+  background-color: white;
   width: 100%;
   padding: 10px;
   margin-bottom: 15px;
-  border: 1px solid #4caf50; /* Medium green border for inputs */
+  border: 1px solid var(--input-border-color) !important;
   border-radius: 4px;
   font-size: 14px;
   box-sizing: border-box;
 }
 
-/* Focus effect for input fields */
-input:focus,
-select:focus {
-  border-color: #388e3c; /* Darker green when focused */
+.upload-input:focus, .upload-input:hover {
+  border-color: var(--input-border-color) !important;;
   outline: none;
-  box-shadow: 0 0 5px rgba(56, 142, 60, 0.5); /* Soft green glow */
+  box-shadow: 0 0 5px rgba(56, 142, 60, 0.5) !important;;
+}
+
+/* Styling the labels */
+form > label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--root-color);
+}
+
+/* Styling the input fields and select dropdowns */
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid var(--input-border-color) !important;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus,
+select:focus, 
+input:hover,
+select:hover {
+  border-color: var(--input-focus-border-color) !important;
+  box-shadow: 0 0 5px var(--input-focus-shadow-color) !important;
+  outline: none;
 }
 
 /* Submit button styling */
@@ -52,16 +75,6 @@ button {
 /* Hover effect for submit button */
 button:hover {
   background-color: #2e7d32; /* Darker green for hover effect */
-}
-
-/* Form container styling */
-.form-container {
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-  background-color: #f1f8f1; /* Light green background for form container */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 form {
