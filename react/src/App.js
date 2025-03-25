@@ -25,6 +25,8 @@ function App() {
           <Route path="/table" element={<InformUser />} />
           <Route path="/user-management" element={<UserManagement />} />
           <Route path="/upload-form" element={<UploadFormPage />}/>
+          <Route path="/csv-upload" element={<CSVUpload />
+          } /> {/* This url is for development purposes at this time*/}
         </Routes>
       </div>
     </Router>

@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent, MouseEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../css/InformUser.css';
-import rowVals, { columns } from './tableStuff';
 
-import {
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
+type Option = {
+    label: string;
+    value: string;
+};
+
+
+
+
 
 interface TransformedData {
     [studentId: string]: { [key: string]: string | number };
@@ -15,8 +17,6 @@ interface TransformedData {
 
 const InformUser: React.FC = () => {
     const [data, setData] = useState<TransformedData>({});
-    const [newFormatData, setFormatData] = useState<rowVals[]>();
-    const [formatOriginalData, setFormatOriginalData] = useState<rowVals[]>();
     const [originalData, setOriginalData] = useState<TransformedData>({});
     const [editedRows, setEditedRows] = useState({});
     const [loading, setLoading] = useState<boolean>(true);
@@ -24,6 +24,93 @@ const InformUser: React.FC = () => {
     const [expandedRows, setExpandedRows] = useState<{ [studentId: string]: boolean }>({});
     const [defaultDisplayColumns, setDefaultDisplayColumns] = useState<string[]>([]);
     const primary_key_string = 'studentIDs';
+
+    const revertData = (studentId: string, revert: boolean) => {
+        if (revert) {
+            setData((old) =>
+                old.map((row, index) =>
+                    index === rowIndex ? originalData[studentId] : row
+                )
+            );
+        } else {
+            setOriginalData((old) =>
+                old.map((row, index) =>
+                    (index === rowIndex ? data[studentId] : row)
+                )
+            );
+        }
+    };
+
+    const updateData = (studentId: string, key: string, value: string) => {
+        setData((old) =>
+            old.map((row, index) => {
+                if (index === rowIndex) {
+                    return {
+                        ...old[rowIndex],
+                        [key]: value,
+                    };
+                }
+                return row;
+            })
+        );
+    };
+
+    const TableCell = (studentId: string, key: string, theValue: string) => {
+        let value = theValue;
+
+        const setValue = (newValue: string) => {
+            value = newValue;
+        }
+
+        const onBlur = () => {
+            updateData(studentId, key, value);
+        }
+
+        if (editedRows[studentId + key]) {
+            return (
+                <input
+                    value={value}
+                    onChange={e => setValue(e.target.value)}
+                    onBlur={onBlur}
+                    type={"text"}
+                />
+            );
+        }
+        return <span>{value}</span>;
+    }
+
+    const EditCell = (studentId: string, key: string) => {
+
+        const setEditRows = (e: MouseEvent<HTMLButtonElement>) => {
+            const elName = e.currentTarget.name;
+            setEditedRows((prev) => ({
+                ...prev,
+                [studentId + key]: !prev[studentId + key],
+            }));
+            if (elName !== "edit") {
+                revertData(studentId, e.currentTarget.name === "cancel");
+            }
+        };
+
+        return (
+            <div className="edit-cell-container">
+                {editedRows[studentId + key] ? (
+                    <div className="edit-cell">
+                        <button onClick={setEditRows} name="cancel">
+                            X
+                        </button>
+                        <button onClick={setEditRows} name="done">
+                            ✔
+                        </button>
+                    </div>
+                ) : (
+                    <button onClick={setEditRows} name="edit">
+                        ✐
+                    </button>
+                )}
+            </div>
+        );
+    };
 
     const location = useLocation();
     useEffect(() => {
@@ -109,9 +196,6 @@ const InformUser: React.FC = () => {
             });
 
             setData(transformedData);
-
-
-
         } catch (err) {
             console.error('Error fetching data:', err);
         } finally {
@@ -163,87 +247,9 @@ const InformUser: React.FC = () => {
         document.body.removeChild(link);
     }
 
-    const Table = () => {
-
-        const table = useReactTable({
-            newFormatData,
-            columns,
-            getCoreRowModel: getCoreRowModel(),
-            meta: {
-                editedRows,
-                setEditedRows,
-                revertData: (rowIndex: number, revert: boolean) => {
-                    if (revert) {
-                        setFormatData((old) =>
-                            old.map((row, index) =>
-                                index === rowIndex ? formatOriginalData[rowIndex] : row
-                            )
-                        );
-                    } else {
-                        setFormatOriginalData((old) =>
-                            old.map((row, index) => (index === rowIndex ? data[rowIndex] : row))
-                        );
-                    }
-                },
-                updateData: (rowIndex: number, columnId: string, value: string) => {
-                    setData((old) =>
-                        old.map((row, index) => {
-                            if (index === rowIndex) {
-                                return {
-                                    ...old[rowIndex],
-                                    [columnId]: value,
-                                };
-                            }
-                            return row;
-                        })
-                    );
-                },
-            },
-        });
-
-        return (
-            <>
-                <table>
-                    <thead>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <th key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                    </th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody>
-                        {table.getRowModel().rows.map((row) => (
-                            <tr key={row.id}>
-                                {row.getVisibleCells().map((cell) => (
-                                    <td key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <pre>{JSON.stringify(data, null, "\t")}</pre>
-            </>
-        );
-
-    };
-
     if (loading) {
         return <div className="loading">Loading...</div>;
     }
-
-
-
 
     return (
         <div id="tableContainer">
@@ -288,13 +294,15 @@ const InformUser: React.FC = () => {
                                         </tr>
                                         <tr id="subHeader" key={`${studentId}-header`} className="expanded-row-header">
                                             <td>Category</td>
-                                            <td colSpan={defaultDisplayColumns.length + 1}>Value</td>
+                                            <td>Value</td>
+                                            <td></td>
                                         </tr>
 
                                         {otherData.map(([key, value]) => (
                                             <tr id="subRows" key={`${studentId}-${key}`} className="expanded-row">
                                                 <td>{key}</td>
-                                                <td colSpan={defaultDisplayColumns.length + 1}>{value}</td>
+                                                <td>{TableCell(studentId, key, value)}</td>
+                                                <td>{EditCell(studentId, key)}</td>
                                             </tr>
                                         ))}
                                     </>
