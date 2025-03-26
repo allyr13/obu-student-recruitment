@@ -2,15 +2,6 @@ import React, { useState, useEffect, ChangeEvent, MouseEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../css/InformUser.css';
 
-type Option = {
-    label: string;
-    value: string;
-};
-
-
-
-
-
 interface TransformedData {
     [studentId: string]: { [key: string]: string | number };
 }

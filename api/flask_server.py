@@ -29,13 +29,7 @@ TableClass = tableSave()
 def home():
     return "Hello, Flask!"
 
-@app.route('/api/batch_job', methods=['POST'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
-def batch_job_api():
-    print(request)
-    response = jsonify({"message": "File successfully uploaded", "status": 200})
-    return response
-
 @app.route('/api/upload_form', methods=['POST'])
 def upload_csv_file():
     if 'file' not in request.files:
