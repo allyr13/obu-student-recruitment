@@ -186,6 +186,15 @@ const StudentForm: React.FC = () => {
                 console.error(result.error);
                 alert(`Error: ${result.error}`);
                 return;
+            }else{
+                const v1 = JSON.stringify(predictionsObj);
+                const theValue = v1.charAt(5);
+                const intVal = Number.parseInt(theValue);
+                if (intVal == 0){
+                    predictionsObj["0"] = "No";
+                }else{
+                    predictionsObj["0"] = "Yes";
+                }
             }
 
             let list = new DataTransfer();
