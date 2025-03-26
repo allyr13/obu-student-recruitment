@@ -1,4 +1,4 @@
-import React, { useState, useEffect, MouseEvent } from 'react';
+import React, { useState, useEffect, useReducer, MouseEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../css/InformUser.css';
 
@@ -15,6 +15,7 @@ const InformUser: React.FC = () => {
     const [expandedRows, setExpandedRows] = useState<{ [studentId: string]: boolean }>({});
     const [defaultDisplayColumns, setDefaultDisplayColumns] = useState<string[]>([]);
     const primary_key_string = 'studentIDs';
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const updateData = async (studentId: string, key: string, value: string | number) => {
         data[studentId][key] = value;
@@ -36,6 +37,7 @@ const InformUser: React.FC = () => {
         }
         console.log(predictionsObj);
         console.log(data[studentId]["Prediction"]);
+        forceUpdate();
     }
 
     const TableCell = (studentId: string, key: string, theValue: string | number) => {
