@@ -25,40 +25,30 @@ const InformUser: React.FC = () => {
     const [defaultDisplayColumns, setDefaultDisplayColumns] = useState<string[]>([]);
     const primary_key_string = 'studentIDs';
 
-    const revertData = (studentId: string, revert: boolean) => {
-        if (revert) {
-            setData((old) =>
-                old.map((row, index) =>
-                    index === rowIndex ? originalData[studentId] : row
-                )
-            );
-        } else {
-            setOriginalData((old) =>
-                old.map((row, index) =>
-                    (index === rowIndex ? data[studentId] : row)
-                )
-            );
+    const updateData = async (studentId: string, key: string, value: string | number) => {
+        data[studentId][key] = value;
+
+        const csvHeader = Object.keys(data[studentId]).join(',') + ",studentIDs";
+        const csvRow = Object.values(data[studentId]).join(',') + "," + studentId;
+        const csvData = `${csvHeader}\n${csvRow}`;
+        const csvBlob = new Blob([csvData], { type: 'text/csv' });
+        const formDataToSend = new FormData();
+        formDataToSend.append('file', csvBlob, `student_form_data_whatIf.csv`);
+        const response = await fetch('/api/upload_form', {
+            method: 'POST',
+            body: formDataToSend,
+        });
+        const result = await response.json();
+        const predictionsObj = result.data;
+        if (predictionsObj !== undefined) {
+            data[studentId]["Prediction"] = predictionsObj["0"];
         }
-    };
+    }
 
-    const updateData = (studentId: string, key: string, value: string) => {
-        setData((old) =>
-            old.map((row, index) => {
-                if (index === rowIndex) {
-                    return {
-                        ...old[rowIndex],
-                        [key]: value,
-                    };
-                }
-                return row;
-            })
-        );
-    };
-
-    const TableCell = (studentId: string, key: string, theValue: string) => {
+    const TableCell = (studentId: string, key: string, theValue: string | number) => {
         let value = theValue;
 
-        const setValue = (newValue: string) => {
+        const setValue = (newValue: string | number) => {
             value = newValue;
         }
 
@@ -69,14 +59,15 @@ const InformUser: React.FC = () => {
         if (editedRows[studentId + key]) {
             return (
                 <input
-                    value={value}
-                    onChange={e => setValue(e.target.value)}
+                    defaultValue={value}
                     onBlur={onBlur}
+                    onChange={e => setValue(e.target.value)}
                     type={"text"}
                 />
             );
+        } else {
+            return <span>{value}</span>;
         }
-        return <span>{value}</span>;
     }
 
     const EditCell = (studentId: string, key: string) => {
@@ -88,7 +79,11 @@ const InformUser: React.FC = () => {
                 [studentId + key]: !prev[studentId + key],
             }));
             if (elName !== "edit") {
-                revertData(studentId, e.currentTarget.name === "cancel");
+                if (elName === "cancel") {
+                    data[studentId][key] = originalData[studentId][key];
+                } else {
+                    originalData[studentId][key] = data[studentId][key];
+                }
             }
         };
 
@@ -151,6 +146,7 @@ const InformUser: React.FC = () => {
             });
 
             setData(transformedData);
+            setOriginalData(transformedData);
 
         } catch (err) {
             console.error('Error fetching data:', err);
@@ -196,6 +192,7 @@ const InformUser: React.FC = () => {
             });
 
             setData(transformedData);
+            setOriginalData(transformedData);
         } catch (err) {
             console.error('Error fetching data:', err);
         } finally {
@@ -286,7 +283,6 @@ const InformUser: React.FC = () => {
                                     ))}
                                 </tr>
 
-
                                 {expandedRows[studentId] && (
                                     <>
                                         <tr>
@@ -307,7 +303,6 @@ const InformUser: React.FC = () => {
                                         ))}
                                     </>
                                 )}
-
                             </React.Fragment>
                         );
                     })}
