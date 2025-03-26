@@ -4,7 +4,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@tanstack/react-table": "^8.21.2",
     "axios": "^1.7.9",
     "cra-template": "1.2.0",
     "csv-parser": "^3.2.0",
