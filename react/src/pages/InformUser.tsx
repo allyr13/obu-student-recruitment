@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent, MouseEvent } from 'react';
+import React, { useState, useEffect, MouseEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../css/InformUser.css';
 
@@ -32,8 +32,10 @@ const InformUser: React.FC = () => {
         const result = await response.json();
         const predictionsObj = result.data;
         if (predictionsObj !== undefined) {
-            data[studentId]["Prediction"] = predictionsObj["0"];
+            predictionsObj[0] == 0 ? data[studentId]["Prediction"] = "No" : data[studentId]["Prediction"] = "Yes";
         }
+        console.log(predictionsObj);
+        console.log(data[studentId]["Prediction"]);
     }
 
     const TableCell = (studentId: string, key: string, theValue: string | number) => {
@@ -155,7 +157,6 @@ const InformUser: React.FC = () => {
                 setPredictionMessage('Prediction(s) not received');
             } else {
                 tableData.forEach((studentData, index) => {
-                    const studentId = studentData.studentIDs;
                     if (predictions[index] !== undefined) {
                         const intVal = Number.parseInt(predictions[index]);
                         if (intVal == 0) {
@@ -255,7 +256,6 @@ const InformUser: React.FC = () => {
                 </thead>
                 <tbody>
                     {Object.entries(data).map(([studentId, details]) => {
-                        const prediction = details["Prediction"] ?? "N/A";
                         const otherData = Object.entries(details).filter(
                             ([key]) => key !== "Prediction"
                         );
@@ -268,7 +268,7 @@ const InformUser: React.FC = () => {
                                     className={expandedRows[studentId] ? 'expanded-row-origin' : ''}
                                 >
                                     <td>{(expandedRows[studentId] ? '▼' : '▶') + " " + studentId}</td>
-                                    <td>{prediction}</td>
+                                    <td>{details["Prediction"] ?? "N/A"}</td>
                                     {defaultDisplayColumns.map((col) => (
                                         <td key={`${studentId}-${col}`}>{details[col]}</td>
                                     ))}
