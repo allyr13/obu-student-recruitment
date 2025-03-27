@@ -43,10 +43,12 @@ const InformUser: React.FC = () => {
     }
 
     const TableCell = (studentId: string, key: string, theValue: string | number) => {
-        let value = theValue;
+        let value: string | number = theValue;
+        let number: boolean = typeof theValue == "number";
+
 
         const setValue = (newValue: string | number) => {
-            value = newValue;
+            number ? value = parseInt(newValue as string) : value = newValue as string;
         }
 
         const onBlur = () => {
