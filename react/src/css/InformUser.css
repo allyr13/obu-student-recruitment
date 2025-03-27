@@ -105,3 +105,11 @@ tr:hover {
 #prediction-err-message {
     color: red
 }
+
+.edit-icon {
+    display:inline-block
+}
+
+.edit-cell {
+    display:flex
+}

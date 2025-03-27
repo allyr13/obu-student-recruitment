@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useReducer, MouseEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../css/InformUser.css';
+import { FaCheck, FaTimes, FaPencilAlt } from "react-icons/fa";
+import { Tooltip } from 'react-tooltip';
 
 interface TransformedData {
     [studentId: string]: { [key: string]: string | number };
@@ -34,9 +36,9 @@ const InformUser: React.FC = () => {
         const predictionsObj = result.data;
         if (predictionsObj !== undefined) {
             predictionsObj[0] == 0 ? data[studentId]["Prediction"] = "No" : data[studentId]["Prediction"] = "Yes";
+        } else {
+            alert(`Invalid value for field ${key}: ${value}`);
         }
-        console.log(predictionsObj);
-        console.log(data[studentId]["Prediction"]);
         forceUpdate();
     }
 
@@ -86,17 +88,28 @@ const InformUser: React.FC = () => {
             <div className="edit-cell-container">
                 {editedRows[studentId + key] ? (
                     <div className="edit-cell">
-                        <button onClick={setEditRows} name="cancel">
-                            X
+                        <button className="edit-icon" onClick={setEditRows} name="cancel"
+                            data-tooltip-id="cancel-edit"
+                            data-tooltip-content="cancel edit">
+                            <FaTimes />
                         </button>
-                        <button onClick={setEditRows} name="done">
-                            ✔
+                        <Tooltip className="edit-icon" id="cancel-edit" />
+                        <button onClick={setEditRows} name="done"
+                            data-tooltip-id="confirm-edit"
+                            data-tooltip-content="confirm edit">
+                            <FaCheck />
                         </button>
+                        <Tooltip id="confirm-edit" />
                     </div>
                 ) : (
-                    <button onClick={setEditRows} name="edit">
-                        ✐
-                    </button>
+                    <div className="edit-cell">
+                        <button className="edit-icon" onClick={setEditRows} name="edit"
+                            data-tooltip-id="edit"
+                            data-tooltip-content="edit">
+                            <FaPencilAlt />
+                        </button>
+                        <Tooltip id="edit" />
+                    </div>
                 )}
             </div>
         );
