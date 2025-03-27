@@ -60,6 +60,7 @@ const InformUser: React.FC = () => {
                     onBlur={onBlur}
                     onChange={e => setValue(e.target.value)}
                     type={"text"}
+                    className="edit-input"
                 />
             );
         } else {
