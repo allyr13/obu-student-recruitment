@@ -95,6 +95,12 @@ const S3FileManager = () => {
           setMessage('Successfully update password.');
           setShowForm(!showForm);
           setErrorMessage("");
+          setUpdatePassword(prevState => ({
+            ...prevState,
+            Old_Password: "",
+            New_Pass_One: "",
+            New_Pass_Two: "", 
+          }));
         }
       } else {
         setErrorMessage(`Error updating password - ${response.status}`);
