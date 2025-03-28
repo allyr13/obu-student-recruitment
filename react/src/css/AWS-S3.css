@@ -551,3 +551,37 @@ li:hover {
     transform: scale(1.00);
 }
   
+.edit-icon {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 90%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.edit-icon:hover {
+    background-color: var(--primary-hover-color);
+    transform: scale(1.05);
+}
+
+.edit-cell {
+    padding: 10px;
+    text-align: center;
+}
+
+.confirm {
+    margin-left: 5px;
+}
+
+.cancel {
+    margin-right: 5px;
+}
+
+.confirm, .cancel {
+    width: 40%;
+}

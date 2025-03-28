@@ -110,10 +110,6 @@ tr:hover {
     display:inline-block
 }
 
-.edit-cell {
-    display:flex
-}
-
 input[type="text"].edit-input {
     padding: 0.75rem;
     margin-top: 0rem;
