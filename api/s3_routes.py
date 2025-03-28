@@ -3,6 +3,7 @@ import boto3
 from json_loader import get_config
 from botocore.exceptions import ClientError
 import json
+import posixpath
 
 s3_bp = Blueprint("s3", __name__)
 
@@ -296,4 +297,39 @@ def delete_folder():
         return jsonify({"message": f"Folder '{folder_key}' deleted successfully", "status": 200})
 
     except ClientError as e:
+        return jsonify({"error": str(e), "status": 500})
+
+@s3_bp.route('/api/list_selected_s3_files', methods=['GET'])
+def list_selected_s3_files():
+    try:
+        user_prefix = request.args.get("prefix")
+        selected_folder = request.args.get("folder")
+        if (selected_folder == user_prefix):
+            selected_folder = ""
+        if (selected_folder == "global"):
+            selected_folder = ""
+            user_prefix = "global"
+        if selected_folder.startswith(user_prefix):
+            # Strip the duplicated part
+            selected_folder = selected_folder[len(user_prefix):].lstrip("/")
+        prefix_path = posixpath.join("/root", user_prefix, selected_folder)
+        if not prefix_path.endswith("/"):
+            prefix_path += "/"
+        print(f"Prefix Path: {prefix_path}")
+        # if user_prefix != "/root":
+        #     if user_prefix != '':
+        #         user_prefix = "/root/" + user_prefix
+
+        response_user_prefix = s3_client.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=prefix_path)
+        files_user_prefix = [obj["Key"] for obj in response_user_prefix.get("Contents", [])]
+
+        # response_other = s3_client.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=f"{get_config("root_dir")}/global")
+        # files_other = [obj["Key"] for obj in response_other.get("Contents", [])]
+
+        combined_files = list(set(files_user_prefix))
+        print(f"Combined Files: {combined_files}")
+
+        return jsonify({"files": combined_files, "status": 200})
+
+    except Exception as e:
         return jsonify({"error": str(e), "status": 500})
