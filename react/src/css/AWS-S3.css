@@ -263,6 +263,21 @@ li:hover {
     gap: 0px;
 }  
 
+.settings{
+    display: block;
+}
+
+.settings-button {
+    float: right;
+    margin-left: 0px !important;
+}
+
+.settings-header {
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateX(32px); /* Offset for icon button on same row so header is centered */
+}
+
 .icon-button {
     background: none;
     border: none;
@@ -432,22 +447,33 @@ li:hover {
     outline: none;
 }
 
-.user-management-add-form {
+.user-management-add-form, .update-password-form {
     border: 1px solid var(--form-input-border-color);
     background-color: var(--form-bg-color);
     min-width: 100%;
+    padding-bottom: 15px;
+    border-radius: 5px;
+}
+
+.update-password-form {
+    margin-bottom: 15px;
 }
 
 .user-management-add-title {
     color: black;
 }
 
-.error-message {
+.error-message, .password-match-error {
     color: red;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
+
+.password-match-error {
+    margin: 0;
+}
+
 
 .loading-text {
     font-size: 1.2em;

@@ -38,6 +38,53 @@ def add_user():
         return jsonify({'message': str(e), 'status': 'error'}), 500
 
 
+
+@s3_bp.route('/api/update_password', methods=['POST'])
+def update_password():
+    try:
+        print("ASKING FOR UPDATE")
+        data = request.json
+        print(data)
+        user_id = data['User_ID']
+        user_prefix = data['User_Prefix']
+        old_password = data['Old_Password']
+        new_pass_one = data['New_Pass_One']
+        new_pass_two = data['New_Pass_Two']
+
+        if (new_pass_one != new_pass_two):
+            return jsonify({'message': 'New passwords did not match each other', 'status': 601})
+
+
+        # Check if the old password is correct
+        response = table.get_item(Key={'User_ID': user_id, 'User_Prefix': user_prefix})
+        
+        if 'Item' not in response or response['Item']['User_Password'] != old_password:
+            return jsonify({'message': 'Old password is incorrect', 'status': 400})
+
+        # Update the password
+        table.update_item(
+            Key={'User_ID': user_id, 'User_Prefix': user_prefix},
+            UpdateExpression="SET User_Password = :new_password",
+            ConditionExpression="User_Password = :old_password",
+            ExpressionAttributeValues={
+                ':old_password': old_password,
+                ':new_password': new_pass_one
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+
+        return jsonify({'message': 'Password updated successfully', 'status': 200})
+
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
+            return jsonify({'message': 'Old password is incorrect', 'status': 400})
+        return jsonify({'message': str(e), 'status': 500})
+
+
+
+
+
+
 @s3_bp.route('/api/delete_user', methods=['DELETE'])
 def delete_user():
     try:
