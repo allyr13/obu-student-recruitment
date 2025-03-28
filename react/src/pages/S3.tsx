@@ -277,6 +277,50 @@ const S3FileManager = () => {
     }
   };
 
+  const listSelectedS3Files = async () => {
+    setIsLoading(true);
+    setProgress(0);
+    try {
+      const global_list: { displayName: string, rawFileName: string }[] = [];
+      const fileList: { displayName: string, rawFileName: string }[] = [];
+      const response = await axios.get(`/api/list_selected_s3_files?prefix=${userPrefix}&folder=${selectedFolder}`);
+
+      const totalFiles = response.data.files.length;
+      let filesProcessed = 0;
+
+      for (let file of response.data.files) {
+        let file_names = file.split('/');
+        console.log(file_names)
+        let actualFileName = file_names[file_names.length - 1];
+        let displayName = actualFileName;
+
+        if (actualFileName !== "") {
+          if (file_names[2] == 'global') {
+            let globalFile = "(Global) " + file_names.slice(3).join("/");
+            global_list.push({ displayName: globalFile, rawFileName: file });
+          } else {
+            displayName = file_names.slice(3).join("/");
+            console.log(displayName)
+            fileList.push({ displayName, rawFileName: file });
+          }
+        }
+
+        filesProcessed += 1;
+        setProgress(Math.floor((filesProcessed / totalFiles) * 100));
+      }
+
+      for (let global_file of global_list) {
+        fileList.push(global_file);
+      }
+      setFilesList(fileList);
+      setMessage('Files fetched successfully.');
+    } catch (error) {
+      setMessage('Error fetching files: ' + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const downloadFileFromS3 = async (fileName: string) => {
     try {
       const response = await axios.get(`/api/download_from_s3?filename=${fileName}`);
@@ -705,7 +749,7 @@ const csv_to_json = (csvString: string): object[] | null => {
 
           <div>
             <h2 className="list-header">List Files in S3</h2>
-            <button className="action-button" onClick={listS3Files}>List Files</button>
+            <button className="action-button" onClick={listSelectedS3Files}>List Files</button>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
 
             {isLoading ? (
