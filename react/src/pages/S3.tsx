@@ -64,7 +64,7 @@ const S3FileManager = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const uploadFormData = () => {
-    navigate('/upload-form')
+    navigate('/upload-form', { state: { folder: {selectedFolder} } });
   }
 
   const triggerFileSelect = (globalFlag: string) => {
