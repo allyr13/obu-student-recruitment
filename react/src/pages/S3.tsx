@@ -26,6 +26,7 @@ const S3FileManager = () => {
   const [newFolderName, setNewFolderName] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const [hasListed, setHasListed] = useState(false);
 
   
   useEffect(() => {
@@ -224,6 +225,7 @@ const S3FileManager = () => {
   };
 
   const listSelectedS3Files = async () => {
+    setHasListed(true);
     setIsLoading(true);
     setProgress(0);
     try {
@@ -669,7 +671,9 @@ const csv_to_json = (csvString: string): object[] | null => {
                         data-tooltip-id="file-name-tooltip" 
                         className="file-name"
                         data-tooltip-content={file.rawFileName}
-                      >{file.displayName}</span>
+                      >
+                        {file.displayName}
+                      </span>
                       <Tooltip id="file-name-tooltip" />
 
                       <div className='file-icons'>
@@ -689,7 +693,7 @@ const csv_to_json = (csvString: string): object[] | null => {
                     </li>
                   ))
                 ) : (
-                  <li>No files found. List files or add new files</li>
+                  hasListed && <li>No files found. List files or add new files</li>
                 )}
               </ul>
             )}
