@@ -258,7 +258,8 @@ const S3FileManager = () => {
       for (let global_file of global_list) {
         fileList.push(global_file);
       }
-      setFilesList(fileList);
+      let sortedFiles = fileList.sort((a, b) => a.displayName.localeCompare(b.displayName));
+      setFilesList(sortedFiles);
       setMessage('Files fetched successfully.');
     } catch (error) {
       setMessage('Error fetching files: ' + error.message);
