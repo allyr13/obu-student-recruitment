@@ -85,13 +85,16 @@ const StudentForm: React.FC = () => {
         eventsAttendedCount: 1.4,
     });
 
+    let date = new Date();
+    let dateTimeString = date.toISOString().slice(0, 19);
+
     const [message, setMessage] = useState('');
     const [userPrefix, setUserPrefix] = useState('');
     const [userID, setUserID] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const location = useLocation();
     const selectedFolder = location.state.folder.selectedFolder || '';
-    const [fileName, setFileName] = useState('')
+    const [fileName, setFileName] = useState(`student_form_data_${dateTimeString}.csv`)
 
     useEffect(() => {
         const storedAuth = localStorage.getItem("isAuthenticated");
@@ -125,7 +128,12 @@ const StudentForm: React.FC = () => {
     };
 
     const handleFileNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setFileName(e.target.value);
+        let theFileName = e.target.value;
+        if (!theFileName.endsWith(".csv")){
+            theFileName += ".csv"
+        }
+        setFileName(theFileName);
+        
     }
 
     const uploadFileToS3 = async (files: FileList, globalFlag: string) => {
@@ -171,8 +179,6 @@ const StudentForm: React.FC = () => {
         e.preventDefault();
 
         try {
-            const date = new Date();
-            const dateTimeString = date.toISOString().slice(0, 19);
 
             const csvHeader = Object.keys(formData).join(',');
             const csvRow = Object.values(formData).join(',');
@@ -1211,7 +1217,6 @@ const StudentForm: React.FC = () => {
                 name="fileName"
                 onChange={handleFileNameChange}
                 placeholder="form_data.csv"
-                required
             ></input>
 
             {/* Submit Button */}
