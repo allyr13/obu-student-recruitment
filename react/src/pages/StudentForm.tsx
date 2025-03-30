@@ -85,12 +85,16 @@ const StudentForm: React.FC = () => {
         eventsAttendedCount: 1.4,
     });
 
+    let date = new Date();
+    let dateTimeString = date.toISOString().slice(0, 19);
+
     const [message, setMessage] = useState('');
     const [userPrefix, setUserPrefix] = useState('');
     const [userID, setUserID] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const location = useLocation();
     const selectedFolder = location.state.folder.selectedFolder || '';
+    const [fileName, setFileName] = useState(`student_form_data_${dateTimeString}.csv`)
 
     useEffect(() => {
         const storedAuth = localStorage.getItem("isAuthenticated");
@@ -122,6 +126,15 @@ const StudentForm: React.FC = () => {
             });
         }
     };
+
+    const handleFileNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+        let theFileName = e.target.value;
+        if (!theFileName.endsWith(".csv")){
+            theFileName += ".csv"
+        }
+        setFileName(theFileName);
+        
+    }
 
     const uploadFileToS3 = async (files: FileList, globalFlag: string) => {
         if (!files || files.length === 0) {
@@ -166,8 +179,6 @@ const StudentForm: React.FC = () => {
         e.preventDefault();
 
         try {
-            const date = new Date();
-            const dateTimeString = date.toISOString().slice(0, 19);
 
             const csvHeader = Object.keys(formData).join(',');
             const csvRow = Object.values(formData).join(',');
@@ -175,7 +186,7 @@ const StudentForm: React.FC = () => {
 
             const csvBlob = new Blob([csvData], { type: 'text/csv' });
             const formDataToSend = new FormData();
-            formDataToSend.append('file', csvBlob, `student_form_data_${dateTimeString}.csv`);
+            formDataToSend.append('file', csvBlob, fileName);
 
             const response = await fetch('/api/upload_form', {
                 method: 'POST',
@@ -198,7 +209,7 @@ const StudentForm: React.FC = () => {
             }
 
             let list = new DataTransfer();
-            let csvFile = new File([csvBlob], `student_form_data_${dateTimeString}.csv`);
+            let csvFile = new File([csvBlob], fileName);
             list.items.add(csvFile);
             let fileList = list.files;
 
@@ -1198,6 +1209,15 @@ const StudentForm: React.FC = () => {
                 required
             />
             <br />
+
+            { /* File Name */}
+            <label>File Name:</label>
+            <input
+                type="text"    
+                name="fileName"
+                onChange={handleFileNameChange}
+                placeholder="form_data.csv"
+            ></input>
 
             {/* Submit Button */}
             <button className='action-button' type="submit">Submit</button>
