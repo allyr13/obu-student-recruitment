@@ -91,6 +91,7 @@ const StudentForm: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const location = useLocation();
     const selectedFolder = location.state.folder.selectedFolder || '';
+    const [fileName, setFileName] = useState('')
 
     useEffect(() => {
         const storedAuth = localStorage.getItem("isAuthenticated");
@@ -122,6 +123,10 @@ const StudentForm: React.FC = () => {
             });
         }
     };
+
+    const handleFileNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setFileName(e.target.value);
+    }
 
     const uploadFileToS3 = async (files: FileList, globalFlag: string) => {
         if (!files || files.length === 0) {
@@ -1198,6 +1203,16 @@ const StudentForm: React.FC = () => {
                 required
             />
             <br />
+
+            { /* File Name */}
+            <label>File Name:</label>
+            <input
+                type="text"    
+                name="fileName"
+                onChange={handleFileNameChange}
+                placeholder="form_data.csv"
+                required
+            ></input>
 
             {/* Submit Button */}
             <button className='action-button' type="submit">Submit</button>
