@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import '../css/StudentForm.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {useLocation} from 'react-router-dom';
 
 interface FormData {
     state: string;
@@ -88,7 +89,8 @@ const StudentForm: React.FC = () => {
     const [userPrefix, setUserPrefix] = useState('');
     const [userID, setUserID] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [selectedFolder, setSelectedFolder] = useState<string>("");
+    const location = useLocation();
+    const selectedFolder = location.state.folder.selectedFolder || '';
 
     useEffect(() => {
         const storedAuth = localStorage.getItem("isAuthenticated");
@@ -138,16 +140,16 @@ const StudentForm: React.FC = () => {
         });
         
         let prefix = userPrefix;
-        if (selectedFolder) {
-            prefix += `/${selectedFolder}`;
-            }
         if (selectedFolder == "global") {
             prefix = "/global";
             globalFlag = "True";
             }
-
+        console.log("Prefix:", prefix);
+        console.log("Global Flag:", globalFlag);
+        console.log("Selected Folder:", selectedFolder);
         fileData.append('prefix', prefix);
         fileData.append('global', globalFlag);
+        fileData.append('folder', selectedFolder)
         console.log("Uploading file to S3 Bucket. Is global upload:", globalFlag);
     
         try {
