@@ -674,18 +674,22 @@ const csv_to_json = (csvString: string): object[] | null => {
                       <Tooltip id="file-name-tooltip" />
 
                       <div className='file-icons'>
+                        
+                      <div data-tooltip-id="file-name-tooltip" className="file-name" data-tooltip-content="Show Table">
                         <button className="icon-button" onClick={() => showTable(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
                           <FaTable />
                         </button>
-                        <button className="icon-button" onClick={() => copyToClipboard(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
-                          <FaClipboard />
-                        </button>
+                      </div>
+                      <div data-tooltip-id="file-name-tooltip" className="file-name" data-tooltip-content="Download">
                         <button className="icon-button" onClick={() => downloadFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
                           <FaDownload />
                         </button>
+                      </div>
+                      <div data-tooltip-id="file-name-tooltip" className="file-name" data-tooltip-content="Delete">
                         <button className="icon-button" onClick={() => deleteFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
                           <FaTrash />
                         </button>
+                      </div>
                       </div>
                     </li>
                   ))
