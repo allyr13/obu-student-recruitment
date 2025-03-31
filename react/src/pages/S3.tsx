@@ -26,6 +26,7 @@ const S3FileManager = () => {
   const [newFolderName, setNewFolderName] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const [hasListed, setHasListed] = useState(false);
 
   
   useEffect(() => {
@@ -177,6 +178,7 @@ const S3FileManager = () => {
     } catch (error) {
       setMessage('Error uploading file: ' + error.message);
     }
+    listSelectedS3Files()
   };
 
   const listS3Files = async () => {
@@ -224,6 +226,7 @@ const S3FileManager = () => {
   };
 
   const listSelectedS3Files = async () => {
+    setHasListed(true);
     setIsLoading(true);
     setProgress(0);
     try {
@@ -339,7 +342,7 @@ const S3FileManager = () => {
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const file = new File([blob], fileName, { type: 'text/csv' });
-
+    
     return file;
   } catch (error) {
     console.error('Error fetching file from S3:', error);
@@ -670,7 +673,9 @@ const csv_to_json = (csvString: string): object[] | null => {
                         data-tooltip-id="file-name-tooltip" 
                         className="file-name"
                         data-tooltip-content={file.rawFileName}
-                      >{file.displayName}</span>
+                      >
+                        {file.displayName}
+                      </span>
                       <Tooltip id="file-name-tooltip" />
 
                       <div className='file-icons'>
@@ -694,7 +699,7 @@ const csv_to_json = (csvString: string): object[] | null => {
                     </li>
                   ))
                 ) : (
-                  <li>No files found. List files or add new files</li>
+                  hasListed && <li>No files found. List files or add new files</li>
                 )}
               </ul>
             )}
