@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/AWS-S3.css';
-import { FaClipboard, FaDownload, FaTrash, FaTable } from 'react-icons/fa';
+import { FaClipboard, FaDownload, FaTrash, FaTable, FaCog } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
 import DeleteConfirmation from "../components/DeleteConfirmation.tsx";
 import { useNavigate } from 'react-router-dom';
@@ -9,11 +9,19 @@ import reference_dict from "../validation_reference.json";
 import Papa from "papaparse";
 import { Tooltip } from 'react-tooltip';
 
+interface TableItem {
+  User_ID: string;
+  Old_Password: string;
+  New_Pass_One: string;
+  New_Pass_Two: string;
+  User_Prefix: string;
+}
 
 const S3FileManager = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [passwordMatchError, setPasswordMatchError] = useState('');
   const [csvErrorMessage, setCsvErrorMessage] = useState('');
   const [filesList, setFilesList] = useState<{ displayName: string, rawFileName: string }[]>([]);
   const [userPrefix, setUserPrefix] = useState('');
@@ -25,6 +33,8 @@ const S3FileManager = () => {
   const [selectedFolder, setSelectedFolder] = useState<string>("");
   const [newFolderName, setNewFolderName] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
+  const [updatePassword, setUpdatePassword] = useState<TableItem>({ User_ID: "", Old_Password: "", New_Pass_One: "", New_Pass_Two: "", User_Prefix: ""});
+  const [showForm, setShowForm] = useState(false);
   const navigate = useNavigate();
   const [hasListed, setHasListed] = useState(false);
 
@@ -33,11 +43,17 @@ const S3FileManager = () => {
     const storedAuth = localStorage.getItem("isAuthenticated");
     const storedPrefix = localStorage.getItem("User_Prefix");
     const storedUserID = localStorage.getItem("User_ID");
-    
+  
     if (storedAuth === "true" && storedPrefix && storedUserID) {
       setIsAuthenticated(true);
       setUserPrefix(storedPrefix);
       setUserID(storedUserID);
+      
+      setUpdatePassword(prevState => ({
+        ...prevState,
+        User_Prefix: storedPrefix,
+        User_ID: storedUserID
+      }));
     }
   }, []);
 
@@ -45,6 +61,11 @@ const S3FileManager = () => {
     setIsAuthenticated(true);
     setUserID(userID);
     setUserPrefix(userPrefix);
+    setUpdatePassword(prevState => ({
+      ...prevState,
+      User_Prefix: userPrefix,
+      User_ID: userID
+    }));
   };
 
   const handleLogout = () => {
@@ -54,6 +75,40 @@ const S3FileManager = () => {
     setIsAuthenticated(false);
     setUserID('');
     setUserPrefix('');
+
+    setUpdatePassword(prevState => ({
+      ...prevState,
+      User_Prefix: '',
+      User_ID: ''
+    }));
+  };
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("/api/update_password", updatePassword);
+      console.log(response);
+      if (response.status === 200) {
+        if (response.data.status === 601) {
+          setPasswordMatchError(`Password did not match the first`);
+        } else {
+          setPasswordMatchError('');
+          setMessage('Successfully update password.');
+          setShowForm(!showForm);
+          setErrorMessage("");
+          setUpdatePassword(prevState => ({
+            ...prevState,
+            Old_Password: "",
+            New_Pass_One: "",
+            New_Pass_Two: "", 
+          }));
+        }
+      } else {
+        setErrorMessage(`Error updating password - ${response.status}`);
+      }
+    } catch (error) {
+      setMessage('Error updating password: ' + error.message);
+    }
   };
 
   const handleFolderSelect = (e) => {
@@ -75,7 +130,6 @@ const S3FileManager = () => {
     }
   };
 
-  
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const globalFlag = e.target.dataset.globalFlag || "False";
@@ -590,6 +644,44 @@ const csv_to_json = (csvString: string): object[] | null => {
       ) : (
         <>
           <div>
+            <div className='settings'>
+            <button onClick={() => setShowForm(!showForm)} 
+                className="icon-button settings-button"
+                data-tooltip-id="settings-icon-tooltip" 
+                data-tooltip-content="Settings">
+            <FaCog size={24} />
+            </button>
+            <Tooltip id="settings-icon-tooltip" />
+            {showForm && (
+            
+            <form onSubmit={handleUpdateUser} className="update-password-form">
+                <h3 className="header settings-header">Update Your Password</h3>
+                <input
+                  type="text"
+                  placeholder="Old Password"
+                  value={updatePassword.Old_Password}
+                  className="user-management-field-input"
+                  onChange={(e) => setUpdatePassword({ ...updatePassword, Old_Password: e.target.value })}
+                />
+                <input
+                  type="text"
+                  placeholder="New Password"
+                  value={updatePassword.New_Pass_One}
+                  className="user-management-field-input"
+                  onChange={(e) => setUpdatePassword({ ...updatePassword, New_Pass_One: e.target.value })}
+                />
+                {passwordMatchError && <p className="password-match-error">{passwordMatchError}</p>}
+                <input
+                  type="text"
+                  placeholder="Confirm New Password"
+                  value={updatePassword.New_Pass_Two}
+                  className="user-management-field-input"
+                  onChange={(e) => setUpdatePassword({ ...updatePassword, New_Pass_Two: e.target.value })}
+                />
+                <button type="submit" className="action-button">Update Password</button>
+            </form>
+            )}
+            </div>
             <h1 className="header">OBU Student Recruitment Tool</h1>
             <div className='sign-out-div'>
                 <h3 className="header">Signed in as: {userID}</h3>
