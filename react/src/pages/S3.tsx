@@ -36,6 +36,7 @@ const S3FileManager = () => {
   const [updatePassword, setUpdatePassword] = useState<TableItem>({ User_ID: "", Old_Password: "", New_Pass_One: "", New_Pass_Two: "", User_Prefix: ""});
   const [showForm, setShowForm] = useState(false);
   const navigate = useNavigate();
+  const [hasListed, setHasListed] = useState(false);
 
   
   useEffect(() => {
@@ -119,7 +120,7 @@ const S3FileManager = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const uploadFormData = () => {
-    navigate('/upload-form')
+    navigate('/upload-form', { state: { folder: {selectedFolder} } });
   }
 
   const triggerFileSelect = (globalFlag: string) => {
@@ -231,6 +232,7 @@ const S3FileManager = () => {
     } catch (error) {
       setMessage('Error uploading file: ' + error.message);
     }
+    listSelectedS3Files()
   };
 
   const listS3Files = async () => {
@@ -278,6 +280,7 @@ const S3FileManager = () => {
   };
 
   const listSelectedS3Files = async () => {
+    setHasListed(true);
     setIsLoading(true);
     setProgress(0);
     try {
@@ -312,7 +315,8 @@ const S3FileManager = () => {
       for (let global_file of global_list) {
         fileList.push(global_file);
       }
-      setFilesList(fileList);
+      let sortedFiles = fileList.sort((a, b) => a.displayName.localeCompare(b.displayName));
+      setFilesList(sortedFiles);
       setMessage('Files fetched successfully.');
     } catch (error) {
       setMessage('Error fetching files: ' + error.message);
@@ -392,7 +396,7 @@ const S3FileManager = () => {
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const file = new File([blob], fileName, { type: 'text/csv' });
-
+    
     return file;
   } catch (error) {
     console.error('Error fetching file from S3:', error);
@@ -765,27 +769,33 @@ const csv_to_json = (csvString: string): object[] | null => {
                         data-tooltip-id="file-name-tooltip" 
                         className="file-name"
                         data-tooltip-content={file.rawFileName}
-                      >{file.displayName}</span>
+                      >
+                        {file.displayName}
+                      </span>
                       <Tooltip id="file-name-tooltip" />
 
                       <div className='file-icons'>
+                        
+                      <div data-tooltip-id="file-name-tooltip" className="file-name" data-tooltip-content="Show Table">
                         <button className="icon-button" onClick={() => showTable(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
                           <FaTable />
                         </button>
-                        <button className="icon-button" onClick={() => copyToClipboard(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
-                          <FaClipboard />
-                        </button>
+                      </div>
+                      <div data-tooltip-id="file-name-tooltip" className="file-name" data-tooltip-content="Download">
                         <button className="icon-button" onClick={() => downloadFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
                           <FaDownload />
                         </button>
+                      </div>
+                      <div data-tooltip-id="file-name-tooltip" className="file-name" data-tooltip-content="Delete">
                         <button className="icon-button" onClick={() => deleteFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
                           <FaTrash />
                         </button>
                       </div>
+                      </div>
                     </li>
                   ))
                 ) : (
-                  <li>No files found. List files or add new files</li>
+                  hasListed && <li>No files found. List files or add new files</li>
                 )}
               </ul>
             )}

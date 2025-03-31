@@ -283,7 +283,6 @@ li:hover {
     margin-right: auto;
     max-width: fit-content !important;
     transform: translateX(32px); /* Offset for icon button on same row so header is centered */
-}
 
 .icon-button {
     background: none;
