@@ -178,6 +178,7 @@ const S3FileManager = () => {
     } catch (error) {
       setMessage('Error uploading file: ' + error.message);
     }
+    refreshListedFiles()
   };
 
   const listS3Files = async () => {
@@ -340,7 +341,7 @@ const S3FileManager = () => {
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const file = new File([blob], fileName, { type: 'text/csv' });
-
+    
     return file;
   } catch (error) {
     console.error('Error fetching file from S3:', error);
