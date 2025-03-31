@@ -91,13 +91,13 @@ const InformUser: React.FC = () => {
             <div className="edit-cell-container">
                 {editedRows[studentId + key] ? (
                     <div className="edit-cell">
-                        <button className="edit-icon" onClick={setEditRows} name="cancel"
+                        <button className="edit-icon cancel" onClick={setEditRows} name="cancel"
                             data-tooltip-id="cancel-edit"
                             data-tooltip-content="cancel edit">
                             <FaTimes />
                         </button>
-                        <Tooltip className="edit-icon" id="cancel-edit" />
-                        <button onClick={setEditRows} name="done"
+                        <Tooltip className="cancel-edit" id="cancel-edit" />
+                        <button className="edit-icon confirm" onClick={setEditRows} name="done"
                             data-tooltip-id="confirm-edit"
                             data-tooltip-content="confirm edit">
                             <FaCheck />
@@ -300,14 +300,14 @@ const InformUser: React.FC = () => {
                                         <tr id="subHeader" key={`${studentId}-header`} className="expanded-row-header">
                                             <td>Category</td>
                                             <td>Value</td>
-                                            <td></td>
+                                            <td colSpan={defaultDisplayColumns.length}></td>
                                         </tr>
 
                                         {otherData.map(([key, value]) => (
                                             <tr id="subRows" key={`${studentId}-${key}`} className="expanded-row">
                                                 <td>{key}</td>
                                                 <td>{TableCell(studentId, key, value)}</td>
-                                                <td>{EditCell(studentId, key)}</td>
+                                                <td colSpan={defaultDisplayColumns.length}>{EditCell(studentId, key)}</td>
                                             </tr>
                                         ))}
                                     </>

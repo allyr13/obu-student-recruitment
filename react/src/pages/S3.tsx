@@ -644,7 +644,9 @@ const csv_to_json = (csvString: string): object[] | null => {
       ) : (
         <>
           <div>
-            <div className='settings'>
+          <div className='header-div'>
+              <img src="OBU-Green.png" alt="OBU Logo" className="obu-logo-green" />
+              <div className='settings'>
             <button onClick={() => setShowForm(!showForm)} 
                 className="icon-button settings-button"
                 data-tooltip-id="settings-icon-tooltip" 
@@ -682,7 +684,9 @@ const csv_to_json = (csvString: string): object[] | null => {
             </form>
             )}
             </div>
-            <h1 className="header">OBU Student Recruitment Tool</h1>
+              <h1 className="header main-header">OBU Student Recruitment Tool</h1>
+          </div>
+            
             <div className='sign-out-div'>
                 <h3 className="header">Signed in as: {userID}</h3>
                 <button className="logout-button" onClick={handleLogout}>Sign Out</button>
