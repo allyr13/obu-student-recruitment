@@ -178,7 +178,7 @@ const S3FileManager = () => {
     } catch (error) {
       setMessage('Error uploading file: ' + error.message);
     }
-    refreshListedFiles()
+    listSelectedS3Files()
   };
 
   const listS3Files = async () => {
