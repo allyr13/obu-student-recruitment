@@ -3,6 +3,7 @@ import boto3
 from json_loader import get_config
 from botocore.exceptions import ClientError
 import json
+import posixpath
 
 s3_bp = Blueprint("s3", __name__)
 
@@ -35,6 +36,53 @@ def add_user():
 
     except ClientError as e:
         return jsonify({'message': str(e), 'status': 'error'}), 500
+
+
+
+@s3_bp.route('/api/update_password', methods=['POST'])
+def update_password():
+    try:
+        print("ASKING FOR UPDATE")
+        data = request.json
+        print(data)
+        user_id = data['User_ID']
+        user_prefix = data['User_Prefix']
+        old_password = data['Old_Password']
+        new_pass_one = data['New_Pass_One']
+        new_pass_two = data['New_Pass_Two']
+
+        if (new_pass_one != new_pass_two):
+            return jsonify({'message': 'New passwords did not match each other', 'status': 601})
+
+
+        # Check if the old password is correct
+        response = table.get_item(Key={'User_ID': user_id, 'User_Prefix': user_prefix})
+        
+        if 'Item' not in response or response['Item']['User_Password'] != old_password:
+            return jsonify({'message': 'Old password is incorrect', 'status': 400})
+
+        # Update the password
+        table.update_item(
+            Key={'User_ID': user_id, 'User_Prefix': user_prefix},
+            UpdateExpression="SET User_Password = :new_password",
+            ConditionExpression="User_Password = :old_password",
+            ExpressionAttributeValues={
+                ':old_password': old_password,
+                ':new_password': new_pass_one
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+
+        return jsonify({'message': 'Password updated successfully', 'status': 200})
+
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
+            return jsonify({'message': 'Old password is incorrect', 'status': 400})
+        return jsonify({'message': str(e), 'status': 500})
+
+
+
+
 
 
 @s3_bp.route('/api/delete_user', methods=['DELETE'])
@@ -165,7 +213,7 @@ def upload_to_s3():
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
 
-      
+
     
 @s3_bp.route('/api/list_s3_files', methods=['GET'])
 def list_s3_files():
@@ -195,7 +243,6 @@ def list_s3_files():
 @s3_bp.route('/api/download_from_s3', methods=['GET'])
 def get_download_url():
     file_name = request.args.get('filename')
-
     if not file_name:
         return jsonify({"error": "Filename is required", "status": 500})
 
@@ -205,12 +252,9 @@ def get_download_url():
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
-
-
     
 @s3_bp.route('/api/get_file', methods=['GET'])
 def get_file():
-    # Get the filename from the query parameters
     file_name = request.args.get('filename')
     print('file name', file_name)
 
@@ -218,19 +262,14 @@ def get_file():
         return jsonify({"error": "Filename is required", "status": 400})
 
     try:
-        # Fetch the file from S3
         response = s3_client.get_object(Bucket=S3_BUCKET_NAME, Key=file_name)
 
-        # The file content is inside 'Body' of the response
         file_content = response['Body'].read().decode('utf-8')
 
-        # If it's a text-based file like JSON, CSV, etc., you can return the content
         try:
-            # Try to parse the content as JSON (if applicable)
             parsed_content = json.loads(file_content)
             return jsonify({"file": parsed_content, "status": 200})
         except json.JSONDecodeError:
-            # If it's not JSON, just return it as plain text
             return jsonify({"file": file_content, "status": 200})
 
     except Exception as e:
@@ -275,5 +314,69 @@ def create_folder_in_s3():
         s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=folder_key, Body=b'')
         print(folder_key)
         return jsonify({"message": f"Folder '{folder_key}' created successfully.", "status": 200})
+    except Exception as e:
+        return jsonify({"error": str(e), "status": 500})
+    
+@s3_bp.route('/api/delete_folder', methods=['POST'])
+def delete_folder():
+    try:
+        data = request.json
+        folder_key = "/root"
+        folder_key += data.get('folderKey')
+        print(f"Folder Key: {folder_key}")
+
+        if not folder_key:
+            return jsonify({"error": "Folder path is required", "status": 400})
+
+        if not folder_key.endswith('/'):
+            folder_key += '/'
+
+        response = s3_client.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=folder_key)
+        objects = response.get('Contents', [])
+
+        if not objects:
+            return jsonify({"message": "Folder is empty or does not exist", "status": 404})
+
+        # # Delete all objects under the folder
+        delete_keys = [{'Key': obj['Key']} for obj in objects]
+        s3_client.delete_objects(Bucket=S3_BUCKET_NAME, Delete={'Objects': delete_keys})
+
+        return jsonify({"message": f"Folder '{folder_key}' deleted successfully", "status": 200})
+
+    except ClientError as e:
+        return jsonify({"error": str(e), "status": 500})
+
+@s3_bp.route('/api/list_selected_s3_files', methods=['GET'])
+def list_selected_s3_files():
+    try:
+        user_prefix = request.args.get("prefix")
+        selected_folder = request.args.get("folder")
+        if (selected_folder == user_prefix):
+            selected_folder = ""
+        if (selected_folder == "global"):
+            selected_folder = ""
+            user_prefix = "global"
+        if selected_folder.startswith(user_prefix):
+            # Strip the duplicated part
+            selected_folder = selected_folder[len(user_prefix):].lstrip("/")
+        prefix_path = posixpath.join("/root", user_prefix, selected_folder)
+        if not prefix_path.endswith("/"):
+            prefix_path += "/"
+        print(f"Prefix Path: {prefix_path}")
+        # if user_prefix != "/root":
+        #     if user_prefix != '':
+        #         user_prefix = "/root/" + user_prefix
+
+        response_user_prefix = s3_client.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=prefix_path)
+        files_user_prefix = [obj["Key"] for obj in response_user_prefix.get("Contents", [])]
+
+        # response_other = s3_client.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=f"{get_config("root_dir")}/global")
+        # files_other = [obj["Key"] for obj in response_other.get("Contents", [])]
+
+        combined_files = list(set(files_user_prefix))
+        print(f"Combined Files: {combined_files}")
+
+        return jsonify({"files": combined_files, "status": 200})
+
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})

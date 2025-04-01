@@ -73,7 +73,7 @@ th {
 }
 
 #mainRow > td {
-    padding: 10px 0px 10px 4px;
+    padding: 10px 4px 10px 4px;
     font-size: larger;
 }
 
@@ -95,7 +95,7 @@ tr:hover {
 }
 
 .expanded-row > td {
-    padding: 4px 0px 4px 4px;
+    padding: 4px 4px 4px 4px;
 }
 
 #subRows > td, #subHeader > td {
@@ -104,4 +104,19 @@ tr:hover {
 
 #prediction-err-message {
     color: red
+}
+
+.edit-icon {
+    display:inline-block
+}
+
+input[type="text"].edit-input {
+    padding: 0.75rem;
+    margin-top: 0rem;
+    margin-bottom:0rem;
+    border: 1px solid var(--input-border-color);
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }

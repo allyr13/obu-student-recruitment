@@ -29,13 +29,7 @@ TableClass = tableSave()
 def home():
     return "Hello, Flask!"
 
-@app.route('/api/batch_job', methods=['POST'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
-def batch_job_api():
-    print(request)
-    response = jsonify({"message": "File successfully uploaded", "status": 200})
-    return response
-
 @app.route('/api/upload_form', methods=['POST'])
 def upload_csv_file():
     if 'file' not in request.files:
@@ -114,16 +108,6 @@ def get_table_data():
         return jsonify({"error": "No data available", "status": 404})
 
     return jsonify({"data": TableClass.getData()["Prediction"], "message": "CSV file received and saved successfully", "status": 200})
-
-
-@app.route('/api/test', methods=['GET'])
-def test():
-    df = get_prediction('default_batch.csv')
-    
-    TableClass.setData(json.loads(get_table_data_results()))
-
-    return jsonify({"status": 200})
-
 
 
 @app.route('/api/test', methods=['GET'])
