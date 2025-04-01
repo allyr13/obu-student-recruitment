@@ -2,7 +2,6 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import '../css/StudentForm.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import {useLocation} from 'react-router-dom';
 
 interface FormData {
     state: string;
@@ -85,16 +84,11 @@ const StudentForm: React.FC = () => {
         eventsAttendedCount: 1.4,
     });
 
-    let date = new Date();
-    let dateTimeString = date.toISOString().slice(0, 19);
-
     const [message, setMessage] = useState('');
     const [userPrefix, setUserPrefix] = useState('');
     const [userID, setUserID] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const location = useLocation();
-    const selectedFolder = location.state.folder.selectedFolder || '';
-    const [fileName, setFileName] = useState(`student_form_data_${dateTimeString}.csv`)
+    const [selectedFolder, setSelectedFolder] = useState<string>("");
 
     useEffect(() => {
         const storedAuth = localStorage.getItem("isAuthenticated");
@@ -127,15 +121,6 @@ const StudentForm: React.FC = () => {
         }
     };
 
-    const handleFileNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-        let theFileName = e.target.value;
-        if (!theFileName.endsWith(".csv")){
-            theFileName += ".csv"
-        }
-        setFileName(theFileName);
-        
-    }
-
     const uploadFileToS3 = async (files: FileList, globalFlag: string) => {
         if (!files || files.length === 0) {
           setMessage("Please select files to upload.");
@@ -153,16 +138,16 @@ const StudentForm: React.FC = () => {
         });
         
         let prefix = userPrefix;
+        if (selectedFolder) {
+            prefix += `/${selectedFolder}`;
+            }
         if (selectedFolder == "global") {
             prefix = "/global";
             globalFlag = "True";
             }
-        console.log("Prefix:", prefix);
-        console.log("Global Flag:", globalFlag);
-        console.log("Selected Folder:", selectedFolder);
+
         fileData.append('prefix', prefix);
         fileData.append('global', globalFlag);
-        fileData.append('folder', selectedFolder)
         console.log("Uploading file to S3 Bucket. Is global upload:", globalFlag);
     
         try {
@@ -179,6 +164,8 @@ const StudentForm: React.FC = () => {
         e.preventDefault();
 
         try {
+            const date = new Date();
+            const dateTimeString = date.toISOString().slice(0, 19);
 
             const csvHeader = Object.keys(formData).join(',');
             const csvRow = Object.values(formData).join(',');
@@ -186,7 +173,8 @@ const StudentForm: React.FC = () => {
 
             const csvBlob = new Blob([csvData], { type: 'text/csv' });
             const formDataToSend = new FormData();
-            formDataToSend.append('file', csvBlob, fileName);
+            formDataToSend.append('file', csvBlob, `student_form_data_${dateTimeString}.csv`);
+
             const response = await fetch('/api/upload_form', {
                 method: 'POST',
                 body: formDataToSend,
@@ -198,17 +186,10 @@ const StudentForm: React.FC = () => {
                 console.error(result.error);
                 alert(`Error: ${result.error}`);
                 return;
-            }else{
-                if (predictionsObj["0"] == 0) {
-                    predictionsObj["0"] = "No";
-                } else {
-                    predictionsObj["0"] = "Yes";
-                }
-                
             }
 
             let list = new DataTransfer();
-            let csvFile = new File([csvBlob], fileName);
+            let csvFile = new File([csvBlob], `student_form_data_${dateTimeString}.csv`);
             list.items.add(csvFile);
             let fileList = list.files;
 
@@ -234,6 +215,7 @@ const StudentForm: React.FC = () => {
             alert('An error occurred while uploading the file or sending the prediction.');
         }
     };
+
 
     return (
         <div>
@@ -963,6 +945,7 @@ const StudentForm: React.FC = () => {
                 required
             />
             <br />
+
             {/* Phone Unsuccessful Count */}
             <label>Phone Unsuccessful Count:</label>
             <input
@@ -1078,7 +1061,6 @@ const StudentForm: React.FC = () => {
             </select>
             <br />
 
-
             {/* Oklahoma City Bison Exclusive */}
             <label>Oklahoma City Bison Exclusive:</label>
             <select
@@ -1105,7 +1087,6 @@ const StudentForm: React.FC = () => {
             </select>
             <br />
 
-
             {/* Scholars Mixer and Banquet */}
             <label>Scholars Mixer and Banquet:</label>
             <select
@@ -1119,7 +1100,6 @@ const StudentForm: React.FC = () => {
             </select>
             <br />
 
-
             {/* Scholarship Interview */}
             <label>Scholarship Interview:</label>
             <select
@@ -1132,7 +1112,6 @@ const StudentForm: React.FC = () => {
                 <option value="1">Y</option>
             </select>
             <br />
-
 
             {/* Scholarship Interview Registration */}
             <label>Scholarship Interview Registration:</label>
@@ -1210,15 +1189,6 @@ const StudentForm: React.FC = () => {
                 required
             />
             <br />
-
-            { /* File Name */}
-            <label>File Name:</label>
-            <input
-                type="text"    
-                name="fileName"
-                onChange={handleFileNameChange}
-                placeholder="form_data.csv"
-            ></input>
 
             {/* Submit Button */}
             <button className='action-button' type="submit">Submit</button>
