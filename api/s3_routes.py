@@ -5,6 +5,7 @@ from botocore.exceptions import ClientError
 import json
 import posixpath
 
+
 s3_bp = Blueprint("s3", __name__)
 
 S3_BUCKET_NAME = "stu-rec-bucket"
@@ -36,7 +37,6 @@ def add_user():
 
     except ClientError as e:
         return jsonify({'message': str(e), 'status': 'error'}), 500
-
 
 
 @s3_bp.route('/api/update_password', methods=['POST'])
@@ -79,11 +79,6 @@ def update_password():
         if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
             return jsonify({'message': 'Old password is incorrect', 'status': 400})
         return jsonify({'message': str(e), 'status': 500})
-
-
-
-
-
 
 @s3_bp.route('/api/delete_user', methods=['DELETE'])
 def delete_user():
@@ -213,7 +208,6 @@ def upload_to_s3():
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
 
-
     
 @s3_bp.route('/api/list_s3_files', methods=['GET'])
 def list_s3_files():
@@ -243,6 +237,7 @@ def list_s3_files():
 @s3_bp.route('/api/download_from_s3', methods=['GET'])
 def get_download_url():
     file_name = request.args.get('filename')
+
     if not file_name:
         return jsonify({"error": "Filename is required", "status": 500})
 
