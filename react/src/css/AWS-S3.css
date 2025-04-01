@@ -618,3 +618,22 @@ li:hover {
 .confirm, .cancel {
     width: 40%;
 }
+
+.admin-button {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    margin-left: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 5px;
+    max-width: fit-content;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.admin-button:hover {
+    background-color: var(--primary-hover-color);
+    transform: scale(1.05);
+}

@@ -430,6 +430,10 @@ const processDataAndSendFile = async (tableData: string) => {
 
 }
 
+const goToAdminPage = () => {
+  navigate('/user-management');
+}
+
 const csv_to_json = (csvString: string): object[] | null => {
   try{
     const lines = csvString.split('\n').map(line => line.trim()).filter(line => line.length > 0);
@@ -657,6 +661,7 @@ const csv_to_json = (csvString: string): object[] | null => {
             {showForm && (
             
             <form onSubmit={handleUpdateUser} className="update-password-form">
+                <div className='admin-button' onClick={() => goToAdminPage()}>Admin</div>
                 <h3 className="header settings-header">Update Your Password</h3>
                 <input
                   type="text"

@@ -3,6 +3,7 @@ import axios from "axios";
 import '../css/AWS-S3.css';
 import { FaTrash } from "react-icons/fa";
 import LoginForm from "../components/AdminLoginForm.tsx"; 
+import { useNavigate } from 'react-router-dom';
 
 interface TableItem {
   User_ID: string;
@@ -16,6 +17,7 @@ const UserManagement = () => {
   const [tableData, setTableData] = useState<TableItem[]>([]);
   const [message, setMessage] = useState('');
   const [newUser, setNewUser] = useState<TableItem>({ User_ID: "", User_Prefix: "", User_Password: "" });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const isAuth = localStorage.getItem("isAuthenticated") === "true";
@@ -47,6 +49,11 @@ const UserManagement = () => {
     localStorage.removeItem("User_Prefix");
     setIsAuthenticated(false);
   };
+
+  const backToMainPage = () => {
+    navigate('/');
+  };
+
 
   const fetchTableData = async () => {
     try {
@@ -128,6 +135,7 @@ const UserManagement = () => {
         <div>
           <h2 className="main-title">Manage User Access Credentials</h2>
           <button className="logout-button" onClick={handleLogout}>Sign Out</button>
+          <button className="logout-button" onClick={backToMainPage}>Back</button>
           {message && <p className="message">{message}</p>}
           <table className="user-management-table">
             <thead>
