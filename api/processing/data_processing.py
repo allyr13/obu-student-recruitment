@@ -182,8 +182,6 @@ def get_prediction(data):
 
     df_input = pd.read_csv(data)
     studentIDs_column = df_input.pop('studentIDs')
-    if "Prediction" in df_input.columns:
-        df_input.pop("Prediction")
     df_output = one_hot_encode_df(df_input)
     df_output[numerical_columns] = scaler.transform(df_output[numerical_columns])
     global results_json

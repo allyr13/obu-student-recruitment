@@ -1,27 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/AWS-S3.css';
-import { FaClipboard, FaDownload, FaTrash, FaTable, FaCog } from 'react-icons/fa';
+import { FaClipboard, FaDownload, FaTrash, FaTable } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
-import DeleteConfirmation from "../components/DeleteConfirmation.tsx";
 import { useNavigate } from 'react-router-dom';
 import reference_dict from "../validation_reference.json";
 import Papa from "papaparse";
-import { Tooltip } from 'react-tooltip';
 
-interface TableItem {
-  User_ID: string;
-  Old_Password: string;
-  New_Pass_One: string;
-  New_Pass_Two: string;
-  User_Prefix: string;
-}
 
 const S3FileManager = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [passwordMatchError, setPasswordMatchError] = useState('');
   const [csvErrorMessage, setCsvErrorMessage] = useState('');
   const [filesList, setFilesList] = useState<{ displayName: string, rawFileName: string }[]>([]);
   const [userPrefix, setUserPrefix] = useState('');
@@ -32,27 +23,18 @@ const S3FileManager = () => {
   const [folderList, setFolderList] = useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string>("");
   const [newFolderName, setNewFolderName] = useState<string>("");
-  const [showModal, setShowModal] = useState(false);
-  const [updatePassword, setUpdatePassword] = useState<TableItem>({ User_ID: "", Old_Password: "", New_Pass_One: "", New_Pass_Two: "", User_Prefix: ""});
-  const [showForm, setShowForm] = useState(false);
   const navigate = useNavigate();
-  const [hasListed, setHasListed] = useState(false);
 
   
   useEffect(() => {
     const storedAuth = localStorage.getItem("isAuthenticated");
     const storedPrefix = localStorage.getItem("User_Prefix");
     const storedUserID = localStorage.getItem("User_ID");
+    
     if (storedAuth === "true" && storedPrefix && storedUserID) {
       setIsAuthenticated(true);
       setUserPrefix(storedPrefix);
       setUserID(storedUserID);
-      
-      setUpdatePassword(prevState => ({
-        ...prevState,
-        User_Prefix: storedPrefix,
-        User_ID: storedUserID
-      }));
     }
   }, []);
 
@@ -60,11 +42,6 @@ const S3FileManager = () => {
     setIsAuthenticated(true);
     setUserID(userID);
     setUserPrefix(userPrefix);
-    setUpdatePassword(prevState => ({
-      ...prevState,
-      User_Prefix: userPrefix,
-      User_ID: userID
-    }));
   };
 
   const handleLogout = () => {
@@ -74,41 +51,6 @@ const S3FileManager = () => {
     setIsAuthenticated(false);
     setUserID('');
     setUserPrefix('');
-
-
-    setUpdatePassword(prevState => ({
-      ...prevState,
-      User_Prefix: '',
-      User_ID: ''
-    }));
-  };
-
-  const handleUpdateUser = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post("/api/update_password", updatePassword);
-      console.log(response);
-      if (response.status === 200) {
-        if (response.data.status === 601) {
-          setPasswordMatchError(`Password did not match the first`);
-        } else {
-          setPasswordMatchError('');
-          setMessage('Successfully update password.');
-          setShowForm(!showForm);
-          setErrorMessage("");
-          setUpdatePassword(prevState => ({
-            ...prevState,
-            Old_Password: "",
-            New_Pass_One: "",
-            New_Pass_Two: "", 
-          }));
-        }
-      } else {
-        setErrorMessage(`Error updating password - ${response.status}`);
-      }
-    } catch (error) {
-      setMessage('Error updating password: ' + error.message);
-    }
   };
 
   const handleFolderSelect = (e) => {
@@ -120,7 +62,7 @@ const S3FileManager = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const uploadFormData = () => {
-    navigate('/upload-form', { state: { folder: {selectedFolder} } });
+    navigate('/upload-form')
   }
 
   const triggerFileSelect = (globalFlag: string) => {
@@ -129,6 +71,7 @@ const S3FileManager = () => {
       fileInputRef.current.click();
     }
   };
+
   
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -232,7 +175,6 @@ const S3FileManager = () => {
     } catch (error) {
       setMessage('Error uploading file: ' + error.message);
     }
-    listSelectedS3Files()
   };
 
   const listS3Files = async () => {
@@ -279,52 +221,6 @@ const S3FileManager = () => {
     }
   };
 
-  const listSelectedS3Files = async () => {
-    setHasListed(true);
-    setIsLoading(true);
-    setProgress(0);
-    try {
-      const global_list: { displayName: string, rawFileName: string }[] = [];
-      const fileList: { displayName: string, rawFileName: string }[] = [];
-      const response = await axios.get(`/api/list_selected_s3_files?prefix=${userPrefix}&folder=${selectedFolder}`);
-
-      const totalFiles = response.data.files.length;
-      let filesProcessed = 0;
-
-      for (let file of response.data.files) {
-        let file_names = file.split('/');
-        console.log(file_names)
-        let actualFileName = file_names[file_names.length - 1];
-        let displayName = actualFileName;
-
-        if (actualFileName !== "") {
-          if (file_names[2] == 'global') {
-            let globalFile = "(Global) " + file_names.slice(3).join("/");
-            global_list.push({ displayName: globalFile, rawFileName: file });
-          } else {
-            displayName = file_names.slice(3).join("/");
-            console.log(displayName)
-            fileList.push({ displayName, rawFileName: file });
-          }
-        }
-
-        filesProcessed += 1;
-        setProgress(Math.floor((filesProcessed / totalFiles) * 100));
-      }
-
-      for (let global_file of global_list) {
-        fileList.push(global_file);
-      }
-      let sortedFiles = fileList.sort((a, b) => a.displayName.localeCompare(b.displayName));
-      setFilesList(sortedFiles);
-      setMessage('Files fetched successfully.');
-    } catch (error) {
-      setMessage('Error fetching files: ' + error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-    
   const downloadFileFromS3 = async (fileName: string) => {
     try {
       const response = await axios.get(`/api/download_from_s3?filename=${fileName}`);
@@ -396,6 +292,7 @@ const S3FileManager = () => {
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const file = new File([blob], fileName, { type: 'text/csv' });
+
     return file;
   } catch (error) {
     console.error('Error fetching file from S3:', error);
@@ -514,83 +411,6 @@ const csv_to_json = (csvString: string): object[] | null => {
     }
   }, [userPrefix, selectedFolder]);
 
-  const handleDelete = async () => {
-    if (selectedFolder == userPrefix) {
-      setCsvErrorMessage(`Cannot delete base folder.`);
-      console.log(`Cannot delete base folder:`, selectedFolder);
-      return;
-    }
-
-    if (selectedFolder == 'global') {
-      setCsvErrorMessage(`Cannot delete ${selectedFolder} folder.`);
-      console.log(`Cannot delete folder:`, selectedFolder);
-      return;
-    }
-    setCsvErrorMessage('');
-    setShowModal(true);
-  }
-
-  const deleteFolderInS3 = async () => {
-    console.log(selectedFolder);
-
-    if (!selectedFolder.trim()) {
-      setErrorMessage("Folder name cannot be empty.");
-      return;
-    }
-
-    const folderKey = `/${selectedFolder}/`;
-    console.log("Deleting folder with key:", folderKey);
-    try {
-      const response = await axios.post(
-        '/api/delete_folder',
-        { folderKey },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-      setNewFolderName('');
-      setShowModal(false);
-      if (response.status == 200) {
-        setErrorMessage('');
-        setMessage(`Folder "${selectedFolder}" deleted successfully.`);
-        console.log("Delete status", response.status)
-        refreshListedFiles();
-      }
-    } catch (error: any) {
-      setMessage('Error creating folder: ' + error.message);
-    }
-  }
-
-  const refreshListedFiles = async () => {
-    try {
-      axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
-      .then((response) => {
-        const files: string[] = response.data.files;
-        const folders = Array.from(new Set(
-          files
-            .map(key => {
-              let cleanKey = key;
-              if (cleanKey.startsWith("/root/")) {
-                cleanKey = cleanKey.replace("/root/", "");
-              }
-              const parts = cleanKey.split("/");
-              return parts.length > 1 ? parts.slice(0, parts.length - 1).join("/") : "";
-            })
-            .filter(folder => folder !== "")
-        ));
-        setFolderList(folders);
-      })
-      .catch((error) => {
-        setMessage("Error refreshing folders: " + error.message);
-      });
-    } catch (error: any) {
-      setMessage('Error creating folder: ' + error.message);
-    }
-  };
-
-  const cancelDeletion = () => {
-    setMessage("Deletion canceled.");
-    setShowModal(false);
-  };
-
   const createFolderInS3 = async () => {
     if (!newFolderName.trim()) {
       setMessage("Folder name cannot be empty.");
@@ -636,56 +456,13 @@ const csv_to_json = (csvString: string): object[] | null => {
   }
 
   return (
-
-    <div className={showModal ? "blur-background" : ""}>
     <div className="s3-file-manager">
       {!isAuthenticated ? (
         <AuthForm onLoginSuccess={handleLoginSuccess} />
       ) : (
         <>
           <div>
-          <div className='header-div'>
-              <img src="OBU-Green.png" alt="OBU Logo" className="obu-logo-green" />
-              <div className='settings'>
-            <button onClick={() => setShowForm(!showForm)} 
-                className="icon-button settings-button"
-                data-tooltip-id="settings-icon-tooltip" 
-                data-tooltip-content="Settings">
-            <FaCog size={24} />
-            </button>
-            <Tooltip id="settings-icon-tooltip" />
-            {showForm && (
-            
-            <form onSubmit={handleUpdateUser} className="update-password-form">
-                <h3 className="header settings-header">Update Your Password</h3>
-                <input
-                  type="text"
-                  placeholder="Old Password"
-                  value={updatePassword.Old_Password}
-                  className="user-management-field-input"
-                  onChange={(e) => setUpdatePassword({ ...updatePassword, Old_Password: e.target.value })}
-                />
-                <input
-                  type="text"
-                  placeholder="New Password"
-                  value={updatePassword.New_Pass_One}
-                  className="user-management-field-input"
-                  onChange={(e) => setUpdatePassword({ ...updatePassword, New_Pass_One: e.target.value })}
-                />
-                {passwordMatchError && <p className="password-match-error">{passwordMatchError}</p>}
-                <input
-                  type="text"
-                  placeholder="Confirm New Password"
-                  value={updatePassword.New_Pass_Two}
-                  className="user-management-field-input"
-                  onChange={(e) => setUpdatePassword({ ...updatePassword, New_Pass_Two: e.target.value })}
-                />
-                <button type="submit" className="action-button">Update Password</button>
-            </form>
-            )}
-            </div>
-              <h1 className="header main-header">OBU Student Recruitment Tool</h1>
-          </div>
+            <h1 className="header">OBU Student Recruitment Tool</h1>
             <div className='sign-out-div'>
                 <h3 className="header">Signed in as: {userID}</h3>
                 <button className="logout-button" onClick={handleLogout}>Sign Out</button>
@@ -712,7 +489,6 @@ const csv_to_json = (csvString: string): object[] | null => {
                     </option>
                   ))}
                 </select>
-                <button className="action-button" onClick={handleDelete}>Delete Folder</button>
               </div>
 
               <div className="folder-select-form" style={{ marginTop: "1rem" }}>
@@ -721,7 +497,6 @@ const csv_to_json = (csvString: string): object[] | null => {
                   type="text"
                   placeholder="Enter folder name"
                   value={newFolderName}
-                  className='folder-name-input'
                   onChange={(e) => setNewFolderName(e.target.value)}
                 />
                 <button className="action-button" onClick={createFolderInS3}>Create Folder</button>
@@ -752,7 +527,7 @@ const csv_to_json = (csvString: string): object[] | null => {
 
           <div>
             <h2 className="list-header">List Files in S3</h2>
-            <button className="action-button" onClick={listSelectedS3Files}>List Files</button>
+            <button className="action-button" onClick={listS3Files}>List Files</button>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
 
             {isLoading ? (
@@ -764,45 +539,29 @@ const csv_to_json = (csvString: string): object[] | null => {
                 {filesList.length > 0 ? (
                   filesList.map((file, index) => (
                     <li key={index} className={`file-item ${deletedFiles.includes(file.rawFileName) ? 'deleted' : ''}`}>
-                      <span 
-                        data-tooltip-id="file-name-tooltip" 
-                        className="file-name"
-                        data-tooltip-content={file.rawFileName}
-                      >
-                        {file.displayName}
-                      </span>
-                      <Tooltip id="file-name-tooltip" />
-
-                      <div className='file-icons'>
-                        
-                      <div data-tooltip-id="file-name-tooltip" className="file-name" data-tooltip-content="Show Table">
-                        <button className="icon-button" onClick={() => showTable(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
-                          <FaTable />
-                        </button>
-                      </div>
-                      <div data-tooltip-id="file-name-tooltip" className="file-name" data-tooltip-content="Download">
-                        <button className="icon-button" onClick={() => downloadFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
-                          <FaDownload />
-                        </button>
-                      </div>
-                      <div data-tooltip-id="file-name-tooltip" className="file-name" data-tooltip-content="Delete">
-                        <button className="icon-button" onClick={() => deleteFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
-                          <FaTrash />
-                        </button>
-                      </div>
-                      </div>
+                      <span className="file-name">{file.displayName}</span>
+                      <button className="icon-button" onClick={() => showTable(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                        <FaTable />
+                      </button>
+                      <button className="icon-button" onClick={() => copyToClipboard(file.displayName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                        <FaClipboard />
+                      </button>
+                      <button className="icon-button" onClick={() => downloadFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                        <FaDownload />
+                      </button>
+                      <button className="icon-button" onClick={() => deleteFileFromS3(file.rawFileName)} disabled={deletedFiles.includes(file.rawFileName)}>
+                        <FaTrash />
+                      </button>
                     </li>
                   ))
                 ) : (
-                  hasListed && <li>No files found. List files or add new files</li>
+                  <li>No files found. List files or add new files</li>
                 )}
               </ul>
             )}
           </div>
         </>
       )}
-    </div>
-    {showModal && <DeleteConfirmation onConfirm={deleteFolderInS3} onCancel={cancelDeletion} />}
     </div>
   );
 };
