@@ -187,6 +187,7 @@ const StudentForm: React.FC = () => {
             const csvBlob = new Blob([csvData], { type: 'text/csv' });
             const formDataToSend = new FormData();
             formDataToSend.append('file', csvBlob, fileName);
+
             const response = await fetch('/api/upload_form', {
                 method: 'POST',
                 body: formDataToSend,
@@ -234,6 +235,7 @@ const StudentForm: React.FC = () => {
             alert('An error occurred while uploading the file or sending the prediction.');
         }
     };
+
 
     return (
         <div>
@@ -963,6 +965,7 @@ const StudentForm: React.FC = () => {
                 required
             />
             <br />
+
             {/* Phone Unsuccessful Count */}
             <label>Phone Unsuccessful Count:</label>
             <input
@@ -1078,7 +1081,6 @@ const StudentForm: React.FC = () => {
             </select>
             <br />
 
-
             {/* Oklahoma City Bison Exclusive */}
             <label>Oklahoma City Bison Exclusive:</label>
             <select
@@ -1105,7 +1107,6 @@ const StudentForm: React.FC = () => {
             </select>
             <br />
 
-
             {/* Scholars Mixer and Banquet */}
             <label>Scholars Mixer and Banquet:</label>
             <select
@@ -1119,7 +1120,6 @@ const StudentForm: React.FC = () => {
             </select>
             <br />
 
-
             {/* Scholarship Interview */}
             <label>Scholarship Interview:</label>
             <select
@@ -1132,7 +1132,6 @@ const StudentForm: React.FC = () => {
                 <option value="1">Y</option>
             </select>
             <br />
-
 
             {/* Scholarship Interview Registration */}
             <label>Scholarship Interview Registration:</label>

@@ -43,6 +43,7 @@ const S3FileManager = () => {
     const storedAuth = localStorage.getItem("isAuthenticated");
     const storedPrefix = localStorage.getItem("User_Prefix");
     const storedUserID = localStorage.getItem("User_ID");
+  
     if (storedAuth === "true" && storedPrefix && storedUserID) {
       setIsAuthenticated(true);
       setUserPrefix(storedPrefix);
@@ -74,7 +75,6 @@ const S3FileManager = () => {
     setIsAuthenticated(false);
     setUserID('');
     setUserPrefix('');
-
 
     setUpdatePassword(prevState => ({
       ...prevState,
@@ -129,7 +129,7 @@ const S3FileManager = () => {
       fileInputRef.current.click();
     }
   };
-  
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const globalFlag = e.target.dataset.globalFlag || "False";
@@ -324,7 +324,7 @@ const S3FileManager = () => {
       setIsLoading(false);
     }
   };
-    
+
   const downloadFileFromS3 = async (fileName: string) => {
     try {
       const response = await axios.get(`/api/download_from_s3?filename=${fileName}`);
@@ -396,6 +396,7 @@ const S3FileManager = () => {
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const file = new File([blob], fileName, { type: 'text/csv' });
+    
     return file;
   } catch (error) {
     console.error('Error fetching file from S3:', error);
@@ -636,7 +637,6 @@ const csv_to_json = (csvString: string): object[] | null => {
   }
 
   return (
-
     <div className={showModal ? "blur-background" : ""}>
     <div className="s3-file-manager">
       {!isAuthenticated ? (
@@ -686,6 +686,7 @@ const csv_to_json = (csvString: string): object[] | null => {
             </div>
               <h1 className="header main-header">OBU Student Recruitment Tool</h1>
           </div>
+            
             <div className='sign-out-div'>
                 <h3 className="header">Signed in as: {userID}</h3>
                 <button className="logout-button" onClick={handleLogout}>Sign Out</button>

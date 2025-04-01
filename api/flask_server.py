@@ -119,14 +119,6 @@ def test():
     return jsonify({"status": 200})
 
 
-@app.route('/api/test', methods=['GET'])
-def test():
-    df = get_prediction('default_batch.csv')
-    
-    TableClass.setData(json.loads(get_table_data_results()))
-
-    return jsonify({"status": 200})
-
 if __name__ == '__main__':
     host = get_config("host")
     port = get_config("port")

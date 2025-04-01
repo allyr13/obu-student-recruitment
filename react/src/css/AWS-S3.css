@@ -82,7 +82,6 @@ header, .header {
     margin-bottom: auto;
 }
 
-
 .main-header {
     max-width: fit-content !important;
     margin-left: auto;
@@ -478,10 +477,10 @@ li:hover {
     margin-right: auto;
 }
 
-
 .password-match-error {
     margin: 0;
 }
+
 
 .loading-text {
     font-size: 1.2em;
