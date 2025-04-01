@@ -3,7 +3,7 @@ import axios from "axios";
 import '../css/AWS-S3.css';
 import { FaTrash } from "react-icons/fa";
 import LoginForm from "../components/AdminLoginForm.tsx"; 
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface TableItem {
   User_ID: string;
@@ -49,11 +49,6 @@ const UserManagement = () => {
     localStorage.removeItem("User_Prefix");
     setIsAuthenticated(false);
   };
-
-  const backToMainPage = () => {
-    navigate('/');
-  };
-
 
   const fetchTableData = async () => {
     try {
@@ -133,9 +128,13 @@ const UserManagement = () => {
         <LoginForm onSubmit={handlePasswordSubmit} error={error} />
       ) : (
         <div>
+          <div className="header-div">
+            <Link to="/">
+              <img src="OBU-Green.png" alt="OBU Logo" className="obu-logo-green" />
+            </Link>
+          </div>
           <h2 className="main-title">Manage User Access Credentials</h2>
           <button className="logout-button" onClick={handleLogout}>Sign Out</button>
-          <button className="logout-button" onClick={backToMainPage}>Back</button>
           {message && <p className="message">{message}</p>}
           <table className="user-management-table">
             <thead>
