@@ -82,6 +82,13 @@ header, .header {
     margin-bottom: auto;
 }
 
+
+.main-header {
+    max-width: fit-content !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .logout-button {
     margin-left: 10px;
     max-height: fit-content;
@@ -251,6 +258,32 @@ li:hover {
     word-break: break-word;
     white-space: nowrap;
     text-overflow: ellipsis;
+    max-width: fit-content;
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.file-icons {
+    display: flex;
+    gap: 0px;
+}  
+
+.settings{
+    display: block;
+}
+
+.settings-button {
+    float: right;
+    margin-left: 0px !important;
+}
+
+.settings-header {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: fit-content !important;
+    transform: translateX(32px); /* Offset for icon button on same row so header is centered */
 }
 
 .icon-button {
@@ -422,21 +455,32 @@ li:hover {
     outline: none;
 }
 
-.user-management-add-form {
+.user-management-add-form, .update-password-form {
     border: 1px solid var(--form-input-border-color);
     background-color: var(--form-bg-color);
     min-width: 100%;
+    padding-bottom: 15px;
+    border-radius: 5px;
+}
+
+.update-password-form {
+    margin-bottom: 15px;
 }
 
 .user-management-add-title {
     color: black;
 }
 
-.error-message {
+.error-message, .password-match-error {
     color: red;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+}
+
+
+.password-match-error {
+    margin: 0;
 }
 
 .loading-text {
@@ -445,9 +489,10 @@ li:hover {
     animation: loadingDots 1.5s infinite;
 }
 
-.folder-select-container {
+.folder-select-container > div {
     display: flex;
-    margin-bottom: 15px;
+    align-items: flex-end;
+    justify-content: center;
 }
 
 .folder-select {
@@ -467,4 +512,110 @@ li:hover {
     scroll-behavior: smooth;
     overflow-y: auto !important;
     overflow: scroll !important;
+    margin-top: 1rem;
+}
+
+.folder-name-input {
+    min-height: 111px;
+    margin-top: none !important;
+}
+
+.blurred-background {
+    filter: blur(5px);
+    pointer-events: none;
+}
+  
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    z-index: 1000;
+    filter: none;
+    border-radius: 8px;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.confirm-delete-spacer {
+    height: 8px;
+}
+
+.confirm-delete-buttons {
+    display: flex;
+    float: right;
+}
+
+.confirm-delete {
+    max-width: fit-content;
+}
+
+.cancel-button {
+    color: var(--primary-color);
+    width: fit-content;
+    background-color: transparent;
+    font-weight: 500;
+    margin-right: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cancel-button:hover {
+    color: var(--primary-hover-color);
+    background-color: var(--message-info-bg-color);
+    transform: scale(1.05);
+}
+
+.action-button:disabled, .action-button.disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.action-button:disabled:hover, .action-button.disabled:hover {
+    transform: scale(1.00);
+}
+  
+.edit-icon {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 90%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.edit-icon:hover {
+    background-color: var(--primary-hover-color);
+    transform: scale(1.05);
+}
+
+.edit-cell {
+    padding: 10px;
+    text-align: center;
+}
+
+.confirm {
+    margin-left: 5px;
+}
+
+.cancel {
+    margin-right: 5px;
+}
+
+.confirm, .cancel {
+    width: 40%;
 }
