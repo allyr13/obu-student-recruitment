@@ -4,7 +4,7 @@ import '../css/AWS-S3.css';
 import { FaClipboard, FaDownload, FaTrash, FaTable, FaCog } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
 import DeleteConfirmation from "../components/DeleteConfirmation.tsx";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import reference_dict from "../validation_reference.json";
 import Papa from "papaparse";
 import { Tooltip } from 'react-tooltip';
@@ -645,7 +645,10 @@ const csv_to_json = (csvString: string): object[] | null => {
         <>
           <div>
           <div className='header-div'>
-              <img src="OBU-Green.png" alt="OBU Logo" className="obu-logo-green" />
+              <Link to="/">
+                <img src="OBU-Green.png" alt="OBU Logo" className="obu-logo-green" />
+              </Link>
+          
               <div className='settings'>
             <button onClick={() => setShowForm(!showForm)} 
                 className="icon-button settings-button"
