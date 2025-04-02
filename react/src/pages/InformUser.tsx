@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer, MouseEvent } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import '../css/InformUser.css';
 import { FaCheck, FaTimes, FaPencilAlt } from "react-icons/fa";
 import { Tooltip } from 'react-tooltip';
@@ -260,6 +260,11 @@ const InformUser: React.FC = () => {
 
     return (
         <div id="tableContainer">
+            <div className='header-div'>
+              <Link to="/">
+                <img src="OBU-Green.png" alt="OBU Logo" className="obu-logo-green" />
+              </Link>
+            </div>
             <h3 className='main-title'>Student Prediction Data</h3>
             <h4 id='prediction-err-message'>{predictionMessage}</h4>
             <table id="mainTable">
