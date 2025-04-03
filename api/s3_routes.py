@@ -21,12 +21,15 @@ def add_user():
         user_id = data['User_ID']
         user_prefix = data['User_Prefix']
         user_password = data['User_Password']
+        user_classification = data['Classification']
+        print(user_classification)
 
         response = table.put_item(
             Item={
                 'User_ID': user_id,
                 'User_Prefix': user_prefix,
-                'User_Password': user_password
+                'User_Password': user_password,
+                'Classification': user_classification
             }
         )
 
@@ -146,6 +149,7 @@ def authenticate_user():
         return jsonify({
             "message": "Authentication successful",
             "User_Prefix": user["User_Prefix"],
+            "Classification": user["Classification"],
             "status": 200
         })
 

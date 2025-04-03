@@ -3,12 +3,13 @@ import axios from "axios";
 import '../css/AWS-S3.css';
 import { FaTrash } from "react-icons/fa";
 import LoginForm from "../components/AdminLoginForm.tsx"; 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface TableItem {
   User_ID: string;
   User_Prefix: string;
   User_Password: string;
+  Classification: string;
 }
 
 const UserManagement = () => {
@@ -16,8 +17,7 @@ const UserManagement = () => {
   const [error, setError] = useState("");
   const [tableData, setTableData] = useState<TableItem[]>([]);
   const [message, setMessage] = useState('');
-  const [newUser, setNewUser] = useState<TableItem>({ User_ID: "", User_Prefix: "", User_Password: "" });
-  const navigate = useNavigate();
+  const [newUser, setNewUser] = useState<TableItem>({ User_ID: "", User_Prefix: "", User_Password: "", Classification: "User" });
 
   useEffect(() => {
     const isAuth = localStorage.getItem("isAuthenticated") === "true";
@@ -66,7 +66,7 @@ const UserManagement = () => {
     try {
       const response = await axios.post("/api/add_user", newUser);
       if (response.status === 200) {
-        setNewUser({ User_ID: "", User_Prefix: "", User_Password: "" });
+        setNewUser({ User_ID: "", User_Prefix: "", User_Password: "", Classification: "User" });
         fetchTableData();
         setMessage('Successfully added a user.');
         setError("");
@@ -170,6 +170,14 @@ const UserManagement = () => {
                 className="user-management-field-input"
                 onChange={(e) => setNewUser({ ...newUser, User_Password: e.target.value })}
               />
+              <select
+                value={newUser.Classification}
+                className="user-management-field-input"
+                onChange={(e) => setNewUser({ ...newUser, Classification: e.target.value })}
+              >
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+              </select>
               <button type="submit" className="action-button">Add User</button>
             </form>
           </div>
