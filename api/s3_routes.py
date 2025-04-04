@@ -4,6 +4,8 @@ from json_loader import get_config
 from botocore.exceptions import ClientError
 import json
 import posixpath
+from boto3.dynamodb.conditions import Key, Attr
+# import traceback
 
 s3_bp = Blueprint("s3", __name__)
 
@@ -22,7 +24,21 @@ def add_user():
         user_prefix = data['User_Prefix']
         user_password = data['User_Password']
         user_classification = data['Classification']
-        print(user_classification)
+        print(f"Received: {data}")
+
+        user_id_exists = table.query(
+            KeyConditionExpression=Key('User_ID').eq(user_id)
+        )
+        if user_id_exists['Items']:
+            print({'message': f'User ID {user_id} already exists', 'status': 'error'})
+            return jsonify({'message': f'User ID {user_id} already exists', "type": "ID", 'status': 409})
+
+        response = table.scan(
+            FilterExpression=Attr('User_Prefix').eq(user_prefix)
+        )
+        if response['Items']:
+            print({'message': f'User Prefix {user_prefix} already exists', 'status': 'error'})
+            return jsonify({'message': f'User Prefix {user_prefix} already exists', "type": "Prefix", 'status': 409})
 
         response = table.put_item(
             Item={
@@ -33,11 +49,14 @@ def add_user():
             }
         )
 
-        s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=f"/root/{user_prefix}/", Body=b'')
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+            return jsonify({'message': 'Error adding user to the database', 'status': 900}), 900
 
-        return jsonify({'message': 'User added successfully', 'status': 'success'}), 200
+        s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=f"root/{user_prefix}/", Body=b'')
 
-    except ClientError as e:
+        return jsonify({'message': 'User added successfully', 'status': 200}), 200
+
+    except Exception as e:
         return jsonify({'message': str(e), 'status': 'error'}), 500
 
 
@@ -85,9 +104,6 @@ def update_password():
 
 
 
-
-
-
 @s3_bp.route('/api/delete_user', methods=['DELETE'])
 def delete_user():
     try:
@@ -111,6 +127,7 @@ def delete_user():
         return jsonify({'message': str(e), 'status': 'error'}), 500
 
 
+
 @s3_bp.route('/api/verify_password', methods=['POST'])
 def verify_password():
     password = request.json.get('password')
@@ -121,6 +138,8 @@ def verify_password():
         return jsonify({"message": "Password valid", "status": 200})
     else:
         return jsonify({"error": "Invalid password", "status": 401})
+
+
 
 @s3_bp.route('/api/authenticate_user', methods=['POST'])
 def authenticate_user():
@@ -155,6 +174,8 @@ def authenticate_user():
 
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
+
+
 
 @s3_bp.route('/api/get_table_data', methods=['GET'])
 def get_table_data():
@@ -243,7 +264,6 @@ def list_s3_files():
 
 
 
-
 @s3_bp.route('/api/download_from_s3', methods=['GET'])
 def get_download_url():
     file_name = request.args.get('filename')
@@ -257,6 +277,8 @@ def get_download_url():
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
     
+
+
 @s3_bp.route('/api/get_file', methods=['GET'])
 def get_file():
     file_name = request.args.get('filename')
@@ -297,6 +319,7 @@ def delete_from_s3():
         return jsonify({"error": str(e), "status": 500})
 
 
+
 def use_pre_signed_url(action_type, file_name, exp_time=3600):
     presigned_url = s3_client.generate_presigned_url(
         action_type,
@@ -304,6 +327,8 @@ def use_pre_signed_url(action_type, file_name, exp_time=3600):
         ExpiresIn=exp_time  # Default 1 hour expiration
     )
     return presigned_url
+
+
 
 @s3_bp.route('/api/create_folder_in_s3', methods=['POST'])
 def create_folder_in_s3():
@@ -321,6 +346,8 @@ def create_folder_in_s3():
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
     
+
+
 @s3_bp.route('/api/delete_folder', methods=['POST'])
 def delete_folder():
     try:
@@ -349,6 +376,8 @@ def delete_folder():
 
     except ClientError as e:
         return jsonify({"error": str(e), "status": 500})
+
+
 
 @s3_bp.route('/api/list_selected_s3_files', methods=['GET'])
 def list_selected_s3_files():

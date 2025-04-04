@@ -4,6 +4,7 @@ import '../css/AWS-S3.css';
 import { FaTrash } from "react-icons/fa";
 import LoginForm from "../components/AdminLoginForm.tsx"; 
 import { Link } from 'react-router-dom';
+import { AxiosResponse } from "axios";
 
 interface TableItem {
   User_ID: string;
@@ -15,6 +16,8 @@ interface TableItem {
 const UserManagement = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState("");
+  const [idError, setIdError] = useState("");
+  const [prefixError, setPrefixError] = useState("");
   const [tableData, setTableData] = useState<TableItem[]>([]);
   const [message, setMessage] = useState('');
   const [newUser, setNewUser] = useState<TableItem>({ User_ID: "", User_Prefix: "", User_Password: "", Classification: "User" });
@@ -65,11 +68,15 @@ const UserManagement = () => {
     e.preventDefault();
     try {
       const response = await axios.post("/api/add_user", newUser);
-      if (response.status === 200) {
+      setIdError("")
+      setPrefixError("")
+      if (response.data.tatus === 200) {
         setNewUser({ User_ID: "", User_Prefix: "", User_Password: "", Classification: "User" });
         fetchTableData();
         setMessage('Successfully added a user.');
         setError("");
+      } else if (response.data.status === 409) {
+        parseTypeInputError(response);
       } else {
         setError("Error adding user");
       }
@@ -77,6 +84,17 @@ const UserManagement = () => {
       setError("Error adding user");
     }
   };
+
+  const parseTypeInputError = (response: AxiosResponse) => {
+    if (response.data['type'] == "ID") {
+      setIdError("This User ID Already Exists")
+    } else if (response.data['type'] == "Prefix") {
+      setPrefixError("This User Prefix Already Exists")
+    } else {
+      setError("Unknown Error");
+    }
+    setMessage('Adding user denied. Cannot have duplicate User ID or Prefix.');
+  }
 
   const handleDeleteUser = async (User_ID: string, User_Prefix: string) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this user?");
@@ -149,6 +167,7 @@ const UserManagement = () => {
           <div className="user-management-controls">
             <form onSubmit={handleAddUser} className="user-management-add-form">
               <h3 className="user-management-add-title">Add New User</h3>
+              {error && <p className="error-message">{idError}</p>}
               <input
                 type="text"
                 placeholder="User ID"
@@ -156,6 +175,7 @@ const UserManagement = () => {
                 className="user-management-field-input"
                 onChange={(e) => setNewUser({ ...newUser, User_ID: e.target.value })}
               />
+              {error && <p className="error-message">{prefixError}</p>}
               <input
                 type="text"
                 placeholder="User Prefix"
