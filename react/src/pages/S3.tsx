@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/AWS-S3.css';
-import { FaClipboard, FaDownload, FaTrash, FaTable, FaCog } from 'react-icons/fa';
+import { FaDownload, FaTrash, FaTable, FaCog } from 'react-icons/fa';
 import AuthForm from '../components/AuthForm.tsx';
 import DeleteConfirmation from "../components/DeleteConfirmation.tsx";
 import { useNavigate, Link } from 'react-router-dom';
@@ -25,6 +25,7 @@ const S3FileManager = () => {
   const [csvErrorMessage, setCsvErrorMessage] = useState('');
   const [filesList, setFilesList] = useState<{ displayName: string, rawFileName: string }[]>([]);
   const [userPrefix, setUserPrefix] = useState('');
+  const [userClassification, setUserClassification] = useState('');
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
   const [userID, setUserID] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -57,16 +58,22 @@ const S3FileManager = () => {
     }
   }, []);
 
-  const handleLoginSuccess = (userID: string, userPrefix: string) => {
+  const handleLoginSuccess = async (userID: string, userPrefix: string) => {
     setIsAuthenticated(true);
     setUserID(userID);
     setUserPrefix(userPrefix);
+    const classification = localStorage.getItem('Classification');
+    if (classification) {
+      setUserClassification(classification);
+    }
+
     setUpdatePassword(prevState => ({
-      ...prevState,
-      User_Prefix: userPrefix,
-      User_ID: userID
+        ...prevState,
+        User_Prefix: userPrefix,
+        User_ID: userID
     }));
   };
+
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
@@ -193,7 +200,6 @@ const S3FileManager = () => {
         });
     });
   };
-
   
   const uploadFilesToS3 = async (files: FileList, globalFlag: string) => {
     if (!files || files.length === 0) {
@@ -430,6 +436,10 @@ const processDataAndSendFile = async (tableData: string) => {
 
 }
 
+const goToAdminPage = () => {
+  navigate('/user-management');
+}
+
 const csv_to_json = (csvString: string): object[] | null => {
   try{
     const lines = csvString.split('\n').map(line => line.trim()).filter(line => line.length > 0);
@@ -660,6 +670,11 @@ const csv_to_json = (csvString: string): object[] | null => {
             {showForm && (
             
             <form onSubmit={handleUpdateUser} className="update-password-form">
+                {userClassification == "Admin" && (
+                    <div className='admin-button' onClick={() => goToAdminPage()}>
+                        Admin
+                    </div>
+                )}
                 <h3 className="header settings-header">Update Your Password</h3>
                 <input
                   type="text"
