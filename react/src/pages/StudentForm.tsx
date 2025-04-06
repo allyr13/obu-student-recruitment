@@ -188,7 +188,7 @@ const StudentForm: React.FC = () => {
             const formDataToSend = new FormData();
             formDataToSend.append('file', csvBlob, fileName);
 
-            const response = await fetch('/api/upload_form', {
+            const response = await fetch('/api/upload_data', {
                 method: 'POST',
                 body: formDataToSend,
             });
