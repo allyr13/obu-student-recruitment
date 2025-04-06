@@ -11,12 +11,7 @@ table_data_results = None
 pre_processing_df = pd.read_csv("prepared_data.csv")
 pre_processing_df = pre_processing_df.drop(columns=['ID', 'Enrolled'])
 categorical_columns = ['Country', 'State', 'Gender', 'Ethnicity', 'Origin Source',
-       'Student Type', 'Major', 
-       #'Athlete',
-       'Sport', 
-       #'Raley College Tag Exists', 
-       'Recruiting Territory',
-       'Counselor']
+       'Student Type', 'Major', 'Sport','Recruiting Territory', 'Counselor']
 numeric_columns = ['Financial Aid Offered Amount','incoming_text_count','outgoing_text_count',
                    'phone_successful_count','phone_unsuccessful_count','phone_voicemail_count',
                    'Admitted Students Day','Bison Day','Bison Day @ The Weekend','Campus Visit',
@@ -32,8 +27,6 @@ encoded_columns = []
 df_encoded = pd.get_dummies(pre_processing_df, columns=categorical_columns, drop_first=True)
 encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore", drop="first")
 encoder.fit(pre_processing_df[categorical_columns])
-
-##print(encoder.categories_)
 
 scaler = scaler = MinMaxScaler()
 numerical_columns = ['Financial Aid Offered Amount', 'incoming_text_count',
