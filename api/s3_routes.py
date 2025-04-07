@@ -346,8 +346,6 @@ def create_folder_in_s3():
     except Exception as e:
         return jsonify({"error": str(e), "status": 500})
     
-
-
 @s3_bp.route('/api/delete_folder', methods=['POST'])
 def delete_folder():
     try:
@@ -376,8 +374,6 @@ def delete_folder():
 
     except ClientError as e:
         return jsonify({"error": str(e), "status": 500})
-
-
 
 @s3_bp.route('/api/list_selected_s3_files', methods=['GET'])
 def list_selected_s3_files():
