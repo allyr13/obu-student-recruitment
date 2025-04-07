@@ -752,8 +752,7 @@ const S3FileManager = () => {
                             <input
                                 type="file"
                                 multiple
-                                {...({ webkitdirectory: "true" } as any)}
-                                ref={fileInputRef}
+                                                ref={fileInputRef}
                                 style={{ display: "none" }}
                                 onChange={handleFileUpload}
                             />
