@@ -752,7 +752,6 @@ const csv_to_json = (csvString: string): object[] | null => {
               <input
                 type="file"
                 multiple
-                //{...({ webkitdirectory: "true" } as any)}
                 ref={fileInputRef}
                 style={{ display: "none" }}
                 onChange={handleFileUpload}
