@@ -185,7 +185,7 @@ const S3FileManager = () => {
                     }
 
                     // Validate row values
-                    for (let idx = 1; idx < data.length - 1; idx++) {
+                    for (let idx = 0; idx < data.length - 1; idx++) {
                         const row = data[idx];
                         for (const [key, value] of Object.entries(row)) {
                             if (reference_dict[key] && !reference_dict[key].includes(value)) {

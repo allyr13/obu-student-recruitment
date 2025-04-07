@@ -1,51 +1,51 @@
 state,country,gender,ethnicity,studentIDs,originSource,studentType,major,financialAidOfferedAmount,athlete,sport,raleyCollegeTagExists,recruitingTerritory,counselor,counselorIncomingTextCount,counselorOutgoingTextCount,phoneSuccessfulCount,phoneUnsuccessfulCount,phoneVoicemailCount,admittedStudentsDay,bisonDay,bisonDayAtTheWeekend,campusVisit,dallasBisonExclusive,footballVisit,golfVisit,oklahomaCityBisonExclusive,scholarsBisonDay,scholarsMixerAndBanquet,scholarshipInterview,scholarshipInterviewRegistration,softballVisit,trackVisit,tulsaBisonExclusive,volleyballVisit,eventsAttendedCount
-Akwa Ibom,UGA,Not Declared,Eth-1,01475169,Phone Call - Voicemail,First-Time Freshman,Music Education,3764,Not Declared,Softball,Not Declared,T03,C12,3,1,6,0,15,Y,N,N,Y,Y,Y,Y,Y,N,N,N,Y,Y,Y,Y,Y,9
-MI,MMR,M,Eth-8,01527798,StriveScan - Scans,Readmit,Engineering - Electrical Engineering,4379,Not Declared,Dance,Not Declared,T06,C12,17,4,6,18,13,Y,Y,N,N,N,Y,Y,Y,N,Y,N,N,Y,N,Y,N,12
-Oyo,ARG,Not Declared,Eth-9,01397252,Phone Call - Successful,Transfer (24+ Hours),Creative Writing,3764,Not Declared,Track & Field (Men's),Y,T02,C5,10,4,20,8,15,N,Y,Y,N,N,Y,N,N,N,Y,Y,Y,N,Y,N,N,14
-Eastern Visayas,CZE,M,Eth-5,01338641,Super Summer,Second Degree,"Christian Ministry, Pastoral Ministry Emphasis",2683,Not Declared,Golf,Not Declared,Graduate,C10,1,1,3,13,18,Y,N,N,Y,Y,N,N,N,N,Y,N,Y,Y,Y,Y,N,8
-Lambayeque,LSO,M,Eth-5,01571303,Phone Call - Voicemail,Readmit,Corporate Innovation,3267,Not Declared,Track & Field (Men's),Y,Graduate,C13,17,2,13,14,16,Y,N,Y,Y,Y,Y,N,Y,Y,Y,N,Y,Y,N,N,N,17
-ME,IRN,M,Eth-7,01324751,Encoura Affinity Connection,Readmit,Worship Studies,3242,Y,Not Declared,Not Declared,Raley College,C9,10,14,5,16,1,N,Y,Y,Y,Y,N,N,N,N,Y,N,N,Y,Y,N,N,6
-Saint Philip,TUR,Not Declared,Eth-5,01569924,Super Summer,Readmit,History,3989,Not Declared,STUNT,Y,T06,C2,9,17,6,12,20,N,N,Y,N,N,N,Y,Y,N,N,Y,Y,Y,N,N,Y,4
-Mexico City,DEU,M,Eth-1,01430932,Phone Call - Voicemail,Readmit,Creative Writing,4318,Not Declared,Soccer,Y,T04,C7,19,6,0,8,18,Y,N,N,N,Y,N,Y,N,Y,N,N,N,N,Y,N,N,2
-Garissa,CMR,M,Eth-5,01370205,Bison Day Registration,First-Time Freshman,Art,3151,Y,Not Declared,Not Declared,Graduate,C9,2,20,12,10,14,Y,Y,Y,N,Y,N,Y,N,N,N,Y,Y,Y,N,Y,Y,0
-Greater Accra,KEN,M,Eth-1,01553585,Campus Visit Attended,First-Time Freshman,Natural Science,4318,Y,Basketball (Women's),Y,T04,C3,12,5,10,15,16,Y,N,N,Y,N,Y,N,N,Y,N,N,Y,Y,Y,Y,N,2
-Osun,IND,Not Declared,Eth-7,01378802,Next Step Magazine,Transfer (24+ Hours),"Sports and Recreation, Camp Administration Emphasis",2430,Y,Golf,Not Declared,T01,C14,2,7,16,13,18,N,N,Y,N,Y,Y,Y,N,Y,N,N,N,N,N,Y,Y,9
-Northern,Not Declared,Not Declared,Eth-1,01301263,NRCCUA Declared Names,Second Degree,"Mathematics Education, Secondary",3150,Y,Dance,Not Declared,T05,C10,8,9,0,15,12,N,N,Y,Y,Y,N,N,N,Y,Y,N,N,Y,N,Y,N,11
-West Bengal,ETH,Not Declared,Eth-8,01303434,Website Inquiry,Transfer,Biblical and Theological Studies,4837,Y,STUNT,Not Declared,T04,C12,17,11,6,6,15,Y,N,Y,Y,Y,Y,N,Y,Y,N,N,N,N,N,Y,N,13
-Western Highlands,CAN,Not Declared,Eth-7,01518195,Online Application,Readmit,Sports Communication,2141,Not Declared,Football,Y,T00,C12,7,17,19,18,4,N,N,N,Y,Y,Y,Y,N,Y,Y,Y,Y,N,Y,N,Y,18
-Khyber Pakhtunkhwa,CHE,Not Declared,Eth-4,01517144,Text Message,First-Time Freshman,"Accounting, Interdisciplinary Emphasis",3948,Y,Not Declared,Not Declared,T03,C11,15,6,19,9,6,Y,N,N,Y,N,Y,N,N,N,N,Y,N,N,Y,N,Y,0
-Madhya Pashchimanchal,SAU,Not Declared,Eth-7,01316528,Southern Baptist Convention,Transfer,Creative Writing,2086,Not Declared,STUNT,Not Declared,T02,C10,18,17,18,6,9,Y,N,Y,N,Y,N,N,N,N,Y,Y,Y,N,N,Y,N,4
-IN,CUB,M,Eth-9,01535381,Paper Application,Test Optional,Forensic Psychology,3422,Not Declared,Marching Band,Not Declared,P01,C10,13,20,18,13,10,N,N,Y,Y,Y,Y,N,N,Y,N,N,N,Y,N,N,Y,2
-Barisal,SAU,M,Eth-1,01301765,Transcript Received,Transfer,Biblical and Theological Studies,3764,Not Declared,Football,Not Declared,T00,C3,2,4,4,2,4,Y,Y,N,N,N,N,N,N,Y,N,N,N,Y,N,Y,N,3
-Namangan,SLV,Not Declared,Not Declared,01444017,Referral - OBU Faculty Member,Transfer (24+ Hours),Political Science,2847,Y,Football,Y,Homeschool,C2,16,3,8,13,20,N,Y,N,Y,Y,N,N,Y,N,Y,N,Y,Y,Y,Y,Y,0
-MA,CZE,M,Eth-4,01362422,Inquiry Card,Transfer (24+ Hours),Family Science,2180,Not Declared,STUNT,Y,T03,C7,0,16,16,6,1,Y,N,Y,N,Y,N,Y,N,Y,N,Y,Y,N,Y,N,Y,16
-Almaty,NZL,M,Eth-8,01457744,Encoura,Test Optional,Computer Science,2068,Y,Basketball (Women's),Not Declared,T04,C4,1,15,9,17,1,N,Y,N,Y,N,Y,N,N,Y,Y,N,N,Y,Y,Y,Y,2
-Edo,NAM,M,Eth-9,01510210,Text Message,Second Degree,Graphic Design,3228,Not Declared,Track & Field (Men's),Y,T05,C8,18,4,0,10,15,N,N,N,Y,Y,Y,Y,N,Y,N,N,N,Y,Y,N,Y,11
-Western,BGD,Not Declared,Eth-4,01528102,NRCCUA Declared Names,Second Degree,Not Declared,2667,Y,Basketball (Men's),Y,T04,C4,0,4,18,1,14,N,Y,Y,Y,Y,N,Y,N,Y,N,N,Y,N,N,Y,N,17
-SD,Not Declared,M,Eth-7,01466489,Encoura Affinity Connection,Readmit,Theatre,3422,Y,Basketball (Women's),Not Declared,T06,C12,9,13,15,18,5,Y,N,Y,Y,N,Y,N,N,Y,Y,N,N,N,Y,Y,Y,11
-Artigas,BEN,Not Declared,Eth-7,01418803,GTCF Matchmaker,Second Degree,"Computer Science, Cybersecurity Emphasis",3980,Not Declared,Not Declared,Y,P02,C9,4,11,11,2,8,Y,N,Y,Y,N,N,N,N,Y,Y,Y,Y,N,Y,Y,Y,10
-Dubai,IRN,M,Eth-5,01319599,CLT Application,Test Optional,"Philosophy, Apologetics Emphasis",3243,Not Declared,Soccer,Y,P01,C8,17,8,15,7,15,N,Y,Y,Y,Y,N,Y,N,Y,N,Y,N,Y,Y,Y,Y,3
-Fars,PNG,Not Declared,Eth-7,01303677,Capture Higher Ed,Transfer,"Biblical and Theological Studies, Practical Theology Emphasis",2703,Y,Track & Field (Men's),Y,Homeschool,C14,20,18,4,4,2,N,N,Y,N,N,Y,N,N,N,N,N,N,N,Y,Y,N,16
-Northwest,SEN,Not Declared,Eth-5,01504632,Transcript Received,Second Degree,Master of Arts in Christian Studies: Biblical and Theological Studies (In-Person),3455,Y,Golf,Not Declared,T06,C2,14,12,18,6,18,N,Y,N,N,N,Y,Y,Y,N,Y,N,Y,Y,N,N,Y,4
-OK,KAZ,Not Declared,Eth-8,01397961,GTCF Matchmaker,Second Degree,Undecided,2510,Not Declared,Football,Y,T03,C5,16,15,15,13,3,N,N,Y,N,Y,Y,Y,Y,N,N,N,N,Y,Y,Y,N,6
-Southern,PAK,Not Declared,Eth-2,01444623,Referral - OBU Faculty Member,Second Degree,Family Science,3243,Y,STUNT,Y,T02,C11,17,6,4,16,20,N,N,Y,Y,N,N,N,N,N,Y,Y,N,N,N,N,Y,4
-OH,UGA,M,Not Declared,01444704,New Mexico Annual Convention,First-Time Freshman,"Christian Ministry, Student and Family Ministry Emphasis",3676,Y,Marching Band,Y,Graduate,C5,17,10,12,17,14,N,Y,N,N,Y,N,N,N,Y,N,Y,Y,N,Y,Y,Y,3
-Ulaanbaatar,CYP,Not Declared,Eth-5,01332287,Private Colleges & Universities,Test Optional,"Computer Science, Cybersecurity Emphasis",3799,Not Declared,Soccer,Y,Homeschool,C12,17,19,1,18,8,N,Y,N,N,Y,N,Y,Y,N,N,Y,Y,Y,N,Y,Y,10
-KERICHO,ZMB,Not Declared,Not Declared,01342677,Church Visit,Transfer (24+ Hours),Criminal Justice,3948,Not Declared,Basketball (Men's),Not Declared,P01,C7,9,9,4,5,5,N,N,N,N,Y,Y,N,Y,Y,Y,N,N,Y,N,N,N,2
-Bong,PNG,M,Eth-2,01321404,Clark Higher Ed Leads,Transfer (24+ Hours),Biblical and Theological Studies,3837,Y,STUNT,Y,T00,C3,20,13,11,18,1,Y,Y,Y,Y,Y,Y,Y,N,Y,N,Y,Y,N,Y,N,N,1
-Abia,ROU,Not Declared,Eth-9,01339648,Graduate Website Inquiry,Transfer (24+ Hours),Applied Mathematics: Actuarial and Financial Math Emphasis,3151,Not Declared,Basketball (Women's),Y,T06,C10,11,19,4,14,7,Y,Y,Y,Y,N,N,Y,N,N,N,Y,N,Y,Y,Y,N,0
-Maritime,COD,Not Declared,Eth-2,01363631,Next Step Magazine,Test Optional,Interdisciplinary Studies,3114,Not Declared,Dance,Not Declared,T01,C12,4,10,14,19,18,Y,Y,Y,Y,Y,Y,N,Y,N,Y,N,N,Y,Y,Y,Y,18
-Uasin Gishu,UZB,M,Eth-5,01319217,Bison Day Attended,Transfer (24+ Hours),"Biblical and Theological Studies, Biblical Studies Emphasis",3447,Not Declared,Volleyball,Not Declared,T05,C7,0,4,5,0,18,Y,Y,N,Y,Y,Y,N,N,Y,N,N,N,Y,N,Y,Y,2
-Southern,SAU,Not Declared,Eth-1,01365640,CLT Prospect,Readmit,Early Childhood Education,2959,Not Declared,Dance,Not Declared,T01,C9,12,18,6,13,13,N,N,Y,Y,Y,N,N,Y,Y,N,N,N,N,N,Y,N,10
-Ulaanbaatar,CHL,M,Not Declared,01549129,Phone Call - Voicemail,Transfer,Interdisciplinary,4344,Y,Soccer,Y,T04,C10,7,7,5,9,15,N,Y,N,N,N,N,Y,Y,Y,Y,Y,Y,N,Y,N,N,9
-Dhaka Division,BRA,Not Declared,Eth-3,01450049,StriveScan - Scans,Test Optional,Engineering - Electrical Engineering,3914,Y,Track & Field (Women's),Not Declared,T05,C14,4,6,19,6,1,Y,Y,Y,Y,Y,Y,N,N,Y,Y,Y,Y,N,N,Y,Y,9
-Dubai,ESP,Not Declared,Eth-6,01430351,Clark Higher Ed Prospect,Second Degree,Corporate Innovation,3965,Not Declared,Softball,Not Declared,T03,C10,2,17,4,2,17,N,N,N,N,Y,N,N,N,Y,Y,Y,Y,N,N,Y,Y,13
-Tashkent,GHA,M,Eth-1,01356403,Clark Higher Ed Paid Social,First-Time Freshman,Music Education,3308,Not Declared,Golf,Not Declared,T01,C9,17,11,20,10,8,Y,N,Y,N,Y,Y,N,N,N,N,N,N,Y,Y,Y,N,5
-FL,HND,Not Declared,Eth-8,01433252,Bison Day Registration,First-Time Freshman,Applied Mathematics: Data Science Emphasis,4031,Not Declared,Softball,Y,T01,C8,20,12,0,18,1,N,Y,N,N,Y,Y,N,N,N,Y,N,N,N,N,N,N,13
-Piedmont,ROU,Not Declared,Eth-3,01500657,Clark Higher Ed Leads,Transfer,"Biblical and Theological Studies, Biblical Language Emphasis",3818,Y,STUNT,Y,T01,C8,19,2,10,16,15,Y,N,N,Y,N,N,N,Y,N,Y,Y,Y,N,N,N,Y,4
-Greater Accra,CUB,Not Declared,Eth-9,01461255,Text Message - Outgoing,Transfer (24+ Hours),Interdisciplinary Studies,3676,Not Declared,Football,Not Declared,P01,C5,0,16,19,2,13,Y,N,Y,N,Y,N,N,Y,N,N,Y,N,N,N,Y,Y,0
-MD,ITA,Not Declared,Eth-6,01454685,Clark Higher Ed Paid Social,Transfer,"Global Marketplace Engagement, Global Education Emphasis",3929,Not Declared,Dance,Not Declared,P01,C12,1,10,19,12,1,N,N,Y,Y,Y,Y,N,N,Y,N,Y,N,Y,N,N,Y,14
-Metro Manila,SAU,M,Eth-8,01366467,Niche Inquiries,Transfer,"Psychology, Pre-Counseling",2851,Not Declared,Soccer,Y,T06,C14,7,7,1,7,8,N,Y,Y,N,Y,N,N,N,N,N,Y,N,Y,Y,N,Y,13
-Not Declared,CMR,Not Declared,Eth-2,01549394,Paper Application,First-Time Freshman,Creative Media,3676,Y,Marching Band,Not Declared,Homeschool,C12,6,6,0,11,13,Y,N,Y,N,N,N,Y,Y,Y,N,N,Y,Y,Y,Y,Y,12
-West Coast Division,BWA,M,Eth-6,01469891,Night on the Hill Reservation,Readmit,Theatre,3249,Not Declared,Softball,Y,T07,C10,9,18,0,11,1,Y,Y,Y,N,N,N,Y,N,N,Y,Y,N,Y,Y,Y,N,18
-TN,NLD,M,Eth-1,01358999,Campus Visit Attended,Second Degree,Family Therapy,2226,Y,Softball,Not Declared,Graduate,C11,10,2,3,18,13,N,Y,N,Y,Y,N,Y,N,N,N,Y,Y,Y,Y,Y,N,15
+Centre,NPL,M,Eth-9,01520412,ACT Tape Load,Test Optional,"Biology, Forensic Emphasis",2029,N,Softball,N,T06,C8,7,15,17,15,8,Y,Y,Y,Y,N,Y,Y,Y,Y,N,Y,N,N,Y,N,N,19
+Dar es Salaam,WSM,M,Eth-3,01534069,FAFSA,First-Time Freshman,Music Education,2116,N,Track & Field (Men's),N,T07,C11,18,15,9,4,11,Y,Y,Y,Y,N,N,Y,Y,N,Y,N,Y,Y,Y,N,N,2
+Sagaing,UGA,Not Declared,Eth-5,01559965,GTCF Matchmaker,Second Degree,Biochemistry,2779,Y,Football,Y,T05,C6,18,17,12,20,8,N,Y,N,Y,N,Y,N,Y,Y,N,Y,Y,N,Y,Y,N,17
+Fars,IRN,Not Declared,Eth-4,01365667,ACT Tape Load,Second Degree,"Special Education, Early Childhood Track",3749,Y,Marching Band,N,Homeschool,C14,12,11,4,8,7,N,Y,N,Y,N,N,Y,N,Y,N,N,Y,N,N,Y,N,5
+Purwanchal,TJK,Not Declared,Eth-5,01576993,New Mexico Annual Convention,Readmit,"Psychology, Pre-Counseling",2779,Y,Dance,Y,T04,C7,18,5,3,10,16,N,N,N,Y,N,N,Y,N,Y,N,Y,N,N,N,Y,Y,5
+OR,URY,Not Declared,Eth-1,01412034,Encoura Affinity Connection,Transfer,MBA in Transformational Leadership,2779,N,Marching Band,N,T03,C8,13,2,3,11,4,N,Y,N,N,N,N,N,Y,N,Y,N,Y,Y,Y,Y,N,3
+Saint Catherine,ZWE,M,Eth-9,01491673,Niche Inquiries,First-Time Freshman,"Special Education, Elementary Track",3930,Y,Dance,Y,Homeschool,C6,2,8,11,19,4,Y,Y,N,Y,N,Y,N,N,N,N,Y,Y,Y,Y,N,Y,2
+Balochistan,CAN,Not Declared,Eth-7,01407745,Christian Connector Web Response,Readmit,"Mathematics Education, Secondary",4194,N,Dance,N,T04,C14,7,6,10,5,19,N,N,N,Y,N,N,Y,N,N,Y,Y,N,Y,N,N,Y,18
+ETHIOPIA,DEU,M,Eth-7,01350913,GenWhy,First-Time Freshman,"Sports and Recreation, Camp Administration Emphasis",2779,Y,Not Declared,N,Graduate,C3,2,11,19,17,2,Y,N,N,Y,Y,N,Y,N,Y,Y,N,N,N,Y,N,N,17
+Antananarivo,VNM,M,Eth-5,01594850,Campus Visit Attended,Transfer (24+ Hours),"Sports and Recreation, Camp Administration Emphasis",2794,Y,Softball,N,T02,C10,1,3,2,6,16,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,N,Y,N,N,Y,Y,2
+Madhya Pashchimanchal,ARE,Not Declared,Eth-1,01347912,Bison Day Registration,Readmit,"Biblical and Theological Studies, Practical Theology Emphasis",2190,Y,STUNT,N,T01,C3,7,11,14,17,14,N,N,N,Y,N,Y,Y,Y,Y,Y,N,Y,Y,N,N,Y,20
+SOUTHWEST REGION,ARE,M,Eth-5,01347088,Phone Call - Unsuccessful,Transfer (24+ Hours),Elementary Education,3935,Y,Not Declared,N,T04,C5,15,17,9,8,16,Y,Y,Y,Y,Y,N,Y,Y,Y,Y,Y,Y,Y,Y,N,N,17
+Centre,NPL,Not Declared,Eth-3,01316295,Christian Connector,Transfer (24+ Hours),"Biblical and Theological Studies, Biblical Studies Emphasis",2734,Y,Volleyball,Y,T01,C9,7,14,4,13,8,N,N,N,N,Y,Y,Y,Y,N,Y,Y,Y,Y,N,Y,N,19
+PUNJAB,NZL,Not Declared,Eth-1,01340531,Text Message,Transfer (24+ Hours),"Biology, Forensic Emphasis",2816,N,Marching Band,Y,P02,C9,11,8,12,16,14,N,Y,N,N,Y,N,N,N,Y,Y,N,N,N,Y,Y,N,13
+Mpumalanga,URY,Not Declared,Eth-5,01324562,Inquiry Form,Test Optional,Management,3755,N,Football,N,T02,C8,11,2,19,20,2,N,Y,N,N,Y,Y,N,N,N,Y,N,Y,Y,Y,N,N,1
+Kwara,CYP,Not Declared,Eth-4,01341490,College Raptor,Test Optional,Alternative Teaching Certificate,3755,Y,Softball,N,P02,C3,10,18,13,15,18,N,Y,Y,Y,Y,Y,N,Y,Y,N,Y,Y,N,Y,Y,N,2
+West Coast Division,ZMB,M,Eth-4,01540303,CLT Application,First-Time Freshman,History,3530,Y,Football,Y,P02,C8,11,17,3,6,6,Y,Y,N,Y,N,Y,Y,Y,N,Y,Y,Y,N,Y,N,N,2
+Tashkent,GHA,M,Eth-6,01443388,Oklahoma Promise,Transfer (24+ Hours),"Biblical and Theological Studies, History and Theology Emphasis",4174,N,Golf,Y,P01,C12,11,15,14,17,8,Y,Y,Y,Y,Y,N,N,N,Y,N,N,Y,Y,N,N,N,13
+Bujumbura,LSO,Not Declared,Eth-3,01319270,Inquiry Card,Transfer (24+ Hours),"Chemistry, Forensic Emphasis",2837,Y,Softball,Y,P01,C4,11,19,17,13,0,N,N,Y,Y,N,N,N,N,Y,Y,N,N,N,Y,N,N,17
+GREATER ACCRA,CZE,M,Eth-9,01449034,High School Visit,Transfer,Business Administration,2697,N,Track & Field (Men's),Y,T00,C7,0,18,8,2,20,N,Y,Y,N,N,Y,Y,N,Y,Y,N,N,N,N,N,Y,6
+RIO GRANDE DO NORTE,KWT,M,Eth-7,01352474,ACT Tape Load,Readmit,"Chemistry, Forensic Emphasis",3052,N,Not Declared,Y,Raley College,C4,8,18,0,2,3,Y,Y,Y,N,N,Y,N,N,Y,N,N,Y,Y,N,N,N,15
+FERGANA,PAK,Not Declared,Eth-2,01440389,Capture Higher Ed,Transfer (24+ Hours),Applied Mathematics: Data Science Emphasis,4752,N,Football,Y,P02,C2,12,10,3,7,6,Y,Y,N,Y,N,N,Y,Y,Y,N,Y,Y,N,N,Y,N,16
+Khyber Pakhtunkhwa,MEX,Not Declared,Eth-2,01565063,GenWhy,Readmit,"Exercise Science, Human Performance Emphasis",3948,Y,Basketball (Women's),N,T06,C6,11,10,3,20,8,N,Y,Y,N,N,Y,N,N,Y,Y,N,Y,N,Y,Y,N,11
+ON,BDI,M,Eth-6,01384225,CollegExpress,Readmit,Applied Mathematics: Actuarial and Financial Math Emphasis,4855,Y,Softball,N,T07,C12,13,19,18,12,14,Y,N,Y,Y,N,Y,Y,Y,N,N,Y,Y,Y,N,Y,Y,5
+BONO EAST,ZMB,M,Eth-2,01432284,Southern Baptist Convention,Second Degree,Not Declared,3625,N,STUNT,Y,T06,C2,0,13,9,15,11,Y,Y,N,Y,Y,N,Y,Y,Y,Y,N,Y,N,Y,Y,N,19
+Oshana,PHL,Not Declared,Eth-3,01352761,Niche Prospects,First-Time Freshman,Criminal Justice,3895,Y,STUNT,Y,T03,C8,11,0,17,19,20,Y,N,Y,N,Y,Y,N,Y,N,Y,Y,Y,Y,N,N,N,5
+MD,BDI,M,Eth-3,01496211,Bison Day Attended,Test Optional,"Exercise Science, Human Performance Emphasis",4522,N,Soccer,N,Graduate,C7,18,3,4,19,19,Y,Y,N,Y,N,Y,N,N,Y,Y,N,Y,Y,N,N,N,14
+Ulaanbaatar,SWZ,Not Declared,Eth-4,01523158,CLT Prospect,First-Time Freshman,"Biblical and Theological Studies, Practical Theology Emphasis",3369,N,Soccer,N,T00,C8,18,9,14,18,6,N,N,Y,Y,N,Y,N,N,Y,N,Y,Y,N,N,N,Y,17
+Kisii,KEN,M,Eth-6,01589796,RNL Sophomore Search,First-Time Freshman,Not Declared,2190,N,Dance,Y,Graduate,C6,0,15,18,5,20,Y,Y,Y,N,N,Y,Y,Y,N,N,Y,N,Y,N,N,N,5
+Hhohho,IRN,M,Eth-5,01431912,Phone Call - Successful,First-Time Freshman,Master of Arts in Christian Studies: Biblical and Theological Studies (In-Person),2315,N,Basketball (Men's),Y,P02,C14,14,5,9,12,15,Y,N,Y,Y,Y,Y,Y,Y,N,Y,Y,N,Y,Y,Y,Y,19
+Gilgit-Baltistan,CHE,M,Eth-6,01460398,Encoura Affinity Connection,Test Optional,MBA in Transformational Leadership,4049,Y,Track & Field (Women's),N,Graduate,C3,11,2,14,11,18,Y,N,N,N,N,N,N,N,N,Y,N,N,Y,N,Y,N,18
+Nimba,BFA,M,Eth-5,01357371,StriveScan - Connections,Transfer,Interdisciplinary,3552,N,Softball,Y,T00,C4,16,3,1,17,16,N,N,N,N,N,N,N,N,Y,N,N,N,Y,N,Y,Y,15
+Maharashtra,ZAF,M,Eth-7,01561124,Private Colleges & Universities,Readmit,Engineering - Mechanical Engineering,4807,N,Basketball (Women's),N,T05,C11,7,18,12,20,2,Y,Y,N,Y,N,Y,Y,N,N,N,N,Y,Y,Y,Y,N,7
+AB,CAN,M,Eth-3,01303946,StriveScan - Connections,Transfer,Corporate Innovation,4194,Y,Soccer,N,Homeschool,C8,7,4,4,11,11,N,Y,Y,Y,N,Y,Y,N,N,Y,N,N,Y,N,N,Y,11
+Dhaka Division,CAN,M,Eth-9,01583168,Text Message,Second Degree,Forensic Psychology,2400,Y,Golf,N,T06,C10,2,7,19,8,11,N,N,Y,N,N,N,N,N,N,N,N,N,N,Y,Y,N,6
+Volta,JAM,M,Eth-6,01523491,Inquiry Card,First-Time Freshman,Computer Science,4054,Y,Golf,Y,P02,C2,8,14,10,19,20,Y,Y,N,Y,Y,N,Y,Y,Y,N,Y,N,N,N,N,N,16
+TX,PHL,M,Eth-2,01410471,SAT Score,Test Optional,"Sports and Recreation, Camp Administration Emphasis",4934,N,Not Declared,Y,Raley College,C9,10,10,17,19,3,Y,Y,Y,N,N,Y,N,Y,Y,Y,N,N,Y,N,Y,N,2
+MS,KEN,M,Eth-3,01465233,Jump Forward Athletic Website,Test Optional,"Global Marketplace Engagement, Math Education Emphasis",3052,N,Volleyball,Y,Raley College,C3,0,10,11,15,5,Y,N,Y,Y,N,N,N,Y,N,Y,Y,N,Y,Y,N,Y,10
+Nairobi County,PER,Not Declared,Eth-5,01317032,Text Message - Outgoing,First-Time Freshman,"Global Marketplace Engagement, Graphic Design Emphasis",3687,N,Volleyball,Y,T02,C10,0,13,15,11,12,Y,Y,N,Y,Y,N,N,Y,Y,Y,N,N,N,N,N,N,17
+SANCTI SPIRITUS,PER,Not Declared,Eth-4,01555012,Christian Connector Web Response,Readmit,"Global Marketplace Engagement, TESOL Emphasis",2400,N,Golf,N,T06,C10,18,19,11,11,10,Y,Y,N,Y,N,Y,Y,Y,Y,N,Y,N,N,N,Y,Y,1
+Tashkent,GBR,Not Declared,Eth-1,01584587,Clark Higher Ed Paid Social,Readmit,Undecided,3794,N,Soccer,Y,T03,C4,10,3,17,11,8,N,Y,Y,Y,N,Y,N,N,Y,N,N,Y,Y,N,Y,Y,15
+Nandi,DEU,Not Declared,Eth-7,01369580,Encoura,Test Optional,"Science Education, Secondary",2315,Y,Soccer,Y,Homeschool,C3,14,14,6,0,11,Y,N,Y,N,Y,N,Y,Y,Y,Y,N,N,N,Y,N,Y,12
+Dushanbe,TJK,Not Declared,Eth-3,01426399,Clark Higher Ed Search,First-Time Freshman,"Global Marketplace Engagement, Global Education Emphasis",2260,N,Dance,N,T06,C14,12,5,3,19,7,N,N,Y,Y,Y,Y,N,N,Y,Y,N,Y,Y,Y,Y,N,1
+Limpopo,SSD,Not Declared,Eth-9,01590503,Christian Connector,Transfer (24+ Hours),Psychology,3289,Y,Soccer,N,T00,C12,16,5,8,20,1,Y,N,N,Y,Y,Y,Y,N,Y,N,N,Y,N,N,Y,Y,17
+Dar es Salaam,NGA,M,Eth-3,01468034,Online Application,Test Optional,Political Science,4255,N,Golf,Y,T06,C6,16,3,12,12,7,Y,Y,N,N,N,N,Y,Y,N,Y,Y,N,N,Y,N,N,6
+Kiambu,BWA,M,Eth-9,01528240,Inquiry Card,Transfer (24+ Hours),"Social Sciences Education, Secondary",4264,N,Marching Band,N,T05,C12,3,18,6,11,14,Y,Y,N,N,Y,Y,N,N,N,N,Y,Y,Y,Y,N,Y,2
+MI,BGD,M,Eth-4,01559106,RNL Junior Search,Second Degree,Mathematics,4049,N,Volleyball,Y,T06,C8,10,7,15,15,12,N,Y,Y,N,N,Y,N,Y,N,Y,N,N,N,Y,N,N,18
+CO,UZB,Not Declared,Eth-3,01320844,College Raptor,Test Optional,"Christian Ministry, Pastoral Ministry Emphasis",2946,Y,Softball,Y,P02,C4,11,13,2,2,12,N,Y,N,Y,Y,N,Y,Y,Y,Y,Y,N,N,Y,Y,Y,4
+Oyo State,ROU,M,Eth-5,01592458,Southern Baptist Convention,Test Optional,Creative Writing,3755,Y,Basketball (Men's),N,T05,C10,15,15,10,15,20,N,Y,N,N,N,N,N,Y,Y,N,Y,Y,Y,N,Y,N,5
+Banjul,CAN,Not Declared,Not Declared,01592167,Encoura,Second Degree,"Philosophy, Apologetics Emphasis",4907,Y,Track & Field (Men's),Y,Homeschool,C9,18,6,4,14,7,Y,N,Y,N,N,Y,Y,N,Y,Y,Y,Y,N,Y,Y,N,8
