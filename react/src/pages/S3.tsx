@@ -18,7 +18,7 @@ interface TableItem {
 }
 
 const S3FileManager = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [message, setMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [passwordMatchError, setPasswordMatchError] = useState('');
