@@ -56,9 +56,9 @@ const StudentForm: React.FC = () => {
         studentType: 'First-Time Freshman',
         major: 'Undecided',
         financialAidOfferedAmount: 24724.1,
-        athlete: 'Not Declared',
+        athlete: 'N',
         sport: 'Not Declared',
-        raleyCollegeTagExists: 'Not Declared',
+        raleyCollegeTagExists: 'N',
         recruitingTerritory: 'Raley College',
         counselor: 'C11',
         counselorIncomingTextCount: 5.6,
@@ -188,7 +188,7 @@ const StudentForm: React.FC = () => {
             const formDataToSend = new FormData();
             formDataToSend.append('file', csvBlob, fileName);
 
-            const response = await fetch('/api/upload_form', {
+            const response = await fetch('/api/upload_data', {
                 method: 'POST',
                 body: formDataToSend,
             });

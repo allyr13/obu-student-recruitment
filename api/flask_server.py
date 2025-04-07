@@ -30,33 +30,8 @@ def home():
     return "Hello, Flask!"
 
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
-@app.route('/api/upload_form', methods=['POST'])
+@app.route('/api/upload_data', methods=['POST'])
 def upload_csv_file():
-    if 'file' not in request.files:
-        return jsonify({"error": "No File Part", "status": 500})
-    
-    file = request.files['file']
-
-    # Ensure the file has a name and is a CSV
-    if file.filename == '':
-        return jsonify({"error": "No Selected File", "status": 500})
-    
-    if not file.filename.endswith('.csv'):
-        return jsonify({"error": "Invalid File Format", "status": 500})
-    
-    try:
-        df = get_prediction(file)
-
-        TableClass.setData(json.loads(get_table_data_results()))
-
-        return jsonify({"data": TableClass.getData()["Prediction"], "message": "CSV file received and saved successfully", "status": 200})
-
-    except Exception as e:
-        return jsonify({"error": str(e), "status": 500})
-    
-@app.route('/api/load_data', methods=['POST'])
-def load_data():
-    print('running upload data route')
     if 'file' not in request.files:
         return jsonify({"error": "No File Part", "status": 500})
     
