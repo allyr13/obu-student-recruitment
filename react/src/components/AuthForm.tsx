@@ -15,6 +15,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onLoginSuccess }) => {
     const storedUserID = localStorage.getItem("User_ID");
     const storedPrefix = localStorage.getItem("User_Prefix");
     const storedAuth = localStorage.getItem("isAuthenticated") === "true";
+    const storedClass = localStorage.getItem("Classification") === "false";
 
     if (storedAuth && storedUserID && storedPrefix) {
       onLoginSuccess(storedUserID, storedPrefix);
@@ -32,6 +33,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onLoginSuccess }) => {
         localStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("User_ID", userID);
         localStorage.setItem("User_Prefix", response.data.User_Prefix);
+        localStorage.setItem("Classification", response.data.Classification);
 
         onLoginSuccess(userID, response.data.User_Prefix);
         setMessage('Login successful');

@@ -1,8 +1,49 @@
 import React, { useState, useEffect, useReducer, MouseEvent } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import '../css/InformUser.css';
 import { FaCheck, FaTimes, FaPencilAlt } from "react-icons/fa";
 import { Tooltip } from 'react-tooltip';
+import Papa from "papaparse";
+import reference_dict from "../validation_reference.json";
+
+const validateCSV = (file: File) => {
+    Papa.parse(file, {
+        header: true,
+        complete: (result) => {
+            console.log("Validating from dynamic table");
+            const { data, errors } = result;
+
+            const requiredColumns = Object.keys(reference_dict);
+            const headers = Object.keys(data[0] || {});
+
+            if (!headers.length) {
+                console.log("Missing required columns");
+            }
+
+            const hasRequiredColumns = requiredColumns.every(col => headers.includes(col));
+
+            if (!hasRequiredColumns) {
+                console.log("Missing required columns");
+            }
+
+            // Validate row values
+            let errorString = "";
+            for (let idx = 1; idx < data.length - 1; idx++) {
+                const row = data[idx];
+                console.log(row);
+                for (const [key, value] of Object.entries(row)) {
+                    if (reference_dict[key] != undefined && !reference_dict[key].includes(value)) {
+                        errorString = `Invalid value "${value}" for column "${key}."\n`;
+                        console.log(`Invalid value "${value}" for column "${key}".`); // + 2 to offset for headers and 0 index
+                    }
+                }
+            }
+            if (errorString !== "") {
+                alert(errorString);
+            }
+        }
+    });
+}
 
 interface TransformedData {
     [studentId: string]: { [key: string]: string | number };
@@ -22,13 +63,27 @@ const InformUser: React.FC = () => {
     const updateData = async (studentId: string, key: string, value: string | number) => {
         data[studentId][key] = value;
 
-        const csvHeader = Object.keys(data[studentId]).join(',') + ",studentIDs";
-        const csvRow = Object.values(data[studentId]).join(',') + "," + studentId;
+        const csvHeader = Object.keys(data[studentId]).join(',') + ',studentIDs';
+
+        var csvRow = ``;
+        for (const [key, value] of Object.entries(data[studentId])) {
+            if (typeof value == "string" && value.includes(",")) {
+                console.log("Contains comma!!!" + value);
+                csvRow += `"${value}",`;
+            } else {
+                csvRow += `${value},`;
+            }
+        }
+        csvRow += `${studentId}`;
         const csvData = `${csvHeader}\n${csvRow}`;
+        console.log(csvData);
         const csvBlob = new Blob([csvData], { type: 'text/csv' });
+        const fileVersion = new File([csvBlob], "dummy_file.csv");
+        validateCSV(fileVersion);
         const formDataToSend = new FormData();
         formDataToSend.append('file', csvBlob, `student_form_data_whatIf.csv`);
-        const response = await fetch('/api/upload_form', {
+
+        const response = await fetch('/api/upload_data', {
             method: 'POST',
             body: formDataToSend,
         });
@@ -48,7 +103,11 @@ const InformUser: React.FC = () => {
 
 
         const setValue = (newValue: string | number) => {
-            number ? value = parseInt(newValue as string) : value = newValue as string;
+
+            if (key == "athlete") {
+                console.log(`Old Athlete Value: ${value}, type: ${typeof value}`);
+            }
+            value = number ? parseInt(newValue as string) : value = newValue as string;
         }
 
         const onBlur = () => {
@@ -260,6 +319,11 @@ const InformUser: React.FC = () => {
 
     return (
         <div id="tableContainer">
+            <div className='header-div'>
+                <Link to="/">
+                    <img src="OBU-Green.png" alt="OBU Logo" className="obu-logo-green" />
+                </Link>
+            </div>
             <h3 className='main-title'>Student Prediction Data</h3>
             <h4 id='prediction-err-message'>{predictionMessage}</h4>
             <table id="mainTable">
