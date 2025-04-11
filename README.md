@@ -335,7 +335,7 @@ Each model requires **551 features**, categorized as:
 ```
 
 ## Model Output
-The model returns an array containing a single value, either `0` or `1`, in the format `[0]`.
+The model returns an array containing a single value, either `0` or `1`, in the format `[0]`. Theses are boolean values were a `0` is equivalent to a "No" or false while a `1` is a "Yes" or true.
 
 ### Example Demonstration
 ```python
