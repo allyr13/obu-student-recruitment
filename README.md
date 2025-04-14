@@ -1,12 +1,18 @@
 # OBU Student Recruitment
 
 ## Table of Contents
+## Table of Contents
 1. [Getting Started](#getting-started)
    - [Flask Back End](#flask-back-end)
+     - [Setup](#setup)
+     - [Activate The Server](#activate-the-server)
+     - [Troubleshooting Conda Environment](#troubleshooting-conda-environment)
    - [React Front End](#react-front-end)
 2. [Client-Side Information](#client-side-information)
-   - [Managing Users](#managing-users)
-   - [S3 Bucket](#s3-bucket)
+   - [Managing Users Page](#managing-users-page)
+     - [Admin Functions](#admin-functions)
+   - [Main User Page](#main-user-page)
+     - [Available Actions](#available-actions)
 3. [Predictive Model Information](#predictive-model-information)
    - [Models](#models)
    - [Running The Model](#running-the-model)
@@ -65,24 +71,52 @@ The app will open in your browser.
 As an admin, log into the [User Management](react/src/pages/UserManagement.tsx) page at `/user-management` using the admin password. This page displays a table of user credentials.
 
 ### Admin Functions
-- **Add Users:** Use the "Add New User" form.
+- **Add Users:** Use the "Add New User" form. When adding a user, the admin defines a:
+   - User ID: Username
+   - User Prefix: Path to user's folder
+   - User Password: Password specific to that user
+   - User Classification: Tells if the user ahs user level access or admin level access.
+---
 - **Delete Users:** Remove user credentials from the system.
+---
 - **Update User Information:** Modify existing user details. 
+![Add New User Form](images/add-new-user-form.png)
+---
+- **NOTE: Clicking the OBU Logo at the top of the page will return you to the main page**
+---
 
-![Add New User Form](add-new-user-form.png)
-
-## S3 Bucket Page
+## Main User Page
 Users can log into the [S3 bucket](react/src/pages/S3.tsx) page with their credentials. This grants access to files and folders under their specific prefix (e.g., `/user1`).
 
+![Main User Page](images/main-user-page.png)
+---
+
 ### Available Actions
-- **Upload Files**
-- **Download Files**
-- **Create New Folders**
-- **List Files**
-- **Run Predictions**
-- **Delete Files**
-- **Input Single Student Form**
+- **Upload Files**: A user can upload individual files or complete folders (includes all files in that folder). Uploaded files must be of the correct csv format for the model, and will be verified upon upload. 
+---
+- **Download Files**: Download files from the S3 bucket to your local computer.
+---
+- **Create New Folders**: Create a nee folder in the S3 bucket.
+---
+- **List Files**: List all files in the selected folder of the S3 bucket.
+---
+- **Run Predictions**: Run a prediction on a selected csv file.
+---
+- **Delete Files**: Deletes files from the S3 bucket.
+---
+- **Input Single Student Form**: Manually input prediction data for a single student.
+---
+- **Update Your Password**: A user is able to update their password without admin interference by clicking the settings icon on the top right of the page, then filling out the password form to submit a new password.
+![Change password form](images/change-password-form.png)
+---
 - **Access Global Storage:** Users can also upload and retrieve files under the `/global` prefix.
+---
+- **Access Admin Page:** If a user has `Admin` classification in their credentials, they can access the admin page by clicking the settings icon on the top right of the page, then clicking the green button that says "Admin."
+![Admin page button](images/admin-button-example.png)
+
+---
+
+- **NOTE: Clicking the OBU Logo at the top of the page will return you to the main page**
 
 ---
 
