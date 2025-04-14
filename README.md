@@ -75,7 +75,7 @@ As an admin, log into the [User Management](react/src/pages/UserManagement.tsx) 
    - User ID: Username
    - User Prefix: Path to user's folder
    - User Password: Password specific to that user
-   - User Classification: Tells if the user ahs user level access or admin level access.
+   - User Classification: Tells if the user has user level access or admin level access.
 ---
 - **Delete Users:** Remove user credentials from the system.
 ---
@@ -96,7 +96,7 @@ Users can log into the [S3 bucket](react/src/pages/S3.tsx) page with their crede
 ---
 - **Download Files**: Download files from the S3 bucket to your local computer.
 ---
-- **Create New Folders**: Create a nee folder in the S3 bucket.
+- **Create New Folders**: Create a new folder in the S3 bucket.
 ---
 - **List Files**: List all files in the selected folder of the S3 bucket.
 ---
