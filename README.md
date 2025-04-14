@@ -16,6 +16,13 @@
 
 ---
 
+## Other Useful Information
+1. [React](react/README.md)
+2. [S3](api/S3_README.md)
+3. [Field Values](api/README.md)
+
+---
+
 # Getting Started
 ## Flask Back End
 
