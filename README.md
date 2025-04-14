@@ -13,7 +13,9 @@
    - [Model Input](#model-input)
    - [Model Output](#model-output)
    - [JSON](#json-format)
-
+4. [Back End API](#back-end-api)
+   - [flask_server.py Routes](#flask_serverpy-routes)
+   - [s3_server.py Routes](#s3_routespy-routes)
 ---
 
 # Getting Started
@@ -406,3 +408,339 @@ Student data is transferred as a JSON object containing an array of student entr
 - **See `schema_test.py` for proof of concept and validation example.**
 - **Feature values in JSON are one-hot encoded and must be ordered as described in the [Model Input](#model-input) section.**
 
+# Back End API
+
+The service contains a back end Flask server that has two primary files:
+- `flask_server.py`: Runs server and contains primary route interactions
+- `s3_routes.py`: Sets up a Flask Blueprint (modular routes) for S3 interaction. Imported into `flask_server.py`
+
+Together, these files handle all back-end functionality of the service including User Management, S3 Integration, and Prediction.
+---
+
+## `flask_server.py` Routes
+
+### GET `/`
+Flask's default route.
+
+**Output:**
+```json
+"Hello, Flask!"
+```
+
+### POST `/api/upload_data`
+CSV file upload for model prediction.
+
+**Input:**
+```json
+A CSV file
+```
+
+**Output:**
+```json
+{
+   "data": [0,0,0..., 0],
+   "message": "CSV file received and saved successfully",  
+   "status": 200
+}
+```
+
+### GET `/api/test_model`
+Tests model is working.
+
+**Output:**
+```json
+{
+   "message": "Data was successfully one-hot-encoded", 
+   "status": 200
+}
+```
+
+### GET `/api/test_batch`
+Tests model is working with batch file.
+
+**Output:**
+```json
+{
+   "message": "Data was successfully one-hot-encoded", 
+   "status": 200
+}
+```
+
+### GET`/api/get_table_data`
+Gets prediction of particular file
+
+**Input:**
+```json
+A CSV file
+```
+
+**Output:**
+```json
+{
+   "data": [0,0,0..., 0],
+   "message": "CSV file received and saved successfully",  
+   "status": 200
+}
+```
+
+### GET `/api/test`
+Tests prediction is working.
+
+
+**Output:**
+```json
+{
+   "status": 200
+}
+```
+---
+
+## `s3_routes.py` Routes
+
+### POST `/api/add_user`
+Adds user to DynamoDB table found in `config.json`
+
+**Input:**
+```json
+{ 
+   User_ID: "abcd", 
+   User_Prefix: "abcd", 
+   User_Password: "abcd", 
+   Classification: "User" 
+   }
+```
+
+**Output:**
+```json
+{
+   'message': 'User added successfully', 
+   'status': 200
+}
+```
+
+### POST `/api/update_password`
+Updates user's password in DynamoDB table found in `config.json`
+
+**Input:**
+```json
+{ 
+   User_ID: "a", 
+   Old_Password: "a", 
+   New_Pass_One: "a", 
+   New_Pass_Two: "a", 
+   User_Prefix: "a" 
+}
+```
+
+**Output:**
+```json
+{
+   'message': 'Password updated successfully', 
+   'status': 200
+}
+```
+
+### DELETE `/api/delete_user`
+Deletes user from DynamoDB table found in `config.json`
+
+**Input:**
+```json
+{
+   User_ID: 'abcd',
+   User_Prefix: 'abcd'
+}
+```
+
+**Output:**
+```json
+{
+   'message': 'User deleted successfully', 
+   'status': 'success'
+}
+```
+
+### POST `/api/verify_password`
+Verifies the admin password is correct on Admin sign in page
+
+**Input:**
+```json
+{
+   password: "abcd"
+}
+```
+
+**Output:**
+```json
+{
+   "message": "Password valid", 
+   "status": 200
+}
+```
+
+### POST `/api/authenticate_user`
+Authenticates user.
+
+**Input:**
+```json
+{
+   User_ID: "abcd",
+   password: "abcd"
+}
+```
+
+**Output:**
+```json
+{
+   "message": "Authentication successful",
+   "User_Prefix": "abcd",
+   "Classification": "abcd",
+   "status": 200
+}
+```
+
+### GET `/api/get_table_data` 
+Retrieves table data from DynamoDB table in `config.json`
+
+**Output:**
+```json
+{
+   "data": [0,0,0..., 0],
+   "status": 200
+}
+```
+
+### POST `/api/upload_to_s3`
+Uploads a CSV file(s) to S3 under specified user.
+
+**Input:**
+Multi-part Form Data
+| Field Name         | Type     | Required | Description                                                                 |
+|--------------------|----------|----------|-----------------------------------------------------------------------------|
+| `file`             | File     | Yes      | One or more files to upload (use the same `file` key for all uploads).     |
+| `prefix`           | String   | No       | Optional path prefix. Used if `folder` is not provided.                    |
+| `folder`           | String   | No       | Folder to upload files into. Overrides `prefix` if both are provided.      |
+| `global`           | String   | No       | Set to `"True"` to upload files into the global folder. Defaults to "None".|
+| `path_<filename>`  | String   | No       | Relative path of each file. Example: `path_resume.pdf=docs/resume.pdf`     |
+
+
+**Output:**
+```json
+{
+   "message": "Files uploaded successfully", 
+   "filenames": uploaded_files, 
+   "status": 200
+}
+```
+
+### GET `/api/list_s3_files`
+Lists S3 files that a user has access to.
+
+**Output:**
+```json
+{
+   "files": combined_files, 
+   "status": 200
+}
+```
+
+### GET `/api/download_from_s3`
+Downloads selected file.
+
+**Output:**
+```json
+{
+   "url": "www.downloadlink.com", 
+   "status": 200
+}
+```
+
+### GET`/api/get_file`
+Gets content of specific file
+
+**Input:**
+```json
+{
+   "file_name": file.csv
+}
+```
+
+**Output:**
+```json
+{
+   "file": [0, 0, 0..., 0], 
+   "status": 200
+}
+```
+
+### DELETE `/api/delete_from_s3`
+Deletes file from S3
+
+**Input:**
+```json
+{
+   "file_name": "file.csv"
+}
+```
+
+**Output:**
+```json
+{
+   "message": "File file.csv deleted successfully",
+   "status": 200
+}
+```
+
+### POST `/api/create_folder_in_s3`
+Creates a new folder in S3
+
+**Input:**
+```json
+{
+   "folderKey": "abcd"
+}
+```
+
+**Output:**
+```json
+{
+   "message": "Folder abcd created successfully.", 
+   "status": 200
+}
+```
+
+### POST `/api/delete_folder`
+Deletes folder from S3
+
+**Input:**
+```json
+{
+   "folderKey": "abcd"
+}
+```
+
+**Output:**
+```json
+{
+   "message": "Folder abcd deleted successfully", 
+   "status": 200
+}
+```
+
+### GET `/api/list_selected_s3_files`
+Retrieves files in selected folder in S3
+
+**Input:**
+```json
+{
+   "prefix": "abcd",
+   "folder": "abcd"
+}
+```
+
+**Output:**
+```json
+{
+   "files": combined_files, 
+   "status": 200
+}
+```
