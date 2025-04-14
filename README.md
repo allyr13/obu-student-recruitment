@@ -24,6 +24,13 @@
    - [s3_server.py Routes](#s3_routespy-routes)
 ---
 
+## Other Useful Information
+1. [React](react/README.md)
+2. [S3](api/S3_README.md)
+3. [Field Values](api/data-field-values.md)
+
+---
+
 # Getting Started
 ## Flask Back End
 
