@@ -1,19 +1,27 @@
 # OBU Student Recruitment
 
 ## Table of Contents
+## Table of Contents
 1. [Getting Started](#getting-started)
    - [Flask Back End](#flask-back-end)
+     - [Setup](#setup)
+     - [Activate The Server](#activate-the-server)
+     - [Troubleshooting Conda Environment](#troubleshooting-conda-environment)
    - [React Front End](#react-front-end)
 2. [Client-Side Information](#client-side-information)
-   - [Managing Users](#managing-users)
-   - [S3 Bucket](#s3-bucket)
+   - [Managing Users Page](#managing-users-page)
+     - [Admin Functions](#admin-functions)
+   - [Main User Page](#main-user-page)
+     - [Available Actions](#available-actions)
 3. [Predictive Model Information](#predictive-model-information)
    - [Models](#models)
    - [Running The Model](#running-the-model)
    - [Model Input](#model-input)
    - [Model Output](#model-output)
    - [JSON](#json-format)
-
+4. [Back End API](#back-end-api)
+   - [flask_server.py Routes](#flask_serverpy-routes)
+   - [s3_server.py Routes](#s3_routespy-routes)
 ---
 
 ## Other Useful Information
@@ -72,24 +80,52 @@ The app will open in your browser.
 As an admin, log into the [User Management](react/src/pages/UserManagement.tsx) page at `/user-management` using the admin password. This page displays a table of user credentials.
 
 ### Admin Functions
-- **Add Users:** Use the "Add New User" form.
+- **Add Users:** Use the "Add New User" form. When adding a user, the admin defines a:
+   - User ID: Username
+   - User Prefix: Path to user's folder
+   - User Password: Password specific to that user
+   - User Classification: Tells if the user has user level access or admin level access.
+---
 - **Delete Users:** Remove user credentials from the system.
+---
 - **Update User Information:** Modify existing user details. 
+![Add New User Form](images/add-new-user-form.png)
+---
+- **NOTE: Clicking the OBU Logo at the top of the page will return you to the main page**
+---
 
-![Add New User Form](add-new-user-form.png)
-
-## S3 Bucket Page
+## Main User Page
 Users can log into the [S3 bucket](react/src/pages/S3.tsx) page with their credentials. This grants access to files and folders under their specific prefix (e.g., `/user1`).
 
+![Main User Page](images/main-user-page.png)
+---
+
 ### Available Actions
-- **Upload Files**
-- **Download Files**
-- **Create New Folders**
-- **List Files**
-- **Run Predictions**
-- **Delete Files**
-- **Input Single Student Form**
+- **Upload Files**: A user can upload individual files or complete folders (includes all files in that folder). Uploaded files must be of the correct csv format for the model, and will be verified upon upload. 
+---
+- **Download Files**: Download files from the S3 bucket to your local computer.
+---
+- **Create New Folders**: Create a new folder in the S3 bucket.
+---
+- **List Files**: List all files in the selected folder of the S3 bucket.
+---
+- **Run Predictions**: Run a prediction on a selected csv file.
+---
+- **Delete Files**: Deletes files from the S3 bucket.
+---
+- **Input Single Student Form**: Manually input prediction data for a single student.
+---
+- **Update Your Password**: A user is able to update their password without admin interference by clicking the settings icon on the top right of the page, then filling out the password form to submit a new password.
+![Change password form](images/change-password-form.png)
+---
 - **Access Global Storage:** Users can also upload and retrieve files under the `/global` prefix.
+---
+- **Access Admin Page:** If a user has `Admin` classification in their credentials, they can access the admin page by clicking the settings icon on the top right of the page, then clicking the green button that says "Admin."
+![Admin page button](images/admin-button-example.png)
+
+---
+
+- **NOTE: Clicking the OBU Logo at the top of the page will return you to the main page**
 
 ---
 
@@ -366,50 +402,343 @@ Student data is transferred as a JSON object containing an array of student entr
 - **Minimum Entries:** 1
 - **Maximum Entries:** 100
 
-### JSON Example (Structure):
-```json
-[
-    {
-        "Financial Aid Offered Amount": 34000.0,
-        "incoming_text_count": 12,
-        "outgoing_text_count": 12,
-        "phone_successful_count": 12,
-        "phone_unsuccessful_count": 12,
-        "phone_voicemail_count": 12,
-        "Admitted Students Day": 0,
-        "Bison Day": 0,
-        "Bison Day @ The Weekend": 0,
-        "Campus Visit": 0,
-        "Dallas Bison Exclusive": 0,
-        "Football Visit": 0,
-        "Golf Visit": 0,
-        "Oklahoma City Bison Exclusive": 0,
-        "Scholars Bison Day": 0,
-        "Scholars Mixer and Banquet": 0,
-        "Scholarship Interview": 0,
-        "Scholarship Interview Registration": 0,
-        "Softball Visit": 0,
-        "Track Visit": 0,
-        "Tulsa Bison Exclusive": 0,
-        "Volleyball Visit": 0,
-        "Events Attended Count": 0,
-        "Country": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        "State": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        "Gender": [0, 1],
-        "Ethnicity": [0, 0, 0, 0, 0, 0, 0, 0, 1],
-        "Origin Source": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        "Student Type": [0, 0, 0, 0, 1],
-        "Major": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],   
-        "Athlete": 0,
-        "Sport": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        "Raley College Tag Exists": 0,
-        "Recruiting Territory": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        "Counselor": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
-    }
-]
-```
 
 - **All key-value pairs listed must be included.**
-- **See `schema_test.py` for proof of concept and validation example.**
 - **Feature values in JSON are one-hot encoded and must be ordered as described in the [Model Input](#model-input) section.**
 
+# Back End API
+
+The service contains a back end Flask server that has two primary files:
+- `flask_server.py`: Runs server and contains primary route interactions
+- `s3_routes.py`: Sets up a Flask Blueprint (modular routes) for S3 interaction. Imported into `flask_server.py`
+
+Together, these files handle all back-end functionality of the service including User Management, S3 Integration, and Prediction.
+---
+
+## `flask_server.py` Routes
+
+### GET `/`
+Flask's default route.
+
+**Output:**
+```json
+"Hello, Flask!"
+```
+
+### POST `/api/upload_data`
+CSV file upload for model prediction.
+
+**Input:**
+```json
+A CSV file
+```
+
+**Output:**
+```json
+{
+   "data": [0,0,0..., 0],
+   "message": "CSV file received and saved successfully",  
+   "status": 200
+}
+```
+
+### GET `/api/test_model`
+Tests model is working.
+
+**Output:**
+```json
+{
+   "message": "Data was successfully one-hot-encoded", 
+   "status": 200
+}
+```
+
+### GET `/api/test_batch`
+Tests model is working with batch file.
+
+**Output:**
+```json
+{
+   "message": "Data was successfully one-hot-encoded", 
+   "status": 200
+}
+```
+
+### GET`/api/get_table_data`
+Gets prediction of particular file
+
+**Input:**
+```json
+A CSV file
+```
+
+**Output:**
+```json
+{
+   "data": [0,0,0..., 0],
+   "message": "CSV file received and saved successfully",  
+   "status": 200
+}
+```
+
+### GET `/api/test`
+Tests prediction is working.
+
+
+**Output:**
+```json
+{
+   "status": 200
+}
+```
+---
+
+## `s3_routes.py` Routes
+
+### POST `/api/add_user`
+Adds user to DynamoDB table found in `config.json`
+
+**Input:**
+```json
+{ 
+   User_ID: "abcd", 
+   User_Prefix: "abcd", 
+   User_Password: "abcd", 
+   Classification: "User" 
+   }
+```
+
+**Output:**
+```json
+{
+   'message': 'User added successfully', 
+   'status': 200
+}
+```
+
+### POST `/api/update_password`
+Updates user's password in DynamoDB table found in `config.json`
+
+**Input:**
+```json
+{ 
+   User_ID: "a", 
+   Old_Password: "a", 
+   New_Pass_One: "a", 
+   New_Pass_Two: "a", 
+   User_Prefix: "a" 
+}
+```
+
+**Output:**
+```json
+{
+   'message': 'Password updated successfully', 
+   'status': 200
+}
+```
+
+### DELETE `/api/delete_user`
+Deletes user from DynamoDB table found in `config.json`
+
+**Input:**
+```json
+{
+   User_ID: 'abcd',
+   User_Prefix: 'abcd'
+}
+```
+
+**Output:**
+```json
+{
+   'message': 'User deleted successfully', 
+   'status': 'success'
+}
+```
+
+### POST `/api/verify_password`
+Verifies the admin password is correct on Admin sign in page
+
+**Input:**
+```json
+{
+   password: "abcd"
+}
+```
+
+**Output:**
+```json
+{
+   "message": "Password valid", 
+   "status": 200
+}
+```
+
+### POST `/api/authenticate_user`
+Authenticates user.
+
+**Input:**
+```json
+{
+   User_ID: "abcd",
+   password: "abcd"
+}
+```
+
+**Output:**
+```json
+{
+   "message": "Authentication successful",
+   "User_Prefix": "abcd",
+   "Classification": "abcd",
+   "status": 200
+}
+```
+
+### GET `/api/get_table_data` 
+Retrieves table data from DynamoDB table in `config.json`
+
+**Output:**
+```json
+{
+   "data": [0,0,0..., 0],
+   "status": 200
+}
+```
+
+### POST `/api/upload_to_s3`
+Uploads a CSV file(s) to S3 under specified user.
+
+**Input:**
+Multi-part Form Data
+| Field Name         | Type     | Required | Description                                                                 |
+|--------------------|----------|----------|-----------------------------------------------------------------------------|
+| `file`             | File     | Yes      | One or more files to upload (use the same `file` key for all uploads).     |
+| `prefix`           | String   | No       | Optional path prefix. Used if `folder` is not provided.                    |
+| `folder`           | String   | No       | Folder to upload files into. Overrides `prefix` if both are provided.      |
+| `global`           | String   | No       | Set to `"True"` to upload files into the global folder. Defaults to "None".|
+| `path_<filename>`  | String   | No       | Relative path of each file. Example: `path_resume.pdf=docs/resume.pdf`     |
+
+
+**Output:**
+```json
+{
+   "message": "Files uploaded successfully", 
+   "filenames": uploaded_files, 
+   "status": 200
+}
+```
+
+### GET `/api/list_s3_files`
+Lists S3 files that a user has access to.
+
+**Output:**
+```json
+{
+   "files": combined_files, 
+   "status": 200
+}
+```
+
+### GET `/api/download_from_s3`
+Downloads selected file.
+
+**Output:**
+```json
+{
+   "url": "www.downloadlink.com", 
+   "status": 200
+}
+```
+
+### GET`/api/get_file`
+Gets content of specific file
+
+**Input:**
+```json
+{
+   "file_name": file.csv
+}
+```
+
+**Output:**
+```json
+{
+   "file": [0, 0, 0..., 0], 
+   "status": 200
+}
+```
+
+### DELETE `/api/delete_from_s3`
+Deletes file from S3
+
+**Input:**
+```json
+{
+   "file_name": "file.csv"
+}
+```
+
+**Output:**
+```json
+{
+   "message": "File file.csv deleted successfully",
+   "status": 200
+}
+```
+
+### POST `/api/create_folder_in_s3`
+Creates a new folder in S3
+
+**Input:**
+```json
+{
+   "folderKey": "abcd"
+}
+```
+
+**Output:**
+```json
+{
+   "message": "Folder abcd created successfully.", 
+   "status": 200
+}
+```
+
+### POST `/api/delete_folder`
+Deletes folder from S3
+
+**Input:**
+```json
+{
+   "folderKey": "abcd"
+}
+```
+
+**Output:**
+```json
+{
+   "message": "Folder abcd deleted successfully", 
+   "status": 200
+}
+```
+
+### GET `/api/list_selected_s3_files`
+Retrieves files in selected folder in S3
+
+**Input:**
+```json
+{
+   "prefix": "abcd",
+   "folder": "abcd"
+}
+```
+
+**Output:**
+```json
+{
+   "files": combined_files, 
+   "status": 200
+}
+```
