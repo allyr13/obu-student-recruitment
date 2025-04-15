@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/AWS-S3.css';
 
+const BASE_API = (window as any)._env_.API_BASE_URL;
+
 interface AuthFormProps {
   onLoginSuccess: (userID: string, userPrefix: string) => void;
 }
@@ -27,7 +29,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onLoginSuccess }) => {
     setMessage('');
 
     try {
-      const response = await axios.post('/api/authenticate_user', { User_ID: userID, password });
+      const response = await axios.post(`${BASE_API}/api/authenticate_user`, { User_ID: userID, password });
 
       if (response.data['status'] === 200) {
         localStorage.setItem("isAuthenticated", "true");

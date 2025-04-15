@@ -4,16 +4,17 @@ import numpy as np
 from json_loader import get_config
 
 chosen_model = get_config("predict_model")
+models_path = "../models/"
 
 match chosen_model:
     case "AdaBoost":
-        model_path = "../models/adaboost_model.pkl"
+        model_path = f"{models_path}adaboost_model.pkl"
     case "Decision_Tree":
-        model_path = "../models/dtree_model.pkl"
+        model_path = f"{models_path}dtree_model.pkl"
     case "Logarithmic_Regression":
-        model_path = "../models/logreg_model.pkl"
+        model_path = f"{models_path}logreg_model.pkl"
     case "XGBoost":
-        model_path = "../models/xgb_model.pkl"
+        model_path = f"{models_path}xgb_model.pkl"
 
 
 f = open(model_path, "rb")

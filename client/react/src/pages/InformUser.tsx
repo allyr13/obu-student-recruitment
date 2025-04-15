@@ -6,6 +6,8 @@ import { Tooltip } from 'react-tooltip';
 import Papa from "papaparse";
 import reference_dict from "../validation_reference.json";
 
+const BASE_API = (window as any)._env_.API_BASE_URL;
+
 const validateCSV = (file: File) => {
     Papa.parse(file, {
         header: true,
@@ -83,7 +85,7 @@ const InformUser: React.FC = () => {
         const formDataToSend = new FormData();
         formDataToSend.append('file', csvBlob, `student_form_data_whatIf.csv`);
 
-        const response = await fetch('/api/upload_data', {
+        const response = await fetch(`${BASE_API}/api/upload_data`, {
             method: 'POST',
             body: formDataToSend,
         });

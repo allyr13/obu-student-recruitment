@@ -15,3 +15,5 @@ __pycache__/
 
 oneHotEncoded_data.csv
 *oneHotEncoded_data.csv
+
+.env
