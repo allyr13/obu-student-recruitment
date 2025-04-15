@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/AWS-S3.css';
 
-const BASE_API = (window as any)._env_.API_BASE_URL;
+const BASE_API = process.env.REACT_APP_API_BASE_URL;
 
 interface AuthFormProps {
   onLoginSuccess: (userID: string, userPrefix: string) => void;

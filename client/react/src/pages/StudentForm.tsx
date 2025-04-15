@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {useLocation} from 'react-router-dom';
 
-const BASE_API = (window as any)._env_.API_BASE_URL;
+const BASE_API = process.env.REACT_APP_API_BASE_URL;
 
 interface FormData {
     state: string;

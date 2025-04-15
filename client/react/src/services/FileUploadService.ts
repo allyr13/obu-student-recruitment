@@ -1,6 +1,6 @@
 import http from "../http-common.ts";
 
-const BASE_API = (window as any)._env_.API_BASE_URL;
+const BASE_API = process.env.REACT_APP_API_BASE_URL;
 
 const upload = (file: File, onUploadProgress: any): Promise<any> => {
     const formData = new FormData();

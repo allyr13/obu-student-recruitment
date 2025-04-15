@@ -6,7 +6,7 @@ import { Tooltip } from 'react-tooltip';
 import Papa from "papaparse";
 import reference_dict from "../validation_reference.json";
 
-const BASE_API = (window as any)._env_.API_BASE_URL;
+const BASE_API = process.env.REACT_APP_API_BASE_URL;
 
 const validateCSV = (file: File) => {
     Papa.parse(file, {

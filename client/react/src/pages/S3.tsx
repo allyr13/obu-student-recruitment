@@ -9,7 +9,7 @@ import reference_dict from "../validation_reference.json";
 import Papa from "papaparse";
 import { Tooltip } from 'react-tooltip';
 
-const BASE_API = (window as any)._env_.API_BASE_URL;
+const BASE_API = process.env.REACT_APP_API_BASE_URL;
 
 interface TableItem {
     User_ID: string;

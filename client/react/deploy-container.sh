@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define variables
-IMAGE_NAME="stu_rec_client_v0-0-4"
+IMAGE_NAME="stu_rec_client_v0-1-1"
 AWS_ACCOUNT_ID="216990846240"
 REGION="us-east-2"
 ECR_REPO="cis-4203-24-25"

@@ -6,7 +6,7 @@ import LoginForm from "../components/AdminLoginForm.tsx";
 import { Link } from 'react-router-dom';
 import { AxiosResponse } from "axios";
 
-const BASE_API = (window as any)._env_.API_BASE_URL;
+const BASE_API = process.env.REACT_APP_API_BASE_URL;
 
 interface TableItem {
     User_ID: string;
