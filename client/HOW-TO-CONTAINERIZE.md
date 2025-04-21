@@ -16,7 +16,7 @@
 ## Making a Container
 The following are the list of commands needed to create the client container. The commands' container variables are intended to be REPLACED by the proper values for a specific user, service, repository, etc. Each variable is marked with "<>".
 
-0. Start by navigating to the react folder in `client/react`
+0. Start by navigating to the react folder in `/client`
 
 ---
 
@@ -77,7 +77,7 @@ Use the `deploy-container.sh` script to automatically build the image, container
 ---
 
 **First time using the script?**
-Make the script excecutable for you by navigating to it (`cd client/react`) and running the below command
+Make the script excecutable for you by navigating to it (`cd /client`) and running the below command
 ```bash
 chmod +x deploy-container.sh
 ```
