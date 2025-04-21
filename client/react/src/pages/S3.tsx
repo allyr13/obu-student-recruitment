@@ -9,6 +9,8 @@ import reference_dict from "../validation_reference.json";
 import Papa from "papaparse";
 import { Tooltip } from 'react-tooltip';
 
+const BASE_API = process.env.REACT_APP_API_BASE_URL;
+
 interface TableItem {
     User_ID: string;
     Old_Password: string;
@@ -93,7 +95,7 @@ const S3FileManager = () => {
     const handleUpdateUser = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await axios.post("/api/update_password", updatePassword);
+            const response = await axios.post(`${BASE_API}/api/update_password`, updatePassword);
             console.log(response);
             if (response.status === 200) {
                 if (response.data.status === 601) {
@@ -231,7 +233,7 @@ const S3FileManager = () => {
         console.log("Uploading file to S3 Bucket. Is global upload: ", globalFlag);
 
         try {
-            const response = await axios.post('/api/upload_to_s3', formData, {
+            const response = await axios.post(`${BASE_API}/api/upload_to_s3`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             setMessage(`File uploaded successfully: ${response.data.message}`);
@@ -247,7 +249,7 @@ const S3FileManager = () => {
         try {
             const global_list: { displayName: string, rawFileName: string }[] = [];
             const fileList: { displayName: string, rawFileName: string }[] = [];
-            const response = await axios.get(`/api/list_s3_files?prefix=${userPrefix}`);
+            const response = await axios.get(`${BASE_API}/api/list_s3_files?prefix=${userPrefix}`);
 
             const totalFiles = response.data.files.length;
             let filesProcessed = 0;
@@ -292,7 +294,7 @@ const S3FileManager = () => {
         try {
             const global_list: { displayName: string, rawFileName: string }[] = [];
             const fileList: { displayName: string, rawFileName: string }[] = [];
-            const response = await axios.get(`/api/list_selected_s3_files?prefix=${userPrefix}&folder=${selectedFolder}`);
+            const response = await axios.get(`${BASE_API}/api/list_selected_s3_files?prefix=${userPrefix}&folder=${selectedFolder}`);
 
             const totalFiles = response.data.files.length;
             let filesProcessed = 0;
@@ -333,7 +335,7 @@ const S3FileManager = () => {
 
     const downloadFileFromS3 = async (fileName: string) => {
         try {
-            const response = await axios.get(`/api/download_from_s3?filename=${fileName}`);
+            const response = await axios.get(`${BASE_API}/api/download_from_s3?filename=${fileName}`);
 
             if (response.data?.url) {
                 const link = document.createElement('a');
@@ -363,7 +365,7 @@ const S3FileManager = () => {
         const confirmed = window.confirm(`Are you sure you want to delete the file: ${fileToDelete.rawFileName}?`);
         if (confirmed) {
             try {
-                await axios.delete(`/api/delete_from_s3?filename=${fileToDelete.rawFileName}`);
+                await axios.delete(`${BASE_API}/api/delete_from_s3?filename=${fileToDelete.rawFileName}`);
                 setDeletedFiles((prev) => [...prev, fileToDelete.rawFileName]);
                 setMessage(`File deleted successfully: ${fileToDelete.rawFileName}`);
             } catch (error) {
@@ -383,7 +385,7 @@ const S3FileManager = () => {
             setErrorMessage('');
 
             console.log(type);
-            const response = await axios.get(`/api/get_file?filename=${fileName}`, {
+            const response = await axios.get(`${BASE_API}/api/get_file?filename=${fileName}`, {
                 responseType: 'json',
             });
 
@@ -416,7 +418,7 @@ const S3FileManager = () => {
         const formData = new FormData();
         formData.append('file', csvBlob, 'data.csv');
 
-        const response = await fetch('/api/upload_data', {
+        const response = await fetch(`${BASE_API}/api/upload_data`, {
             method: 'POST',
             body: formData,
         });
@@ -499,7 +501,7 @@ const S3FileManager = () => {
 
     useEffect(() => {
         if (userPrefix) {
-            axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
+            axios.get(`${BASE_API}/api/list_s3_files?prefix=${userPrefix}`)
                 .then((response) => {
                     const files: string[] = response.data.files;
                     const folders = Array.from(new Set(
@@ -553,7 +555,7 @@ const S3FileManager = () => {
         console.log("Deleting folder with key:", folderKey);
         try {
             const response = await axios.post(
-                '/api/delete_folder',
+                `${BASE_API}/api/delete_folder`,
                 { folderKey },
                 { headers: { 'Content-Type': 'application/json' } }
             );
@@ -572,7 +574,7 @@ const S3FileManager = () => {
 
     const refreshListedFiles = async () => {
         try {
-            axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
+            axios.get(`${BASE_API}/api/list_s3_files?prefix=${userPrefix}`)
                 .then((response) => {
                     const files: string[] = response.data.files;
                     const folders = Array.from(new Set(
@@ -615,13 +617,13 @@ const S3FileManager = () => {
         console.log("Creating folder with key:", folderKey);
         try {
             const response = await axios.post(
-                '/api/create_folder_in_s3',
+                `${BASE_API}/api/create_folder_in_s3`,
                 { folderKey },
                 { headers: { 'Content-Type': 'application/json' } }
             );
             setMessage(`Folder "${newFolderName}" created successfully.`);
             setNewFolderName('');
-            axios.get(`/api/list_s3_files?prefix=${userPrefix}`)
+            axios.get(`${BASE_API}/api/list_s3_files?prefix=${userPrefix}`)
                 .then((response) => {
                     const files: string[] = response.data.files;
                     const folders = Array.from(new Set(

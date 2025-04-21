@@ -87,6 +87,18 @@ chmod +x deploy-container.sh
 ### Running Container Locally
 Open docker desktop and find the image you created in step 1. Click run, then open the image on the specified port. 
 
+---
+**Use the below script to automatically create and run the container locally:**
+
+```bash
+./local-container.sh
+```
+
+_Make the script excecutable for you by navigating to it (`cd client/react`) and running the below command_
+```bash
+chmod +x local-container.sh
+```
+
 
 # Using AWS AppRunner
 **Deploying Container App**
