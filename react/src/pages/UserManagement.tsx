@@ -72,10 +72,11 @@ const UserManagement = () => {
             const response = await axios.post("/api/add_user", newUser);
             setIdError("")
             setPrefixError("")
-            if (response.data.tatus === 200) {
+            if (response.data.status === 200) {
                 setNewUser({ User_ID: "", User_Prefix: "", User_Password: "", Classification: "User" });
                 fetchTableData();
                 setMessage('Successfully added a user.');
+                window.location.reload();
                 setError("");
             } else if (response.data.status === 409) {
                 parseTypeInputError(response);
