@@ -112,13 +112,8 @@ chmod +x local-container.sh
 ## Step 2: Set environment variable & port. 
 **_NOTE: This information is subject to change in future deployments_**
 * Name your deployment something descriptive. It is recommended to have some sort of incremental version reference standard. 
-* Add the `REACT_APP_API_BASE_URL` environment variable. Use the values in the table below:
-
-    | Format or Source | Name | Value |
-    | ---------------- | ---- | ----- |
-    | Plain text | REACT_APP_API_BASE_URL | http://127.0.0.1:5555 (or some other API URL) |
-
 * Change the Port to be the port referenced in the Dockerfile (In this case `80`).
+* Set environment variables if neccessary (not neccessary as of `v0.0.9`)
 <br>
 
 ---
