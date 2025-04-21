@@ -70,7 +70,7 @@ To start the React app:
     ```
 2. Start the app:
    ```bash
-   npm start
+   REACT_APP_API_BASE_URL=http://localhost:5555 npm start
    ```
 The app will open in your browser.
 
