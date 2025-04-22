@@ -1,10 +1,12 @@
 import http from "../http-common.ts";
 
+const BASE_API = process.env.REACT_APP_API_BASE_URL;
+
 const upload = (file: File, onUploadProgress: any): Promise<any> => {
     const formData = new FormData();
     formData.append("file", file);
 
-    return http.post("/api/upload_data", formData, {
+    return http.post(`${BASE_API}/api/upload_data`, formData, {
         headers: {
             "Content-Type": "multipart/form-data",
         },
