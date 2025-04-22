@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {useLocation} from 'react-router-dom';
 
+const BASE_API = process.env.REACT_APP_API_BASE_URL;
 interface FormData {
     state: string;
     country: string;
@@ -166,7 +167,7 @@ const StudentForm: React.FC = () => {
         console.log("Uploading file to S3 Bucket. Is global upload:", globalFlag);
     
         try {
-          const response = await axios.post('/api/upload_to_s3', fileData, {
+          const response = await axios.post(`${BASE_API}/api/upload_to_s3`, fileData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           });
           setMessage(`File uploaded successfully: ${response.data.message}`);
@@ -188,7 +189,7 @@ const StudentForm: React.FC = () => {
             const formDataToSend = new FormData();
             formDataToSend.append('file', csvBlob, fileName);
 
-            const response = await fetch('/api/upload_data', {
+            const response = await fetch(`${BASE_API}/api/upload_data`, {
                 method: 'POST',
                 body: formDataToSend,
             });

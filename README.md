@@ -22,6 +22,7 @@
 4. [Back End API](#back-end-api)
    - [flask_server.py Routes](#flask_serverpy-routes)
    - [s3_server.py Routes](#s3_routespy-routes)
+5. [Running Backend Container](#running-backend-container)
 ---
 
 ## Other Useful Information
@@ -69,7 +70,7 @@ To start the React app:
     ```
 2. Start the app:
    ```bash
-   npm start
+   REACT_APP_API_BASE_URL=http://localhost:5555 npm start
    ```
 The app will open in your browser.
 
@@ -741,4 +742,13 @@ Retrieves files in selected folder in S3
    "files": combined_files, 
    "status": 200
 }
+```
+
+# Running Backend Container
+The service is split into two separate sub-services: the frontend and the backend. This section covers running the backend container.
+
+To create and run the container, navigate to the `/api` directory. Then, run the following commands:
+```bash
+docker build -t flask-app .
+docker run -p 5555:[PORT-NUMBER] flask-app
 ```

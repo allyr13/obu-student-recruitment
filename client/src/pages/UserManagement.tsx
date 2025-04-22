@@ -6,6 +6,7 @@ import LoginForm from "../components/AdminLoginForm.tsx";
 import { Link } from 'react-router-dom';
 import { AxiosResponse } from "axios";
 
+const BASE_API = process.env.REACT_APP_API_BASE_URL;
 interface TableItem {
     User_ID: string;
     User_Prefix: string;
@@ -34,7 +35,7 @@ const UserManagement = () => {
 
     const handlePasswordSubmit = async (password: string) => {
         try {
-            const response = await axios.post("/api/verify_password", { password });
+            const response = await axios.post(`${BASE_API}/api/verify_password`, { password });
             if (response.data.status === 200) {
                 setIsAuthenticated(true);
                 localStorage.setItem("isAuthenticated", "true");
@@ -57,7 +58,7 @@ const UserManagement = () => {
 
     const fetchTableData = async () => {
         try {
-            const response = await axios.get("/api/get_table_data");
+            const response = await axios.get(`${BASE_API}/api/get_table_data`);
             if (response.status === 200) {
                 setTableData(response.data.data);
             }
@@ -69,13 +70,14 @@ const UserManagement = () => {
     const handleAddUser = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await axios.post("/api/add_user", newUser);
+            const response = await axios.post(`${BASE_API}/api/add_user`, newUser);
             setIdError("")
             setPrefixError("")
-            if (response.data.tatus === 200) {
+            if (response.data.status === 200) {
                 setNewUser({ User_ID: "", User_Prefix: "", User_Password: "", Classification: "User" });
                 fetchTableData();
                 setMessage('Successfully added a user.');
+                window.location.reload();
                 setError("");
             } else if (response.data.status === 409) {
                 parseTypeInputError(response);
@@ -100,22 +102,15 @@ const UserManagement = () => {
 
     const handleDeleteUser = async (User_ID: string, User_Prefix: string) => {
         const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-        if (confirmDelete) {
+        if (confirmDelete && User_ID !== localStorage.getItem("User_ID")) {
             try {
-                const response = await axios.delete("/api/delete_user", {
+                const response = await axios.delete(`${BASE_API}/api/delete_user`, {
                     data: { User_ID, User_Prefix }
                 });
                 if (response.status === 200) {
                     fetchTableData();
                     setMessage('Successfully deleted a user.');
                     setError("");
-                }
-                if (User_ID === localStorage.getItem("User_ID")) {
-                    localStorage.removeItem("isAuthenticated");
-                    localStorage.removeItem("User_ID");
-                    localStorage.removeItem("User_Prefix");
-                    setIsAuthenticated(false);
-                    forceUpdate();
                 }
             } catch (err) {
                 setError("Error deleting user");

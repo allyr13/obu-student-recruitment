@@ -1,23 +1,43 @@
 import pickle
 import pandas as pd
 import numpy as np
+import posixpath
+from pathlib import Path
 from json_loader import get_config
 
 chosen_model = get_config("predict_model")
 
+def get_model_path(model_name: str) -> Path:
+
+    # Check local path: models/<model_name>
+    local_model_path_str = posixpath.join("models", model_name)
+    local_model_path = Path(local_model_path_str)
+    if local_model_path.exists():
+        return local_model_path.resolve()
+
+    # Docker fallback: <this_file>/../models/<model_name>
+    script_dir = Path(__file__).resolve().parent
+    docker_model_path_str = posixpath.join("models", model_name)
+    docker_model_path = script_dir.parent / Path(docker_model_path_str)
+    return docker_model_path
+
 match chosen_model:
     case "AdaBoost":
-        model_path = "../models/adaboost_model.pkl"
+        model_path = get_model_path("adaboost_model.pkl")
     case "Decision_Tree":
-        model_path = "../models/dtree_model.pkl"
+        model_path = get_model_path("dtree_model.pkl")
     case "Logarithmic_Regression":
-        model_path = "../models/logreg_model.pkl"
+        model_path = get_model_path("logreg_model.pkl")
     case "XGBoost":
-        model_path = "../models/xgb_model.pkl"
+        model_path = get_model_path("xgb_model.pkl")
+    case _:
+        raise ValueError(f"Model {chosen_model} not found. Please check the model name.")
 
 
-f = open(model_path, "rb")
-model = pickle.load(f)
+with open(model_path, "rb") as f:
+    model = pickle.load(f)
+print(f"{type(model)}")
+print(f"Model loaded from {model_path}")
 
 ## Input: A one-hot encoded Pandas dataframe
 def predict(ohe_df):
