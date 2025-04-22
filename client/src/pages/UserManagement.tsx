@@ -102,7 +102,7 @@ const UserManagement = () => {
 
     const handleDeleteUser = async (User_ID: string, User_Prefix: string) => {
         const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-        if (confirmDelete) {
+        if (confirmDelete && User_ID !== localStorage.getItem("User_ID")) {
             try {
                 const response = await axios.delete(`${BASE_API}/api/delete_user`, {
                     data: { User_ID, User_Prefix }
@@ -111,13 +111,6 @@ const UserManagement = () => {
                     fetchTableData();
                     setMessage('Successfully deleted a user.');
                     setError("");
-                }
-                if (User_ID === localStorage.getItem("User_ID")) {
-                    localStorage.removeItem("isAuthenticated");
-                    localStorage.removeItem("User_ID");
-                    localStorage.removeItem("User_Prefix");
-                    setIsAuthenticated(false);
-                    forceUpdate();
                 }
             } catch (err) {
                 setError("Error deleting user");
