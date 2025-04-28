@@ -97,4 +97,4 @@ def test():
 if __name__ == '__main__':
     host = get_config("host")
     port = get_config("port")
-    app.run(debug=True, host=host, port=int(port))
+    app.run(debug=True, host="0.0.0.0", port=int(port))

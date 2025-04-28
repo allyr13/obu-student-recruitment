@@ -5,6 +5,7 @@ test_models.py
 .ipynb_checkpoints
 package-lock.json
 *package-lock.json
+.env
 
 # Ignore Python bytecode files
 __pycache__/
