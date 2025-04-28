@@ -22,7 +22,7 @@
 4. [Back End API](#back-end-api)
    - [flask_server.py Routes](#flask_serverpy-routes)
    - [s3_server.py Routes](#s3_routespy-routes)
-5. [Running Backend Container](#running-backend-container)
+5. [Running Containerized Service](#running-containerized-service)
 ---
 
 ## Other Useful Information
@@ -744,11 +744,26 @@ Retrieves files in selected folder in S3
 }
 ```
 
-# Running Backend Container
-The service is split into two separate sub-services: the frontend and the backend. This section covers running the backend container.
+# Running Containerized Service
+The service is split into two separate sub-services: the frontend and the backend. Due to weird networking issues, they need to be run together through a docker-compose file. To run the service follow these steps:
 
-To create and run the container, navigate to the `/api` directory. Then, run the following commands:
+1. Ensure you are in the root of the project.
+
+2. Create a `.env` file with your AWS credentials. To find your credentials, run the following command:
 ```bash
-docker build -t flask-app .
-docker run -p 5555:[PORT-NUMBER] flask-app
+cat ~/.aws/credentials
+```
+Once you have your credentials, place them in your `.env` file as follows:
+```
+AWS_ACCESS_KEY_ID=AAJSKJBFK...
+AWS_SECRET_ACCESS_KEY=k4a+nasdkj...
+AWS_DEFAULT_REGION=us-east-2
+```
+
+3. Run the following to start the service:
+```bash
+## Ensures everything is shut down
+docker compose down -v
+## Builds container from ground up
+docker compose up --build
 ```

@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  flask-backend:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: flask-app
+    ports:
+      - "5555:5555"
+    environment:
+      - FLASK_ENV=development
+    env_file:
+      - .env
+    volumes:
+      - ./api:/app
+    command: ["python", "flask_server.py"]
+
+  react-frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_BASE_URL: http://localhost:5555
+    container_name: react-app
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_BASE_URL=http://localhost:5555
+    depends_on:
+      - flask-backend
